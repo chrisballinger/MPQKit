@@ -590,8 +590,8 @@ typedef struct mpq_deferred_operation mpq_deferred_operation_t;
 - (BOOL)addArrayToFileList:(NSArray *)listfile error:(NSError **)error;
 
 /*! 
-    @method addFileToFileList:
-    @abstract Adds an external list of files to the instance's internal list of files.
+    @method addContentsOfFileToFileList:
+    @abstract Adds the entries of an external list of files to the instance's internal list of files.
     @discussion See the discussion on loadInternalListfile for more details on file lists.
         
         This method attemps to add each line of the provided text file to the instance's internal list
@@ -599,8 +599,8 @@ typedef struct mpq_deferred_operation mpq_deferred_operation_t;
     @param path System path to the file.
     @result YES on sucess or NO on failure.
 */
-- (BOOL)addFileToFileList:(NSString *)path;
-- (BOOL)addFileToFileList:(NSString *)path error:(NSError **)error;
+- (BOOL)addContentsOfFileToFileList:(NSString *)path;
+- (BOOL)addContentsOfFileToFileList:(NSString *)path error:(NSError **)error;
 
 /*! 
     @method fileList

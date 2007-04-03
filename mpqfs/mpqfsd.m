@@ -59,6 +59,7 @@ static void usage(const char *program) {
 static struct fuse_operations dummy_opts;
 
 static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args *outargs) {
+    NSString *listfile;
     switch (key) {
         case FUSE_OPT_KEY_OPT:
             if (strstr(arg, "volname") != NULL) {
@@ -78,11 +79,12 @@ static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args
             return 1;
         
         case KEY_LISTFILE:
-            NSLog(@"KEY_LISTFILE: %s", arg);
+            if (strstr(arg, "-l") == arg) listfile = [[NSString stringWithCString:arg + 2 encoding:NSUTF8StringEncoding] stringByStandardizingPath];
+            if (strstr(arg, "--listfile=") == arg) listfile = [[NSString stringWithCString:arg + 11 encoding:NSUTF8StringEncoding] stringByStandardizingPath];
+            [listfiles addObject:listfile];
             return 0;
         
         case KEY_VOLICON:
-            NSLog(@"KEY_VOLICON: %s", arg);
             [mount_icon release]; mount_icon = nil;
             if (strstr(arg, "-i") == arg) mount_icon = [[[NSString stringWithCString:arg + 2 encoding:NSUTF8StringEncoding] stringByStandardizingPath] retain];
             if (strstr(arg, "--icon=") == arg) mount_icon = [[[NSString stringWithCString:arg + 7 encoding:NSUTF8StringEncoding] stringByStandardizingPath] retain];
@@ -136,7 +138,11 @@ int main(int argc, char *argv[]) {
     [archive_path release];
     
     if ([listfiles count] > 0) {
-        
+        NSEnumerator *listfileEnum = [listfiles objectEnumerator];
+        NSString *listfile;
+        while ((listfile = [listfileEnum nextObject])) {
+            [archive addContentsOfFileToFileList:listfile];
+        }
     }
     [listfiles release];
     

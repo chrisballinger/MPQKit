@@ -1939,22 +1939,22 @@ AbortDigest:
     ReturnValueWithNoError(YES, error)
 }
 
-- (BOOL)addFileToFileList:(NSString *)path {
-    return [self addFileToFileList:path error:nil];
+- (BOOL)addContentsOfFileToFileList:(NSString *)path {
+    return [self addContentsOfFileToFileList:path error:nil];
 }
 
-- (BOOL)addFileToFileList:(NSString *)path error:(NSError **)error {
+- (BOOL)addContentsOfFileToFileList:(NSString *)path error:(NSError **)error {
     NSParameterAssert(path != nil);
     NSAutoreleasePool *p = [NSAutoreleasePool new];
     
-    NSData *fileData = [[NSData alloc] initWithContentsOfFile:path];
+    NSData *fileData = [NSData dataWithContentsOfFile:path options:NSUncachedRead error:error];
     if (!fileData) {
         [p release];
-        ReturnValueWithError(NO, MPQErrorDomain, errCouldNotReadFile, nil, error)
+        return NO;
     }
     
     BOOL result = [self addArrayToFileList:[NSArray arrayWithListfileData:fileData] error:error];
-    [fileData release];
+
     [p release];
     return result;
 }

@@ -7,14 +7,17 @@ CFStringEncoding CFStringFileSystemEncoding(void);
 
 int main(int argc, char *argv[]) {
     NSAutoreleasePool *p = [NSAutoreleasePool new];
+    NSError *error = nil;
+    
     int i = 1;
     for (; i < argc; i++) {
         if (i > 1) printf("\n");
         
         NSString *archivePath = [NSString stringWithCString:argv[i] encoding:CFStringConvertEncodingToNSStringEncoding(CFStringFileSystemEncoding())];
-        MPQArchive *archive = [[MPQArchive alloc] initWithPath:archivePath];
+        MPQArchive *archive = [[MPQArchive alloc] initWithPath:archivePath error:&error];
         if (!archive) {
             printf("INVALID ARCHIVE\n");
+            printf("    %s\n", [[error description] UTF8String]);
             break;
         }
         
@@ -23,7 +26,6 @@ int main(int argc, char *argv[]) {
         
         // signatures
         BOOL isSigned;
-        NSError *error = nil;
         BOOL valid = [archive verifyBlizzardWeakSignature:&isSigned error:&error];
         if (valid) printf("Blizzard weak signature: VALID\n");
         else if (isSigned && !error) printf("Blizzard weak signature: INVALID\n");
@@ -68,17 +70,6 @@ int main(int argc, char *argv[]) {
             
             printf("\n%08x \"%s\"\n", hash_position, utf8_filename);
             
-            if (!can_open) {
-                printf("    **** cannot open this file ****\n");
-                continue;
-            }
-            
-            NSData *fileData = (!can_open) ? nil : [archive copyDataForFile:[fileInfo objectForKey:MPQFilename] locale:[[fileInfo objectForKey:MPQFileLocale] intValue]];
-            if (!fileData && can_open) {
-                printf("    **** could not read file's data ****\n");
-                continue;
-            }
-            
             // general info
             printf("    file info: {\n");
             NSEnumerator *keys = [fileInfo keyEnumerator];
@@ -110,12 +101,32 @@ int main(int argc, char *argv[]) {
                     valueString = [[value description] UTF8String];
                     [stringFlags release];
                 }
+                else if ([key isEqualToString:MPQFileLocale]) valueString = [[[MPQArchive localeForMPQLocale:[value unsignedShortValue]] localeIdentifier] UTF8String];
                 else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%.16qx", [value unsignedLongLongValue]] UTF8String];
                 else valueString = [[value description] UTF8String];
                 
                 printf("        %s: %s\n", [[key description] UTF8String], valueString);
             }
             printf("    }\n");
+            
+            if (!can_open) {
+                printf("    **** cannot open this file ****\n");
+                continue;
+            }
+            
+            MPQFile *file = [archive openFileAtPosition:[[fileInfo objectForKey:MPQFileHashPosition] unsignedIntValue] error:&error];
+            if (!file && can_open) {
+                printf("    **** could not open the file ****\n");
+                printf("    %s\n", [[error description] UTF8String]);
+                continue;
+            }
+            
+            NSData *fileData = [file copyDataToEndOfFile:&error];
+            if (!fileData) {
+                printf("    **** could not read the file's data ****\n");
+                printf("    %s\n", [[error description] UTF8String]);
+                continue;
+            }
             
             // CRC
             uint32_t crc = 0;
