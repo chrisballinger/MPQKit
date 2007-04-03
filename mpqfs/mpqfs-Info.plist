@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+    <key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mpq</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>mpq.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>application/mpq</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>MoPaQ Archive</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>W!pq</string>
+				<string>MPQA</string>
+				<string>D2pq</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.blizzard.mpq</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.macstorm.mpqfs</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSMainNibFile</key>
+	<string>mpqfs</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+    <key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>MoPaQ Archive</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.blizzard.mpq</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>com.apple.ostype</key>
+				<array>
+					<string>D2pq</string>
+					<string>W!pq</string>
+					<string>MPQA</string>
+				</array>
+				<key>public.filename-extension</key>
+				<array>
+					<string>mpq</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,0 +1,7 @@
+/*! 
+@framework MPQKit
+@abstract A foundation-based framework for MoPaQ archives.
+@discussion MPQKit is an object oriented Foundation-based framework for interacting with MoPaQ archives, the data storage brainchild of Blizzard Entertainment Inc. It supports a number of operations such as file extraction, addition and listing spread across 2 principal classes, MPQArchive and MPQFile.
+
+MPQKit is universal and is tested on both PowerPC and Intel hardware.
+*/
