@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3102E5F20BC1F3BD006A9088 /* MPQ-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 312311A60549EF9B00833907 /* MPQ-Info.plist */; };
 		310D91910BBECF5600FEA3C5 /* mpqfs-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */; };
 		310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
@@ -130,7 +131,7 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		310D91590BBECCC800FEA3C5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "mpqfs-Info.plist"; path = "mpqfs/mpqfs-Info.plist"; sourceTree = "<group>"; };
 		310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = mpqfs.nib; path = mpqfs/mpqfs.nib; sourceTree = "<group>"; };
 		310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFSApplicationDelegate.h; path = mpqfs/MPQFSApplicationDelegate.h; sourceTree = "<group>"; };
@@ -455,6 +456,7 @@
 				310D91820BBECE5100FEA3C5 /* Frameworks */,
 				310D91980BBECF8400FEA3C5 /* CopyFiles */,
 				31A8A5410BC147BC001F583D /* CopyFiles */,
+				3102E6010BC1F3F1006A9088 /* svnversion */,
 			);
 			buildRules = (
 			);
@@ -578,12 +580,27 @@
 				31149A2C05CD52D800419143 /* attributes.plist in Resources */,
 				3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */,
 				3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */,
+				3102E5F20BC1F3BD006A9088 /* MPQ-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3102E6010BC1F3F1006A9088 /* svnversion */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = svnversion;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env python";
+			shellScript = "#-*- encoding: utf-8 -*-\n# Xcode auto-versioning script for Subversion\n# by Axel Andersson, modified by Daniel Jalkut to use\n# svnversion instead of svn info, so that the current version\n# the highest local revision  number is always used.\n# Python version by Jean-Francois Roy\n        \nimport os, re\n\nif os.getenv(\"BUILT_PRODUCTS_DIR\") is None:\n    print \"Must be run from Xcode\"\n    sys.exit(1)\n\n# Add a few common directories to PATH\npathEntries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in pathEntries: pathEntries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in pathEntries: pathEntries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in pathEntries: pathEntries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(pathEntries)\n\n# Get the current subversion revision number and use it to set the CFBundleVersion value\np = os.popen2(['svnversion', '-n'])[1]\nREV = p.read()\np.close()\nINFO = \"%s/%s\" % (os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\n\nmatchObject = re.compile(\"([\\d]+:)?(\\d+[M|S]*).*\").match(REV)\nif not matchObject:\n    print \"No Subversion revision found\"\n    sys.exit(1)\nversion = matchObject.groups()[1]\n\nFH = open(INFO, 'a+')\nFH.seek(0)\n\ninfo = FH.read()\ninfo_re = re.compile(\"([\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(</string>)\", re.S | re.M)\ninfo = info_re.sub(r'\\g<1>%s\\g<2>' % version, info)\n\nFH.truncate(0)\nFH.write(info)\nFH.close()\n";
+		};
 		31826B6D0915C76D00EB066F /* svnversion */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
