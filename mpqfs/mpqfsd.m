@@ -59,7 +59,7 @@ static void usage(const char *program) {
 static struct fuse_operations dummy_opts;
 
 static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args *outargs) {
-    NSString *listfile;
+    NSString *listfile = nil;
     switch (key) {
         case FUSE_OPT_KEY_OPT:
             if (strstr(arg, "volname") != NULL) {
