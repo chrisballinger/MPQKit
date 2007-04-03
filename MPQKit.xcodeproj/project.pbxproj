@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3102E5F20BC1F3BD006A9088 /* MPQ-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 312311A60549EF9B00833907 /* MPQ-Info.plist */; };
 		310D91910BBECF5600FEA3C5 /* mpqfs-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */; };
 		310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
@@ -580,7 +579,6 @@
 				31149A2C05CD52D800419143 /* attributes.plist in Resources */,
 				3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */,
 				3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */,
-				3102E5F20BC1F3BD006A9088 /* MPQ-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
