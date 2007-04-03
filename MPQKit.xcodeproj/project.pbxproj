@@ -131,7 +131,7 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		310D91590BBECCC800FEA3C5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "mpqfs-Info.plist"; path = "mpqfs/mpqfs-Info.plist"; sourceTree = "<group>"; };
 		310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = mpqfs.nib; path = mpqfs/mpqfs.nib; sourceTree = "<group>"; };
 		310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFSApplicationDelegate.h; path = mpqfs/MPQFSApplicationDelegate.h; sourceTree = "<group>"; };
