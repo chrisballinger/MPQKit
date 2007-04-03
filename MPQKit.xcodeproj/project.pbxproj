@@ -147,7 +147,7 @@
 		3133BFC404C8EB0800A80102 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
 		313E4BDE04A2C80700A80102 /* SCompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCompression.h; path = stormlib2/SCompression.h; sourceTree = "<group>"; };
 		3150DB8C0AF455C300CF2965 /* Public RSA Keys */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Public RSA Keys"; sourceTree = "<group>"; };
-		3150DBAE0AF45FA900CF2965 /* signaturecheck */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = signaturecheck; sourceTree = BUILT_PRODUCTS_DIR; };
+		3150DBAE0AF45FA900CF2965 /* signaturecheck */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = signaturecheck; sourceTree = BUILT_PRODUCTS_DIR; };
 		3150DBB60AF4730900CF2965 /* signaturecheck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = signaturecheck.m; sourceTree = "<group>"; };
 		3150DBF60AF5266700CF2965 /* MPQKit.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MPQKit.pem; sourceTree = "<group>"; };
 		316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayListfileAdditions.h; sourceTree = "<group>"; };
