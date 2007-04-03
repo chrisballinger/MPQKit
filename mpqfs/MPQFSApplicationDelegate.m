@@ -11,6 +11,22 @@
 
 @implementation MPQFSApplicationDelegate
 
+- (NSArray *)standardListfileArguments_ {
+    NSString *listfileDirectory = [[NSBundle mainBundle] pathForResource:@"listfiles" ofType:@""];
+    if (!listfileDirectory) return [NSArray array];
+    
+    NSArray *listfileDirectoryContent = [[NSFileManager defaultManager] directoryContentsAtPath:listfileDirectory];
+    NSMutableArray *arguments = [NSMutableArray arrayWithCapacity:[listfileDirectoryContent count]];
+    
+    NSEnumerator *directoryContentEnum = [listfileDirectoryContent objectEnumerator];
+    NSString *listfile;
+    while ((listfile = [directoryContentEnum nextObject])) {
+        [arguments addObject:[NSString stringWithFormat:@"--listfile=%@", [listfileDirectory stringByAppendingPathComponent:listfile]]];
+    }
+    
+    return arguments;
+}
+
 - (NSString *)mountPointForArchivePath_:(NSString *)path {
     NSFileManager *manager = [NSFileManager defaultManager];
     NSString *basePoint = [@"/Volumes" stringByAppendingPathComponent:[path lastPathComponent]];
@@ -25,11 +41,17 @@
     return mountPoint;
 }
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
-    [NSTask launchedTaskWithLaunchPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mpqfsd"] 
-        arguments:[NSArray arrayWithObjects:filename, [self mountPointForArchivePath_:filename], nil]];
-    [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:filename]];
+- (BOOL)mountArchive_:(NSString *)path loadingListfiles:(BOOL)loadListfiles {
+    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:path, [self mountPointForArchivePath_:path], nil];
+    if (loadListfiles) [arguments addObjectsFromArray:[self standardListfileArguments_]];
+    
+    [NSTask launchedTaskWithLaunchPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mpqfsd"] arguments:arguments];
+    [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
     return YES;
+}
+
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+    return [self mountArchive_:filename loadingListfiles:NO];
 }
 
 - (IBAction)openDocument:(id)sender {
@@ -37,9 +59,11 @@
     [openPanel setCanChooseFiles:YES];
     [openPanel setCanChooseDirectories:NO];
     [openPanel setAllowsMultipleSelection:NO];
+    [openPanel setAccessoryView:loadStdListfilesView];
 	
-    int returnCode = [openPanel runModalForTypes:[NSArray arrayWithObject:@"mpq"]];
-    if(returnCode == NSOKButton) [self application:NSApp openFile:[openPanel filename]];
+    int returnCode = [openPanel runModalForTypes:
+        [NSArray arrayWithObjects:@"mpq", NSFileTypeForHFSTypeCode('D2pq'), NSFileTypeForHFSTypeCode('W!pq'), NSFileTypeForHFSTypeCode('MPQA'), NSFileTypeForHFSTypeCode('Smpq'), nil]];
+    if(returnCode == NSOKButton) [self mountArchive_:[openPanel filename] loadingListfiles:([loadStdListfilesButton state] == NSOnState) ? YES : NO];
 }
 
 @end

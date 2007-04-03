@@ -1,7 +1,12 @@
 {
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {CLASS = MPQFSApplicationDelegate; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+        {
+            CLASS = MPQFSApplicationDelegate; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {loadStdListfilesButton = NSButton; loadStdListfilesView = NSView; }; 
+            SUPERCLASS = NSObject; 
+        }
     ); 
     IBVersion = 1; 
 }

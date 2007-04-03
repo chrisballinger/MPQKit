@@ -49,6 +49,7 @@
 		316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */; };
 		3173395A05B74E47003755C5 /* NSCalendarDateNTFSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3173395805B74E47003755C5 /* NSCalendarDateNTFSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3173395B05B74E47003755C5 /* NSCalendarDateNTFSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3173395905B74E47003755C5 /* NSCalendarDateNTFSAdditions.m */; };
+		319811340BC2EF85009C3E08 /* listfiles in Resources */ = {isa = PBXBuildFile; fileRef = 319811260BC2EF85009C3E08 /* listfiles */; };
 		319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
 		319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		3199802C0B4D8C3000D4FE4E /* verifyarchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 319980080B4D8AFF00D4FE4E /* verifyarchive.m */; };
@@ -154,6 +155,7 @@
 		3173395805B74E47003755C5 /* NSCalendarDateNTFSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSCalendarDateNTFSAdditions.h; sourceTree = "<group>"; };
 		3173395905B74E47003755C5 /* NSCalendarDateNTFSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSCalendarDateNTFSAdditions.m; sourceTree = "<group>"; };
 		3191CA7D0BB859180004E8AA /* libfuse.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse.dylib; path = /usr/local/lib/libfuse.dylib; sourceTree = "<absolute>"; };
+		319811260BC2EF85009C3E08 /* listfiles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = listfiles; path = mpqfs/listfiles; sourceTree = "<group>"; };
 		319980080B4D8AFF00D4FE4E /* verifyarchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = verifyarchive.m; sourceTree = "<group>"; };
 		3199801A0B4D8B4600D4FE4E /* verifyarchive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = verifyarchive; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A6B005068C07F80089D443 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -357,6 +359,7 @@
 			children = (
 				310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */,
 				31A8A5B60BC14B72001F583D /* InfoPlist.strings */,
+				319811260BC2EF85009C3E08 /* listfiles */,
 				31A8A5CC0BC14CC7001F583D /* mpq.icns */,
 				31B808930BB85067001F9B73 /* MPQFileSystem.h */,
 				31B808940BB85067001F9B73 /* MPQFileSystem.m */,
@@ -450,8 +453,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 310D91870BBECE5100FEA3C5 /* Build configuration list for PBXNativeTarget "mpqfs" */;
 			buildPhases = (
-				310D91800BBECE5100FEA3C5 /* Resources */,
 				310D91810BBECE5100FEA3C5 /* Sources */,
+				310D91800BBECE5100FEA3C5 /* Resources */,
 				310D91820BBECE5100FEA3C5 /* Frameworks */,
 				310D91980BBECF8400FEA3C5 /* CopyFiles */,
 				31A8A5410BC147BC001F583D /* CopyFiles */,
@@ -569,6 +572,7 @@
 				310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */,
 				31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */,
 				31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */,
+				319811340BC2EF85009C3E08 /* listfiles in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

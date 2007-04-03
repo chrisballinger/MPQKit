@@ -6,6 +6,8 @@
 	<string>69 10 356 240 0 0 1280 1002 </string>
 	<key>IBEditorPositions</key>
 	<dict>
+		<key>252</key>
+		<string>364 699 395 107 0 0 1280 1002 </string>
 		<key>29</key>
 		<string>276 547 229 44 0 0 1280 1002 </string>
 	</dict>
@@ -14,6 +16,7 @@
 	<key>IBOpenObjects</key>
 	<array>
 		<integer>29</integer>
+		<integer>252</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>8P2137</string>

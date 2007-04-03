@@ -10,7 +10,8 @@
 
 
 @interface MPQFSApplicationDelegate : NSObject {
-
+    IBOutlet NSView *loadStdListfilesView;
+    IBOutlet NSButton *loadStdListfilesButton;
 }
 
 @end

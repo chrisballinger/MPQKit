@@ -24,6 +24,7 @@
 				<string>W!pq</string>
 				<string>MPQA</string>
 				<string>D2pq</string>
+                <string>Smpq</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -69,6 +70,7 @@
 					<string>D2pq</string>
 					<string>W!pq</string>
 					<string>MPQA</string>
+                    <string>Smpq</string>
 				</array>
 				<key>public.filename-extension</key>
 				<array>
