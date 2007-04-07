@@ -86,28 +86,39 @@ typedef struct mpq_shunt mpq_shunt_t;
 
 // Internal types and structures for defered operations
 typedef enum {
-    MPQNone            = 0,
-    MPQDOAdd           = 0x1,
-    MPQDONotFound      = 0x2,
-    MPQDODelete        = 0x4,
-    MPQDORename        = 0x8,
-    MPQDOMask          = 0xF
+    MPQDOAdd = 1,
+    MPQDODelete,
+    MPQDORename,
 } MPQDeferredOperationType;
 
-struct mpq_deferred_operation {
-    MPQDeferredOperationType type;
+struct mpq_deferred_operation_file_context {
     uint32_t hash_position;
     mpq_hash_table_entry_t hash_entry;
     mpq_block_table_entry_t block_entry;
     off_t block_offset;
     uint32_t encryption_key;
     NSString *filename;
-    NSData *data;
-    uint32_t compressor;
-    int32_t compression_quality;
+};
+typedef struct mpq_deferred_operation_file_context mpq_deferred_operation_file_context_t;
+
+struct mpq_deferred_operation {
+    MPQDeferredOperationType type;
+    mpq_deferred_operation_file_context_t primary_file_context;
+    void *context;
     struct mpq_deferred_operation *previous;
 };
 typedef struct mpq_deferred_operation mpq_deferred_operation_t;
+
+struct mpq_deferred_operation_add_context {
+    NSData *data;
+    uint32_t compressor;
+    int32_t compression_quality;
+};
+typedef struct mpq_deferred_operation_add_context mpq_deferred_operation_add_context_t;
+
+struct mpq_deferred_operation_delete_context {
+};
+typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_delete_context_t;
 
 /*!
     @class MPQArchive

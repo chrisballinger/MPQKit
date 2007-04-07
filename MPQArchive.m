@@ -576,25 +576,40 @@ FreeData:
 
 #pragma mark memory management
 
+void mpq_deferred_operation_add_context_free(mpq_deferred_operation_add_context_t *context) {
+    [context->data release];
+    free(context);
+}
+
+void mpq_deferred_operation_delete_context_free(mpq_deferred_operation_delete_context_t *context) {
+    free(context);
+}
+
+typedef void (*deferred_operation_context_free_function)(void *);
+static deferred_operation_context_free_function dosc_free_functions[] = {
+    NULL, 
+    (deferred_operation_context_free_function)mpq_deferred_operation_add_context_free, 
+    (deferred_operation_context_free_function)mpq_deferred_operation_delete_context_free, 
+    NULL};
+
 - (void)_flushLastDO {
     if (last_operation) {
-        // Free memory
-        [last_operation->data release];
-        [last_operation->filename release];
-        
         // Backup the operation's hash table position
-        uint32_t hash_position = last_operation->hash_position;
+        uint32_t hash_position = last_operation->primary_file_context.hash_position;
         operation_hash_table[hash_position] = NULL;
         
         // Remove the operation from the operation linked list
         mpq_deferred_operation_t *old = last_operation;
         last_operation = last_operation->previous;
+        
+        if (old->context) dosc_free_functions[old->type](old->context);
+        [old->primary_file_context.filename release];
         free(old);
         
         // Going from newest to oldest, set the hash table position's operation to the first operation matching the position
         old = last_operation;
         while (old) {
-            if (old->hash_position == hash_position) {
+            if (old->primary_file_context.hash_position == hash_position) {
                 operation_hash_table[hash_position] = old;
                 break;
             }
@@ -608,18 +623,7 @@ FreeData:
 }
 
 - (void)_flushDOS {
-    while (last_operation) {
-        [last_operation->data release];
-        [last_operation->filename release];
-        
-        operation_hash_table[last_operation->hash_position] = NULL;
-        
-        mpq_deferred_operation_t *old = last_operation;
-        last_operation = last_operation->previous;
-        free(old);
-    }
-    
-    deferred_operations_count = 0;
+    while (last_operation) [self _flushLastDO];
 }
 
 - (void)freeMemory {    
@@ -1298,22 +1302,22 @@ AllocateFailure:
     
     // Bail out if we need to restore a filename and we can't do the ASCII convertion
     char *filename_cstring = NULL;
-    if (operation->filename) {
-        filename_cstring = _MPQKitConvertFilenameToASCII(operation->filename, error);
+    if (operation->primary_file_context.filename) {
+        filename_cstring = _MPQKitConvertFilenameToASCII(operation->primary_file_context.filename, error);
         if (!filename_cstring) return NO;
     }
     
     // Invalidate the encryption key, sector table and filename caches
-    encryption_keys_cache[operation->hash_position] = 0;
-    if (sector_tables_cache[operation->hash_position]) free(sector_tables_cache[operation->hash_position]);
-    sector_tables_cache[operation->hash_position] = NULL;
-    if (filename_table[operation->hash_position]) free(filename_table[operation->hash_position]);
+    encryption_keys_cache[operation->primary_file_context.hash_position] = 0;
+    if (sector_tables_cache[operation->primary_file_context.hash_position]) free(sector_tables_cache[operation->primary_file_context.hash_position]);
+    sector_tables_cache[operation->primary_file_context.hash_position] = NULL;
+    if (filename_table[operation->primary_file_context.hash_position]) free(filename_table[operation->primary_file_context.hash_position]);
         
     // Restore archive state
-    block_table[hash_table[operation->hash_position].block_table_index] = operation->block_entry;
-    block_offset_table[hash_table[operation->hash_position].block_table_index] = operation->block_offset;
-    hash_table[operation->hash_position] = operation->hash_entry;
-    filename_table[operation->hash_position] = filename_cstring;
+    block_table[hash_table[operation->primary_file_context.hash_position].block_table_index] = operation->primary_file_context.block_entry;
+    block_offset_table[hash_table[operation->primary_file_context.hash_position].block_table_index] = operation->primary_file_context.block_offset;
+    hash_table[operation->primary_file_context.hash_position] = operation->primary_file_context.hash_entry;
+    filename_table[operation->primary_file_context.hash_position] = filename_cstring;
     
     // Delete the operation
     // FIXME: need to do something about is_modified
@@ -2124,13 +2128,14 @@ AbortDigest:
     // Prepare a deferred operation
     mpq_deferred_operation_t *operation = malloc(sizeof(mpq_deferred_operation_t));
     operation->type = MPQDODelete;
-    operation->hash_position = hash_position;
-    operation->hash_entry = *hash_entry;
-    operation->block_entry = *block_entry;
-    operation->block_offset = block_offset_table[hash_entry->block_table_index];
-    operation->encryption_key = encryption_keys_cache[hash_position];
-    operation->filename = (filename_table[hash_position]) ? [[NSString alloc] initWithCString:filename_table[hash_position] encoding:NSASCIIStringEncoding] : nil;
-    operation->data = nil;
+    operation->context = NULL;
+    
+    operation->primary_file_context.hash_position = hash_position;
+    operation->primary_file_context.hash_entry = *hash_entry;
+    operation->primary_file_context.block_entry = *block_entry;
+    operation->primary_file_context.block_offset = block_offset_table[hash_entry->block_table_index];
+    operation->primary_file_context.encryption_key = encryption_keys_cache[hash_position];
+    operation->primary_file_context.filename = (filename_table[hash_position]) ? [[NSString alloc] initWithCString:filename_table[hash_position] encoding:NSASCIIStringEncoding] : nil;
     
     // Insert the deferred operation
     operation->previous = last_operation;
@@ -2385,15 +2390,20 @@ AbortDigest:
     // Prepare a deferred operation
     mpq_deferred_operation_t *operation = malloc(sizeof(mpq_deferred_operation_t));
     operation->type = MPQDOAdd;
-    operation->hash_position = hash_position;
-    operation->hash_entry = hash_table[hash_position];
-    operation->block_entry = block_table[block_position];
-    operation->block_offset = block_offset_table[block_position];
-    operation->encryption_key = encryption_key;
-    operation->filename = [filename copy];
-    operation->data = [data retain];
-    operation->compressor = compressor;
-    operation->compression_quality = compression_quality;
+    
+    mpq_deferred_operation_add_context_t *context = malloc(sizeof(mpq_deferred_operation_add_context_t));
+    operation->context = context;
+    
+    operation->primary_file_context.hash_position = hash_position;
+    operation->primary_file_context.hash_entry = hash_table[hash_position];
+    operation->primary_file_context.block_entry = block_table[block_position];
+    operation->primary_file_context.block_offset = block_offset_table[block_position];
+    operation->primary_file_context.encryption_key = encryption_key;
+    operation->primary_file_context.filename = [filename copy];
+    
+    context->data = [data retain];
+    context->compressor = compressor;
+    context->compression_quality = compression_quality;
         
     // Insert the deferred operation
     operation->previous = last_operation;
@@ -2432,19 +2442,20 @@ AbortDigest:
 - (BOOL)_performFileAddOperation:(mpq_deferred_operation_t *)operation error:(NSError **)error {
     NSParameterAssert(operation != NULL);
     NSParameterAssert(operation->type == MPQDOAdd);
+    mpq_deferred_operation_add_context_t *context = (mpq_deferred_operation_add_context_t *)operation->context;
     
-    MPQDebugLog(@"adding %@", operation->filename);
+    MPQDebugLog(@"adding %@", operation->primary_file_context.filename);
     MPQDebugLog(@"-------------------------");
     
-    uint32_t hash_position = operation->hash_position;
+    uint32_t hash_position = operation->primary_file_context.hash_position;
     uint32_t block_position = hash_table[hash_position].block_table_index;
     
     // Copy the file flags for easier access in this method
     uint32_t flags = block_table[block_position].flags;
-    MPQDebugLog(@"compressor: %u\ncompression quality: %d", operation->compressor, operation->compression_quality);
+    MPQDebugLog(@"compressor: %u\ncompression quality: %d", context->compressor, context->compression_quality);
     
     // Get the size of the file to add
-    uint32_t file_size = [operation->data length];
+    uint32_t file_size = [context->data length];
     MPQDebugLog(@"size of input file: %u", file_size);
     
     // Predicate for needing a sector table
@@ -2548,7 +2559,7 @@ AbortDigest:
         compressed_size = full_sector_size << 1;
 
         // Read the current sector
-        [operation->data getBytes:read_buffer range:NSMakeRange(data_offset, current_sector_size)];
+        [context->data getBytes:read_buffer range:NSMakeRange(data_offset, current_sector_size)];
 
         // This is to correct the idiosynchrosies of the Diablo compression
         char *buffer_pointer = compression_buffer;
@@ -2557,24 +2568,24 @@ AbortDigest:
         // FIXME: stream compression when one sector is set
         if ((flags & (MPQFileCompressed | MPQFileDiabloCompressed))) {
             int compression_error = 0;
-            if (operation->compressor == MPQStereoADPCMCompression) {
+            if (context->compressor == MPQStereoADPCMCompression) {
                 // Blizzard uses PKWARE compression on the first sector, so we'll do the same
                 compression_error = SCompCompress(compression_buffer, 
                                                   (int *)&compressed_size, 
                                                   read_buffer, 
                                                   current_sector_size, 
-                                                  (current_sector == 0) ? MPQPKWARECompression : operation->compressor, 
+                                                  (current_sector == 0) ? MPQPKWARECompression : context->compressor, 
                                                   0, 
-                                                  operation->compression_quality);
+                                                  context->compression_quality);
             } else if ((flags & MPQFileDiabloCompressed)) {
                 // Diablo compression means to assume PKWARE compression, and therefore no compression type byte is prepended to the bitstream
-                compression_error = SCompCompress(compression_buffer, (int *)&compressed_size, read_buffer, current_sector_size, operation->compressor, 0, 0);
+                compression_error = SCompCompress(compression_buffer, (int *)&compressed_size, read_buffer, current_sector_size, context->compressor, 0, 0);
                 if (compression_error && compressed_size < current_sector_size) {
                     buffer_pointer++;
                     compressed_size--;
                 }
             } else if ((flags & MPQFileCompressed)) {
-                compression_error = SCompCompress(compression_buffer, (int *)&compressed_size, read_buffer, current_sector_size, operation->compressor, 0, operation->compression_quality);
+                compression_error = SCompCompress(compression_buffer, (int *)&compressed_size, read_buffer, current_sector_size, context->compressor, 0, context->compression_quality);
             }
             
             // If the compression failed or we didn't save any bytes, we reject the compressed block
@@ -2634,7 +2645,7 @@ AbortDigest:
     // Update the archive write offset if we wrote at the end of the archive
     if (archive_write_offset == file_write_offset) archive_write_offset += file_compressed_size;
     
-    MPQDebugLog(@"done adding %@", operation->filename);
+    MPQDebugLog(@"done adding %@", operation->primary_file_context.filename);
     MPQDebugLog(@"-------------------------");
     
     if (sector_table) free(sector_table);
@@ -2673,7 +2684,7 @@ AbortDigest:
                 [NSNumber numberWithUnsignedInt:hash_position], @"Position", 
                 [NSNumber numberWithUnsignedInt:(uint32_t)hash_entry], @"HashTableEntry", 
                 [NSNumber numberWithUnsignedInt:(uint32_t)block_entry], @"FileTableEntry", 
-                operation->data, @"Data", 
+                ((mpq_deferred_operation_add_context_t *)operation->context)->data, @"Data", 
                 filename, @"Filename", 
                 nil];
             
@@ -3147,16 +3158,16 @@ AbortDigest:
         }
     }
     
-    MPQDebugLog(@"processing pending operations...");
+    MPQDebugLog(@"processing deferred operations...");
     
     mpq_deferred_operation_t *operation = last_operation;
     while (operation) {
-        if (operation_hash_table[operation->hash_position] != operation) continue;
+        if (operation_hash_table[operation->primary_file_context.hash_position] != operation) continue;
         
         if (operation->type == MPQDOAdd) {
-            if ([delegate respondsToSelector:@selector(archive:willAddFile:)]) [delegate archive:self willAddFile:operation->filename];
+            if ([delegate respondsToSelector:@selector(archive:willAddFile:)]) [delegate archive:self willAddFile:operation->primary_file_context.filename];
             if (![self _performFileAddOperation:operation error:error]) goto WriteFailed;
-            if ([delegate respondsToSelector:@selector(archive:didAddFile:)]) [delegate archive:self didAddFile:operation->filename];
+            if ([delegate respondsToSelector:@selector(archive:didAddFile:)]) [delegate archive:self didAddFile:operation->primary_file_context.filename];
         }
         
         operation = operation->previous;
