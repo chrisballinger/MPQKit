@@ -353,6 +353,8 @@
     uint32_t last_sector = sectors_count - 2;
     uint32_t decompressed_sector_size = full_sector_size;
     uint32_t bytes_left = bytesToKeep.length;
+    uint32_t read_size = full_sector_size << 4;
+    if (read_size > block_entry.archived_size) read_size = full_sector_size;
     
     BOOL encrypted = (block_entry.flags & MPQFileEncrypted) ? YES : NO;
     
@@ -433,7 +435,7 @@
         uint32_t sector_buffer_offset = 0;
         bytes_available[current_iocb] = bytes_read + bytes_available[next_iocb];
 #else
-        ssize_t bytes_read = pread(archive_fd, read_buffer, full_sector_size << 4, file_archive_offset + sectors[current_sector]);
+        ssize_t bytes_read = pread(archive_fd, read_buffer, read_size, file_archive_offset + sectors[current_sector]);
         if (bytes_read == -1) {
             perr = -1;
             if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
