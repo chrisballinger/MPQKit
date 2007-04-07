@@ -165,7 +165,9 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     archiveTree_ = [[MPQFSTree alloc] init];
     
     // Load the internal listfile
-    if (![archive_ loadInternalListfile:error]) return NO;
+    if (![archive_ loadInternalListfile:error]) {
+        if ((error && [*error code] != errHashTableEntryNotFound) || !error) return NO;
+    }
     
     NSAutoreleasePool *p = [NSAutoreleasePool new];
     NSLocale *locale = [NSLocale currentLocale];

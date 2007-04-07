@@ -318,12 +318,12 @@
 #if defined(MPQFILE_AIO)
     buffer_ = valloc(full_sector_size * 7);
 #else
-    buffer_ = valloc(full_sector_size * 5);
+    buffer_ = valloc(full_sector_size + (full_sector_size << 4));
 #endif
     if (!buffer_) ReturnFromInitWithError(MPQErrorDomain, errOutOfMemory, nil, error)
     
-    data_buffer = buffer_;
-    read_buffer = buffer_ + full_sector_size;
+    read_buffer = buffer_;
+    data_buffer = buffer_ + (full_sector_size << 4);
     
     ReturnValueWithNoError(self, error)
 }
@@ -433,7 +433,7 @@
         uint32_t sector_buffer_offset = 0;
         bytes_available[current_iocb] = bytes_read + bytes_available[next_iocb];
 #else
-        ssize_t bytes_read = pread(archive_fd, read_buffer, full_sector_size << 2, file_archive_offset + sectors[current_sector]);
+        ssize_t bytes_read = pread(archive_fd, read_buffer, full_sector_size << 4, file_archive_offset + sectors[current_sector]);
         if (bytes_read == -1) {
             perr = -1;
             if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
