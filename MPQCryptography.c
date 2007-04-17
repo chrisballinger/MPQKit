@@ -120,7 +120,7 @@ void mpq_decrypt(char *data, uint32_t length, uint32_t key, bool disable_output_
     
     if (disable_output_swapping) {
         while (length-- > 0) {
-#if defined(__BIG_ENDAN__)
+#if defined(__BIG_ENDIAN__)
             ch = CFSwapInt32LittleToHost(*buffer32);
 #else
             ch = *buffer32;
@@ -137,7 +137,7 @@ void mpq_decrypt(char *data, uint32_t length, uint32_t key, bool disable_output_
         
     } else {
         while (length-- > 0) {
-#if defined(__BIG_ENDAN__)
+#if defined(__BIG_ENDIAN__)
             ch = CFSwapInt32LittleToHost(*buffer32);
 #else
             ch = *buffer32;
@@ -149,7 +149,7 @@ void mpq_decrypt(char *data, uint32_t length, uint32_t key, bool disable_output_
             key = ((~key << 0x15) + 0x11111111) | (key >> 0x0B);
             seed = ch + seed + (seed << 5) + 3;
             
-#if defined(__BIG_ENDAN__)
+#if defined(__BIG_ENDIAN__)
             *buffer32++ = CFSwapInt32HostToLittle(ch);
 #else
             *buffer32++ = ch;
