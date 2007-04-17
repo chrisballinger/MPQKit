@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/NSString.h>
+#import <Foundation/NSAutoreleasePool.h>
 
 
 // error domains
@@ -49,3 +50,5 @@ typedef enum {
     errDecompressionFailed,
     errEndOfFile,
 } MPQError;
+
+inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p);
