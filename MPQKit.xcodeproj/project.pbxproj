@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		310D91910BBECF5600FEA3C5 /* mpqfs-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */; };
 		310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
 		310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
@@ -567,7 +566,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				310D91910BBECF5600FEA3C5 /* mpqfs-Info.plist in Resources */,
 				310D91BA0BBED0BC00FEA3C5 /* mpqfs.nib in Resources */,
 				310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */,
 				31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */,

@@ -97,7 +97,7 @@ static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args
             exit(1);
             
         case KEY_VERSION:
-            fprintf(stderr, "MPQFS version %s\n", "0.2");
+            fprintf(stderr, "MPQFS version %s\n", "0.2.1");
             fuse_opt_add_arg(outargs, "--version");
             fuse_main(outargs->argc, outargs->argv, &dummy_opts, NULL);
             exit(0);
