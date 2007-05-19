@@ -3,7 +3,7 @@
 //  MPQKit
 //
 //  Created by Jean-Francois Roy on Tue Oct 01 2002.
-//  Copyright (c) 2002 MacStorm. All rights reserved.
+//  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
 
 #import <fcntl.h>

@@ -1,12 +1,12 @@
 //
-//  NSCalendarDateNTFSAdditions.m
+//  NSDateNTFSAdditions.m
 //  MPQKit
 //
 //  Created by Jean-Francois Roy on Thu Jan 15 2004.
-//  Copyright (c) 2004 MacStorm. All rights reserved.
+//  Copyright (c) 2004-2007 MacStorm. All rights reserved.
 //
 
-#import "NSCalendarDateNTFSAdditions.h"
+#import "NSDateNTFSAdditions.h"
 
 /*
 The FILETIME data structure is a 64-bit value representing the number of 100-nanosecond intervals since 
@@ -16,16 +16,16 @@ January 1, 1601
 /* Number of 100 nanosecond units from 1/1/1601 to 1/1/1970 */
 static const uint64_t EPOCH_BIAS = 116444736000000000ULL;
 
-@implementation NSCalendarDate (NTFSAdditions)
+@implementation NSDate (NTFSAdditions)
 
-+ (id)dateWithNTFSDate:(int64_t)filetime {
++ (id)dateWithNTFSFiletime:(int64_t)filetime {
     // We bring the filetime up to 1970
     filetime -= EPOCH_BIAS;
     
     NSTimeInterval secondsSinceEPOCH = filetime * 0.0000001;
     
-    // Now we just have to convert that number of seconds to a NSCalendarDate instance!
-    return [NSCalendarDate dateWithTimeIntervalSince1970:secondsSinceEPOCH];
+    // Now we just have to convert that number of seconds to a NSDate instance
+    return [NSDate dateWithTimeIntervalSince1970:secondsSinceEPOCH];
 }
 
 - (int64_t)ntfsFiletime {

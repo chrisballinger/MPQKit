@@ -3,7 +3,7 @@
 //  MPQKit
 //
 //  Created by Anarchie on Fri Oct 18 2002.
-//  Copyright (c) 2002 MacStorm. All rights reserved.
+//  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
 
 #import "MPQArchive.h"

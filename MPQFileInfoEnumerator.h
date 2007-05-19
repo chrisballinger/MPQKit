@@ -4,7 +4,7 @@
 //
 //  Created by Anarchie on Fri Oct 18 2002.
 //  Contrinuted by Jean-Francois Roy
-//  Copyright (c) 2002 David Vierra. All rights reserved.
+//  Copyright (c) 2002-2007 David Vierra. All rights reserved.
 //
 
 #import <Foundation/NSEnumerator.h>

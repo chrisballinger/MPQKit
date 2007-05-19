@@ -3,7 +3,7 @@
 //  MPQKit
 //
 //  Created by Jean-Francois Roy on Mon Sep 30 2002.
-//  Copyright (c) 2002 MacStorm. All rights reserved.
+//  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
 
 #import <fcntl.h>
@@ -19,7 +19,7 @@
 #import "PHSErrorMacros.h"
 
 #import "SCompression.h"
-#import "NSCalendarDateNTFSAdditions.h"
+#import "NSDateNTFSAdditions.h"
 
 #if defined(MPQKIT_USE_AIO)
 #define MPQFILE_AIO
@@ -55,7 +55,7 @@
 }
 
 + (id)getCreationDate:(NSData *)data {
-    return [NSCalendarDate dateWithNTFSDate:CFSwapInt64LittleToHost(*((u_int64_t *)[data bytes]))];
+    return [NSDate dateWithNTFSFiletime:CFSwapInt64LittleToHost(*((u_int64_t *)[data bytes]))];
 }
 
 + (id)getMD5:(NSData *)data {

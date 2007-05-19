@@ -3,7 +3,7 @@
  *  MPQKit
  *
  *  Created by Anarchie on Wed Jun 11 2003.
- *  Copyright (c) 2003 MacStorm. All rights reserved.
+ *  Copyright (c) 2003-2007 MacStorm. All rights reserved.
  *
  */
 

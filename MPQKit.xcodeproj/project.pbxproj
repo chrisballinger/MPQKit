@@ -46,8 +46,8 @@
 		3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */ = {isa = PBXBuildFile; fileRef = 3150DBF60AF5266700CF2965 /* MPQKit.pem */; };
 		316FE2750ADF74B3002BC846 /* NSArrayListfileAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */; };
-		3173395A05B74E47003755C5 /* NSCalendarDateNTFSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3173395805B74E47003755C5 /* NSCalendarDateNTFSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3173395B05B74E47003755C5 /* NSCalendarDateNTFSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3173395905B74E47003755C5 /* NSCalendarDateNTFSAdditions.m */; };
+		3173395A05B74E47003755C5 /* NSDateNTFSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3173395B05B74E47003755C5 /* NSDateNTFSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */; };
 		319811340BC2EF85009C3E08 /* listfiles in Resources */ = {isa = PBXBuildFile; fileRef = 319811260BC2EF85009C3E08 /* listfiles */; };
 		319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
 		319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
@@ -151,8 +151,8 @@
 		3150DBF60AF5266700CF2965 /* MPQKit.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MPQKit.pem; sourceTree = "<group>"; };
 		316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayListfileAdditions.h; sourceTree = "<group>"; };
 		316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArrayListfileAdditions.m; sourceTree = "<group>"; };
-		3173395805B74E47003755C5 /* NSCalendarDateNTFSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSCalendarDateNTFSAdditions.h; sourceTree = "<group>"; };
-		3173395905B74E47003755C5 /* NSCalendarDateNTFSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSCalendarDateNTFSAdditions.m; sourceTree = "<group>"; };
+		3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateNTFSAdditions.h; sourceTree = "<group>"; };
+		3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateNTFSAdditions.m; sourceTree = "<group>"; };
 		3191CA7D0BB859180004E8AA /* libfuse.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse.dylib; path = /usr/local/lib/libfuse.dylib; sourceTree = "<absolute>"; };
 		319811260BC2EF85009C3E08 /* listfiles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = listfiles; path = mpqfs/listfiles; sourceTree = "<group>"; };
 		319980080B4D8AFF00D4FE4E /* verifyarchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = verifyarchive.m; sourceTree = "<group>"; };
@@ -305,8 +305,8 @@
 			children = (
 				316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */,
 				316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */,
-				3173395805B74E47003755C5 /* NSCalendarDateNTFSAdditions.h */,
-				3173395905B74E47003755C5 /* NSCalendarDateNTFSAdditions.m */,
+				3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */,
+				3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */,
 				3133BFC304C8EB0800A80102 /* NSStringAdditions.h */,
 				3133BFC404C8EB0800A80102 /* NSStringAdditions.m */,
 			);
@@ -438,7 +438,7 @@
 				3123129F0549F2A700833907 /* MPQFile.h in Headers */,
 				312312990549F28700833907 /* MPQFileInfoEnumerator.h in Headers */,
 				3123127A0549F1B900833907 /* MPQSharedConstants.h in Headers */,
-				3173395A05B74E47003755C5 /* NSCalendarDateNTFSAdditions.h in Headers */,
+				3173395A05B74E47003755C5 /* NSDateNTFSAdditions.h in Headers */,
 				316FE2750ADF74B3002BC846 /* NSArrayListfileAdditions.h in Headers */,
 				312443EB0B474D98004DB138 /* MPQErrors.h in Headers */,
 				312444120B47532F004DB138 /* PHSErrorMacros.h in Headers */,
@@ -642,7 +642,7 @@
 				3123128E0549F21A00833907 /* MPQFileInfoEnumerator.m in Sources */,
 				3123128F0549F21A00833907 /* MPQArchive.m in Sources */,
 				312312900549F21A00833907 /* MPQFile.m in Sources */,
-				3173395B05B74E47003755C5 /* NSCalendarDateNTFSAdditions.m in Sources */,
+				3173395B05B74E47003755C5 /* NSDateNTFSAdditions.m in Sources */,
 				316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */,
 				312444220B475387004DB138 /* MPQErrors.m in Sources */,
 			);
@@ -916,6 +916,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2;
 				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -939,7 +940,6 @@
 					"-Wfloat-equal",
 				);
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
@@ -956,6 +956,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 2;
 				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -979,7 +980,6 @@
 					"-Wfloat-equal",
 				);
 				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -988,6 +988,7 @@
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
@@ -996,6 +997,7 @@
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
