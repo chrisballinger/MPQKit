@@ -168,9 +168,9 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     
     off_t *block_offset_table;
     char **filename_table;
+    NSDictionary **file_info_cache;
     
-    NSArray *attribute_descriptions;
-    NSMutableData *attributes_data;
+    void *attributes_data;
     
     mpq_hash_table_entry_t *weak_signature_hash_entry;
     uint8_t *strong_signature;

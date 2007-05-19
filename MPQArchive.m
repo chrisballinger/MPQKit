@@ -73,6 +73,9 @@ static RSA *wow_mac_patch_public_rsa        = NULL;
 
 static RSA *blizzard_weak_public_rsa        = NULL;
 
+// Attribute descriptions
+static NSArray *attribute_descriptions = NULL;
+
 static int _MPQMakeTempFileInDirectory(NSString *directory, NSString **tempFilePath, NSError **error) {
     char *template = malloc(PATH_MAX + 1);
     if (!template) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
@@ -168,6 +171,8 @@ FreeData:
         
         keyPath = [kitBundle pathForResource:@"Blizzard Weak" ofType:@"pem" inDirectory:@"Public RSA Keys"];
         blizzard_weak_public_rsa = [self RSAWithContentsOfPublicKeyPEMFile:keyPath];
+        
+        attribute_descriptions = [[NSArray alloc] initWithContentsOfFile:[[NSBundle bundleForClass:self] pathForResource:@"attributes" ofType:@"plist"]];
     }
 }
 
@@ -423,10 +428,7 @@ FreeData:
     // Search through the hash table until we either find the file we're looking for, or we find an unused hash table entry, indicating the end of the cluster of used hash table entries
     while (hash_table[current_position].block_table_index != HASH_TABLE_EMPTY) {
         if (hash_table[current_position].block_table_index != HASH_TABLE_DELETED) {
-            if (hash_table[current_position].hash_a == hash_a &&
-                hash_table[current_position].hash_b == hash_b &&
-                hash_table[current_position].locale == locale)
-            {
+            if (hash_table[current_position].hash_a == hash_a && hash_table[current_position].hash_b == hash_b && hash_table[current_position].locale == locale) {
                 ReturnValueWithNoError(current_position, error)
             }
         }
@@ -685,6 +687,15 @@ static deferred_operation_context_free_function dosc_free_functions[] = {
         sector_tables_cache = NULL;
     }
     
+    if (file_info_cache) {
+        for (count = 0; count < header.hash_table_length; count++) {
+            if (file_info_cache[count]) [file_info_cache[count] release];
+        }
+        
+        free(file_info_cache);
+        file_info_cache = NULL;
+    }
+    
     [p release];
 }
 
@@ -731,6 +742,10 @@ static deferred_operation_context_free_function dosc_free_functions[] = {
     // Sector table cache
     sector_tables_cache = calloc(header.hash_table_length, sizeof(uint32_t *));
     if (!sector_tables_cache) goto AllocateFailure;
+    
+    // Attributes cache
+    file_info_cache = calloc(header.hash_table_length, sizeof(NSDictionary *));
+    if (!file_info_cache) goto AllocateFailure;
 
     // Mark every entry in the hash table as empty (0xff everywhere)
     memset(hash_table, 0xff, header.hash_table_length * sizeof(mpq_hash_table_entry_t));
@@ -792,10 +807,7 @@ AllocateFailure:
     while (hash_table[current_position].block_table_index != HASH_TABLE_EMPTY) {
         // If the hash table entry matches the file we're searching for
         // and we don't already have the filename in the name table, add it.
-        if (!filename_table[current_position] &&
-            hash_table[current_position].hash_a == hash_a &&
-            hash_table[current_position].hash_b == hash_b)
-        {
+        if (!filename_table[current_position] && hash_table[current_position].hash_a == hash_a && hash_table[current_position].hash_b == hash_b) {
             char *filename_buffer = malloc(strlen(filename) + 1);
             if (!filename_buffer) return NO;
             
@@ -882,19 +894,28 @@ AllocateFailure:
 }
 
 - (void)_loadAttributes:(NSError **)error {
-    NSData *attribute_data_immutable = [self copyDataForFile:kAttributesFilename locale:MPQNeutral error:error];
-    if (!attribute_data_immutable) return;
+    MPQFile *attributes_file = [self openFile:kAttributesFilename locale:MPQNeutral error:error];
+    if (!attributes_file) return;
     
-    attributes_data = [attribute_data_immutable mutableCopy];
-    [attribute_data_immutable release];
+    attributes_data = malloc([attributes_file length]);
+    if (!attributes_data) ReturnWithError(MPQErrorDomain, errOutOfMemory, NULL, error)
     
-    mpq_attributes_header_t *attributes = (mpq_attributes_header_t *)[attributes_data mutableBytes];
+    if ([attributes_file read:attributes_data size:[attributes_file length] error:error] < [attributes_file length]) {
+        free(attributes_data);
+        attributes_data = NULL;
+        return;
+    }
+    
+    mpq_attributes_header_t *attributes = (mpq_attributes_header_t *)attributes_data;
     [[self class] swap_uint32_array:(uint32_t *)attributes length:2];
     
     if (attributes->magic != ATTRIBUTES_MAGIC) {
-        [attributes_data release];
-        attributes_data = nil;
+        free(attributes_data);
+        attributes_data = NULL;
+        ReturnWithError(MPQErrorDomain, errInvalidAttributesFile, NULL, error)
     }
+    
+    ReturnWithNoError(error)
 }
 
 - (BOOL)_loadWithPath:(NSString *)path error:(NSError **)error {
@@ -1107,11 +1128,7 @@ AllocateFailure:
 }
 
 - (void)commonInit {
-    // Load the meta attribute dictionary
-    // FIXME: move that as a file static permament object
-    attribute_descriptions = [[NSArray alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"attributes" ofType:@"plist"]];
-    
-     // Set the compressor to default compressor (zlib)
+    // Set the compressor to default compressor (zlib)
     default_compressor = MPQZLIBCompression;
     
     // We'll keep track of the number of files open
@@ -1128,7 +1145,7 @@ AllocateFailure:
     deferred_operations_count = 0;
     
     // No attributes initially
-    attributes_data = nil;
+    attributes_data = NULL;
 }
 
 - (id)init {
@@ -1209,8 +1226,8 @@ AllocateFailure:
     [archive_path release];
     archive_path = nil;
     
-    [attributes_data release];
-    attributes_data = nil;
+    if (attributes_data) free(attributes_data);
+    attributes_data = NULL;
     
     // Close the archive if it's open
     if (archive_fd != -1) close(archive_fd);
@@ -2020,7 +2037,7 @@ AbortDigest:
     if (!(block_entry->flags & MPQFileValid)) ReturnValueWithError(nil, MPQErrorDomain, errFileIsInvalid, nil, error)
     
     const char *filename = filename_table[hash_position];
-    NSMutableDictionary *tempDict = [NSMutableDictionary dictionaryWithCapacity:8];
+    NSMutableDictionary *tempDict = [NSMutableDictionary dictionaryWithCapacity:0x10];
     
     // Hash table position (aka the file's position)
     [tempDict setObject:[NSNumber numberWithUnsignedInt:hash_position] forKey:MPQFileHashPosition];
@@ -2054,7 +2071,7 @@ AbortDigest:
         uint32_t attributeLength = 0;
         SEL getter = nil;
         
-        mpq_attributes_header_t *attributes = (mpq_attributes_header_t *)[attributes_data mutableBytes];
+        mpq_attributes_header_t *attributes = (mpq_attributes_header_t *)attributes_data;
         uint32_t currentOffset = sizeof(mpq_attributes_header_t);
         
         for (iAttribute = 0; iAttribute < [attribute_descriptions count]; iAttribute++) {
@@ -2064,7 +2081,7 @@ AbortDigest:
                 // We have that attribute
                 attributeLength = [[metaDict objectForKey:@"Size"] unsignedIntValue];
                 getter = NSSelectorFromString([metaDict objectForKey:@"Getter"]);
-                dataWrapper = [NSData dataWithBytesNoCopy:((char *)attributes + currentOffset + attributeLength * hash_entry->block_table_index) 
+                dataWrapper = [NSData dataWithBytesNoCopy:(attributes_data + currentOffset + attributeLength * hash_entry->block_table_index) 
                                                    length:attributeLength 
                                              freeWhenDone:NO];
                 [tempDict setObject:[MPQFile performSelector:getter withObject:dataWrapper] forKey:[metaDict objectForKey:@"Key"]];
@@ -2780,6 +2797,7 @@ AbortDigest:
     // Make sure we have the name in the name table
     if (!filename_table[hash_position]) filename_table[hash_position] = filename_cstring;
     else free(filename_cstring);
+    filename_cstring = NULL;
     
     // Ask the delgate if we should proceed
     if ([delegate respondsToSelector:@selector(archive:shouldOpenFile:)])

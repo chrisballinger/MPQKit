@@ -49,6 +49,7 @@ typedef enum {
     errInvalidOffset,
     errDecompressionFailed,
     errEndOfFile,
+    errInvalidAttributesFile,
 } MPQError;
 
 inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p);
