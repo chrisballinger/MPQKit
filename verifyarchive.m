@@ -35,26 +35,26 @@ int main(int argc, char *argv[]) {
         isSigned = [archive hasStrongSignature];
         if (isSigned) {
             valid = [archive verifyBlizzardStrongSignature:&error];
-            if (valid) printf("Blizzard strong signature: VALID\n");
-            else if (!error) printf("Blizzard strong signature: INVALID\n");
-            else printf("Blizzard strong signature: ERROR: %s\n", [[error description] UTF8String]);
+            if (valid) printf("Blizzard strong signature: VALID");
+            else if (!error) printf("Blizzard strong signature: INVALID");
+            else printf("Blizzard strong signature: ERROR: %s", [[error description] UTF8String]);
             
             valid = [archive verifyWoWSurveySignature:&error];
-            if (valid) printf("WoW survey signature: VALID\n");
-            else if (!error) printf("WoW survey signature: INVALID\n");
-            else printf("Blizzard strong signature: ERROR: %s\n", [[error description] UTF8String]);
+            if (valid) printf("WoW survey signature: VALID");
+            else if (!error) printf("WoW survey signature: INVALID");
+            else printf("Blizzard strong signature: ERROR: %s", [[error description] UTF8String]);
             
             valid = [archive verifyWoWMacPatchSignature:&error];
-            if (valid) printf("WoW Macintosh patch signature: VALID\n");
-            else if (!error) printf("WoW Macintosh patch signature: INVALID\n");
-            else printf("Blizzard strong signature: ERROR: %s\n", [[error description] UTF8String]);
+            if (valid) printf("WoW Macintosh patch signature: VALID");
+            else if (!error) printf("WoW Macintosh patch signature: INVALID");
+            else printf("Blizzard strong signature: ERROR: %s", [[error description] UTF8String]);
             
             valid = [archive verifyWarcraft3MapSignature:&error];
-            if (valid) printf("Warcraft 3 map signature: VALID\n");
-            else if (!error) printf("Warcraft 3 map signature: INVALID\n");
-            else printf("Blizzard strong signature: ERROR: %s\n", [[error description] UTF8String]);
+            if (valid) printf("Warcraft 3 map signature: VALID");
+            else if (!error) printf("Warcraft 3 map signature: INVALID");
+            else printf("Blizzard strong signature: ERROR: %s", [[error description] UTF8String]);
         } else {
-            printf("No strong signature\n");
+            printf("No strong signature");
         }
         
         // files
@@ -95,14 +95,14 @@ int main(int argc, char *argv[]) {
                     // Mask out known flags to reveal unknown flags
                     uint32_t unknownFlags = flags & (~MPQFileFlagsMask);
                     
-                    if (unknownFlags > 0) value = [NSString stringWithFormat:@"0x%.8x: %@, UNKNOWN FLAGS: 0x%.8x", flags, [stringFlags componentsJoinedByString:@" | "], unknownFlags];
-                    else value = [NSString stringWithFormat:@"0x%8x: %@", flags, [stringFlags componentsJoinedByString:@" | "]];
+                    if (unknownFlags > 0) value = [NSString stringWithFormat:@"0x%08x: %@, UNKNOWN FLAGS: 0x%08x", flags, [stringFlags componentsJoinedByString:@" | "], unknownFlags];
+                    else value = [NSString stringWithFormat:@"0x%08x: %@", flags, [stringFlags componentsJoinedByString:@" | "]];
                     
                     valueString = [[value description] UTF8String];
                     [stringFlags release];
                 }
                 else if ([key isEqualToString:MPQFileLocale]) valueString = [[[MPQArchive localeForMPQLocale:[value unsignedShortValue]] localeIdentifier] UTF8String];
-                else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%.16qx", [value unsignedLongLongValue]] UTF8String];
+                else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%016qx", [value unsignedLongLongValue]] UTF8String];
                 else valueString = [[value description] UTF8String];
                 
                 printf("        %s: %s\n", [[key description] UTF8String], valueString);
