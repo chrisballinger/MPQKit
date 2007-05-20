@@ -873,7 +873,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param new_filename The new path of the MPQ file. Note that the path separator MUST be \. Must not be nil.
     @result YES on success or NO on failure.
 */
-// FIXME: - (BOOL)renameFile:(NSString *)old_filename as:(NSString *)new_filename;
+// TODO: - (BOOL)renameFile:(NSString *)old_filename as:(NSString *)new_filename;
 
 /*
     @method renameFile:as:locale:
@@ -886,7 +886,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The old and new file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result YES on success or NO on failure.
 */
-// FIXME: - (BOOL)renameFile:(NSString *)old_filename as:(NSString *)new_filename locale:(MPQLocale)locale;
+// TODO: - (BOOL)renameFile:(NSString *)old_filename as:(NSString *)new_filename locale:(MPQLocale)locale;
 
 #pragma mark opening
 

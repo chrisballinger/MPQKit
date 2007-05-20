@@ -107,8 +107,7 @@ static BOOL _MPQFSCopy(NSString *source, NSString *destination, NSError **error)
     ReturnValueWithNoError(YES, error)
 }
 
-// FIXME: rename to MPQKitAllocateASCIIFilename and change make a copy that accepts a client buffer
-static char *_MPQKitConvertFilenameToASCII(NSString *filename, NSError **error) {
+static char *_MPQKitCreateASCIIFilename(NSString *filename, NSError **error) {
     size_t filename_csize = [filename lengthOfBytesUsingEncoding:NSASCIIStringEncoding] + 1;
     if (filename_csize > MPQ_MAX_PATH) ReturnValueWithError(NULL, MPQErrorDomain, errFilenameTooLong, nil, error)
     
@@ -340,9 +339,7 @@ FreeData:
         if (block_entry->flags & MPQFileHasMetadata) sector_table_length++;
         uint32_t sector_table_size = sector_table_length * sizeof(uint32_t);
         
-        // First we read the first 2 sector table entries. This should
-        // work because no compressed file has fewer than 2 entries.
-        // FIXME: should check the sector table cache
+        // First we read the first 2 sector table entries. This should work because no compressed file has fewer than 2 entries.
         uint32_t sector_table[2];
         if (pread(archive_fd, sector_table, 8, archive_offset + block_offset_table[hash_entry->block_table_index]) < 8) return 0;
         
@@ -459,7 +456,7 @@ FreeData:
         // If we are given the size of the file which will be represented by the new entry, try to recycle deleted entries
         if (size) {
             // Adjust the size to include a possible sector table
-            // FIXME: should be able to take into account MPQFileHasMetadata
+            // TODO: should be able to take into account MPQFileHasMetadata
             uint32_t sector_table_length = ((size + full_sector_size - 1) / full_sector_size) + 1;
             size += (sector_table_length * sizeof(uint32_t));
             
@@ -520,7 +517,7 @@ FreeData:
 - (void)_cacheSectorTableForFile:(uint32_t)hash_position key:(uint32_t)encryptionKey error:(NSError **)error {
     NSParameterAssert(hash_position < header.hash_table_length);
     
-    // Do nothing if the entry if that hash entry is empty or deleted
+    // Do nothing if that hash entry is empty or deleted
     mpq_hash_table_entry_t *hash_entry = hash_table + hash_position;
     if (hash_entry->block_table_index == HASH_TABLE_EMPTY || hash_entry->block_table_index == HASH_TABLE_DELETED) ReturnWithNoError(error)
     mpq_block_table_entry_t *block_entry = block_table + hash_entry->block_table_index;
@@ -535,26 +532,25 @@ FreeData:
 
     // Either we have the sector table for that file in cache, or we don't
     uint32_t *sectors = sector_tables_cache[hash_position];
-    if (!sectors) {
-        // We need to read the block table. Block is allocated and therefore retained
-        sectors = malloc(sector_table_size);
-        if (!sectors) ReturnWithError(MPQErrorDomain, errOutOfMemory, nil, error)
-        
-        // Read the sector table
-        uint32_t bytes_read = pread(archive_fd, sectors, sector_table_size, archive_offset + block_offset_table[hash_entry->block_table_index]);
-        if (bytes_read < sector_table_size) {
-            free(sectors);
-            ReturnWithError(NSPOSIXErrorDomain, errno, nil, error)
-        }
-        
-        // If the file is encrypted, decrypt the block table and disable output swapping since a block table is just an array of unsigned longs
-        if ((block_entry->flags & MPQFileEncrypted)) mpq_decrypt((char *)sectors, sector_table_size, encryptionKey - 1, YES);
-        else [[self class] swap_uint32_array:sectors length:sector_table_length];
-        
-        // Cache the sector table
-        sector_tables_cache[hash_position] = sectors;
+    if (sectors) ReturnWithNoError(error)
+    
+    // We need to read the block table. Block is allocated and therefore retained
+    sectors = malloc(sector_table_size);
+    if (!sectors) ReturnWithError(MPQErrorDomain, errOutOfMemory, nil, error)
+    
+    // Read the sector table
+    uint32_t bytes_read = pread(archive_fd, sectors, sector_table_size, archive_offset + block_offset_table[hash_entry->block_table_index]);
+    if (bytes_read < sector_table_size) {
+        free(sectors);
+        ReturnWithError(NSPOSIXErrorDomain, errno, nil, error)
     }
     
+    // If the file is encrypted, decrypt the block table and disable output swapping since a block table is just an array of unsigned longs
+    if ((block_entry->flags & MPQFileEncrypted)) mpq_decrypt((char *)sectors, sector_table_size, encryptionKey - 1, YES);
+    else [[self class] swap_uint32_array:sectors length:sector_table_length];
+    
+    // Cache the sector table
+    sector_tables_cache[hash_position] = sectors;
     ReturnWithNoError(error)
 }
 
@@ -1319,7 +1315,7 @@ AllocateFailure:
     // Bail out if we need to restore a filename and we can't do the ASCII convertion
     char *filename_cstring = NULL;
     if (operation->primary_file_context.filename) {
-        filename_cstring = _MPQKitConvertFilenameToASCII(operation->primary_file_context.filename, error);
+        filename_cstring = _MPQKitCreateASCIIFilename(operation->primary_file_context.filename, error);
         if (!filename_cstring) return NO;
     }
     
@@ -1336,8 +1332,9 @@ AllocateFailure:
     filename_table[operation->primary_file_context.hash_position] = filename_cstring;
     
     // Delete the operation
-    // FIXME: need to do something about is_modified
     [self _flushLastDO];
+    if (deferred_operations_count == 0) is_modified = NO;
+    
     ReturnValueWithNoError(YES, error)
 }
 
@@ -1465,7 +1462,7 @@ AllocateFailure:
     }
     
     // Inject 0s in place of (signature)
-    // FIXME: use static const pre-made buffer for this instead, signature is fixed length
+    // TODO: use static const pre-made buffer for this instead, signature is fixed length
     char zero = 0;
     uint32_t i = 0;
     for(; i < weak_signature_block_entry->archived_size; i++) MD5_Update(&ctx, &zero, 1);
@@ -1950,7 +1947,7 @@ AbortDigest:
     NSString *listfileEntry = nil;
     
     while ((listfileEntry = [listfileEnumerator nextObject])) {
-        char *filename_cstring = _MPQKitConvertFilenameToASCII(listfileEntry, error);
+        char *filename_cstring = _MPQKitCreateASCIIFilename(listfileEntry, error);
         if (!filename_cstring) {
             MPQTransferErrorAndDrainPool(error, p);
             return NO;
@@ -2101,7 +2098,7 @@ AbortDigest:
     NSParameterAssert(filename != nil);
     NSDictionary *tempDict = nil;
     
-    char *filename_cstring = _MPQKitConvertFilenameToASCII(filename, error);
+    char *filename_cstring = _MPQKitCreateASCIIFilename(filename, error);
     if (!filename_cstring) return nil;
     
     // Find the file in the hash table
@@ -2211,7 +2208,7 @@ AbortDigest:
     if ([delegate respondsToSelector:@selector(archive:willDeleteFile:)]) [delegate archive:self willDeleteFile:filename];
     
     // Convert the filename to ASCII
-    char *filename_cstring = _MPQKitConvertFilenameToASCII(filename, error);
+    char *filename_cstring = _MPQKitCreateASCIIFilename(filename, error);
     if (!filename_cstring) return NO;
     
     // See if the file exists by checking the hash table
@@ -2272,7 +2269,7 @@ AbortDigest:
 
     // Convert filename to ASCII
     BOOL freeFilenameBuffer = YES;
-    char *filename_cstring = _MPQKitConvertFilenameToASCII(filename, error);
+    char *filename_cstring = _MPQKitCreateASCIIFilename(filename, error);
     if (!filename_cstring) return NO;
     
     // Cache the data length
@@ -2304,9 +2301,9 @@ AbortDigest:
             ReturnValueWithError(NO, MPQErrorDomain, errInconsistentCompressionFlags, nil, error)
         }
         
-        // FIXME: need to validate the locale
+        // TODO: need to validate the locale
         
-        // FIXME: Currently we don't support MPQFileHasMetadata
+        // TODO: Currently we don't support MPQFileHasMetadata
         flags &= ~MPQFileHasMetadata;
         
         // Compressor
@@ -2472,7 +2469,7 @@ AbortDigest:
     // Predicate for needing a sector table
     BOOL needs_sector_table = ((flags & (MPQFileDiabloCompressed | MPQFileCompressed)) && !(flags & MPQFileOneSector)) ? YES : NO;
     
-    // FIXME: add support for MPQFileHasMetadata
+    // TODO: add support for MPQFileHasMetadata
     uint32_t sector_table_length = (needs_sector_table) ? ((file_size + full_sector_size - 1) / full_sector_size) + 1 : 0;
     uint32_t sector_table_size = sector_table_length * sizeof(uint32_t);
     MPQDebugLog(@"entries in sector table: %u", sector_table_length);
@@ -2536,7 +2533,7 @@ AbortDigest:
             archive_size += missing_space;
             
             // Resize the archive file (keeping any header data)
-            // FIXME: need to have a threshold beyond which we will dynamically resize the archive while processing the sectors
+            // TODO: need to have a threshold beyond which we will dynamically resize the archive while processing the sectors
             if (ftruncate(archive_fd, archive_offset + archive_size) == -1) {
                 if (sector_table) free(sector_table);
                 ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
@@ -2576,7 +2573,7 @@ AbortDigest:
         char *buffer_pointer = compression_buffer;
             
         // Compress the sector with whatever compression method is specified
-        // FIXME: stream compression when one sector is set
+        // TODO: stream compression when one sector is set
         if ((flags & (MPQFileCompressed | MPQFileDiabloCompressed))) {
             int compression_error = 0;
             if (context->compressor == MPQStereoADPCMCompression) {
@@ -2711,7 +2708,7 @@ AbortDigest:
     uint32_t encryption_key = 0;
     if (block_entry->flags & MPQFileEncrypted) {
         encryption_key = [self getFileEncryptionKey:hash_position];
-        // FIXME: what if 0 can be a legitimate encryption key?
+        // TODO: what if 0 can be a legitimate encryption key?
         if (encryption_key == 0) ReturnValueWithError(nil, MPQErrorDomain, errFilenameRequired, nil, error)
     }
     
@@ -2787,7 +2784,7 @@ AbortDigest:
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
     NSParameterAssert(filename != nil);
     
-    char *filename_cstring = _MPQKitConvertFilenameToASCII(filename, error);
+    char *filename_cstring = _MPQKitCreateASCIIFilename(filename, error);
     if (!filename_cstring) return nil;
 
     // See if the requested file exists in the specified language
@@ -2868,7 +2865,7 @@ AbortDigest:
     NSParameterAssert(filename != nil);
     NSMutableArray *locales = [NSMutableArray arrayWithCapacity:1];
     
-    char *filename_cstring = _MPQKitConvertFilenameToASCII(filename, nil);
+    char *filename_cstring = _MPQKitCreateASCIIFilename(filename, nil);
     if (!filename_cstring) return nil;
     
     // Compute the starting hash table offset, as well as the verification hashes for the specified file.
@@ -2889,7 +2886,7 @@ AbortDigest:
             hash_table[current_hash_position].block_table_index != HASH_TABLE_DELETED)
         {
             // Make sure we have the name in the name table
-            if (!filename_table[current_hash_position]) filename_table[current_hash_position] = _MPQKitConvertFilenameToASCII(filename, nil);
+            if (!filename_table[current_hash_position]) filename_table[current_hash_position] = _MPQKitCreateASCIIFilename(filename, nil);
             [locales addObject:[NSNumber numberWithUnsignedInt:hash_table[current_hash_position].locale]];
         }
         
@@ -2907,7 +2904,7 @@ AbortDigest:
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
     NSParameterAssert(filename != nil);
 
-    char *filename_cstring = _MPQKitConvertFilenameToASCII(filename, error);
+    char *filename_cstring = _MPQKitCreateASCIIFilename(filename, error);
     if (!filename_cstring) return NO;
     
     // Find the file in the hash table
@@ -3185,7 +3182,7 @@ AbortDigest:
         operation = operation->previous;
     }
     
-    // FIXME: optimize the block table
+    // TODO: optimize the block table
     
     // We can now compute the exact archive size
     archive_size = archive_write_offset + [self computeSizeOfStructuralTables];
@@ -3296,7 +3293,7 @@ WriteFailed:
     if (pFlags & 0x4) [[NSFileManager defaultManager] removeFileAtPath:temp_path handler:nil];
     if (pFlags & 0x8) archive_fd = temp_fd;
     
-    // FIXME: we should attempt to re-write the structural tables if they were overwritten
+    // TODO: we should attempt to re-write the structural tables if they were overwritten
     
     // Restore the instance's state as it was pre-write if we were atomical or writing elsewhere
     if (atomically || ![archive_path isEqualToString:path]) {
