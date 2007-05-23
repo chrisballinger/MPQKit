@@ -5,6 +5,7 @@
 //  Created by Jean-Francois Roy on Mon Sep 30 2002.
 //  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
+#include <stdint.h>
 
 /*!
   @header MPQSharedConstants.h
@@ -225,10 +226,11 @@
     @constant MPQOriginalVersion The original archive format.
     @constant MPQExtendedVersion The extended archive format.
 */
-typedef enum {
+enum {
     MPQOriginalVersion = 0,
     MPQExtendedVersion = 1,
-} MPQVersion;
+};
+typedef uint16_t MPQVersion;
 
 /*!
     @typedef MPQFileFlag
@@ -253,7 +255,7 @@ typedef enum {
         compatible with Diablo.
     @constant MPQFileFlagsMask A bit mask for valid MPQ file flags.
 */
-typedef enum {
+enum {
     MPQFileValid                = 0x80000000,
     MPQFileHasMetadata          = 0x04000000,
     MPQFileDummy                = 0x02000000,
@@ -263,7 +265,8 @@ typedef enum {
     MPQFileCompressed           = 0x00000200,
     MPQFileDiabloCompressed     = 0x00000100,
     MPQFileFlagsMask            = 0x87030300
-} MPQFileFlag;
+};
+typedef uint32_t MPQFileFlag;
 
 /*!
     @typedef MPQLocale
@@ -289,7 +292,7 @@ typedef enum {
     @constant MPQRusssian  Russsian locale constant.
     @constant MPQEnglishUK  English (UK) locale constant.
 */
-typedef enum {
+enum {
     MPQNeutral      = 0,
     MPQChinese      = 0x404,
     MPQCzech        = 0x405,
@@ -305,7 +308,8 @@ typedef enum {
     MPQPortuguese   = 0x416,
     MPQRusssian     = 0x419,
     MPQEnglishUK    = 0x809
-} MPQLocale;
+};
+typedef uint16_t MPQLocale;
 
 /*!
     @typedef MPQCompressorFlag
@@ -331,25 +335,27 @@ typedef enum {
         
         The default compression quality for this compressor is Z_DEFAULT_COMPRESSION. Please refer to the zlib documentation for more information.
 */
-typedef enum {
+enum {
     MPQPKWARECompression        = 0x08,
     MPQStereoADPCMCompression   = 0x81,
     MPQBZIP2Compression         = 0x10, 
     MPQZLIBCompression          = 0x02
-} MPQCompressorFlag;
+};
+typedef uint8_t MPQCompressorFlag;
 
 /*!
     @typedef MPQADPCMQuality
     @abstract ADPCM compression quality constants.
     @discussion ADPCM compression is only suitable for audio data, and doesn't really compete with 
-        more advanced codecs such as MP3, AAC or Vorbis.
+        more advanced codecs such as MP3, AAC and Vorbis.
     @constant MPQADPCMQuality4Bits Uses 4 bits per sample.
     @constant MPQADPCMQuality2Bits Uses 2 bits per sample.
 */
-typedef enum {
+enum {
     MPQADPCMQuality4Bits    = 4,
     MPQADPCMQuality2Bits    = 2
-} MPQADPCMQuality;
+};
+typedef uint8_t MPQADPCMQuality;
 
 /*!
     @typedef MPQFileDisplacementMode
@@ -365,21 +371,9 @@ typedef enum {
         to a negative position, the file pointer is moved to the beginning of the 
         file.
 */
-typedef enum {
+enum {
     MPQFileStart    = 0,
     MPQFileCurrent  = 1,
     MPQFileEnd      = 2
-} MPQFileDisplacementMode;
-
-/*!
-    @typedef MPQAttributesFlag
-    @abstract Valid file attributes constants.
-    @constant MPQHasCRC Indicates files have CRC checksums.
-    @constant MPQHasFiletime Indicates files have file time information.
-    @constant MPQHasMD5 Indicates files have MD5 checksums.
-*/
-typedef enum {
-    MPQHasCRC       = 0x1,
-    MPQHasFiletime  = 0x2,
-    MPQHasMD5       = 0x4
-} MPQAttributesFlag;
+};
+typedef uint8_t MPQFileDisplacementMode;

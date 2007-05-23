@@ -63,6 +63,8 @@
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
 		31C2FF610B8FDA9C000C1DB5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */; };
+		31CEEFD90C04FA3D001ACC9A /* MPQFileDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQFileDataSource.h */; };
+		31CEEFDA0C04FA3D001ACC9A /* MPQFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQFileDataSource.m */; };
 		31DD6C9A0AEAF41B002CDD2C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31DD6C990AEAF41B002CDD2C /* Security.framework */; };
 /* End PBXBuildFile section */
 
@@ -156,7 +158,7 @@
 		3191CA7D0BB859180004E8AA /* libfuse.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse.dylib; path = /usr/local/lib/libfuse.dylib; sourceTree = "<absolute>"; };
 		319811260BC2EF85009C3E08 /* listfiles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = listfiles; path = mpqfs/listfiles; sourceTree = "<group>"; };
 		319980080B4D8AFF00D4FE4E /* verifyarchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = verifyarchive.m; sourceTree = "<group>"; };
-		3199801A0B4D8B4600D4FE4E /* verifyarchive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = verifyarchive; sourceTree = BUILT_PRODUCTS_DIR; };
+		3199801A0B4D8B4600D4FE4E /* verifyarchive */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = verifyarchive; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A6B005068C07F80089D443 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		31A8A4FB0BC14502001F583D /* mpqfsd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqfsd; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A8A50D0BC1455A001F583D /* mpqfs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mpqfs.m; path = mpqfs/mpqfs.m; sourceTree = "<group>"; };
@@ -167,6 +169,8 @@
 		31B808940BB85067001F9B73 /* MPQFileSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFileSystem.m; path = mpqfs/MPQFileSystem.m; sourceTree = "<group>"; };
 		31BAC6BA03D63FDA00A80102 /* MPQArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchive.m; sourceTree = "<group>"; };
 		31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
+		31CEEFD70C04FA3D001ACC9A /* MPQFileDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQFileDataSource.h; sourceTree = "<group>"; };
+		31CEEFD80C04FA3D001ACC9A /* MPQFileDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQFileDataSource.m; sourceTree = "<group>"; };
 		31CFD34C04A1592C00A80102 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wave.h; path = stormlib2/wave/wave.h; sourceTree = "<group>"; };
 		31CFD34D04A1592C00A80102 /* wave.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = stormlib2/wave/wave.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		31CFD34E04A1592C00A80102 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = stormlib2/pklib/crc32.c; sourceTree = "<group>"; };
@@ -264,9 +268,7 @@
 				3133BFBE04C8E98700A80102 /* Additions */,
 				F5F8743F037322BA01000102 /* Compression */,
 				F568E755034FC7B901000102 /* Cryptography */,
-				F5DEFEC803465B8001000102 /* MPQArchive */,
-				F5DEFEC703465B7A01000102 /* MPQFile */,
-				F56CED3E036B025501000102 /* MPQEnumerator */,
+				F5DEFEC803465B8001000102 /* Classes */,
 				31F0CF000BB849B800E24273 /* MPQFS */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Libraries */,
@@ -381,31 +383,19 @@
 			name = Cryptography;
 			sourceTree = "<group>";
 		};
-		F56CED3E036B025501000102 /* MPQEnumerator */ = {
-			isa = PBXGroup;
-			children = (
-				F56CED3F036B027201000102 /* MPQFileInfoEnumerator.h */,
-				F56CED40036B027201000102 /* MPQFileInfoEnumerator.m */,
-			);
-			name = MPQEnumerator;
-			sourceTree = "<group>";
-		};
-		F5DEFEC703465B7A01000102 /* MPQFile */ = {
-			isa = PBXGroup;
-			children = (
-				F5AA7217034908BB01000102 /* MPQFile.h */,
-				F5AA7218034908BB01000102 /* MPQFile.m */,
-			);
-			name = MPQFile;
-			sourceTree = "<group>";
-		};
-		F5DEFEC803465B8001000102 /* MPQArchive */ = {
+		F5DEFEC803465B8001000102 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
 				F53AFA24034A8CA501000102 /* MPQArchive.h */,
 				31BAC6BA03D63FDA00A80102 /* MPQArchive.m */,
+				F5AA7217034908BB01000102 /* MPQFile.h */,
+				F5AA7218034908BB01000102 /* MPQFile.m */,
+				F56CED3F036B027201000102 /* MPQFileInfoEnumerator.h */,
+				F56CED40036B027201000102 /* MPQFileInfoEnumerator.m */,
+				31CEEFD70C04FA3D001ACC9A /* MPQFileDataSource.h */,
+				31CEEFD80C04FA3D001ACC9A /* MPQFileDataSource.m */,
 			);
-			name = MPQArchive;
+			name = Classes;
 			sourceTree = "<group>";
 		};
 		F5F8743F037322BA01000102 /* Compression */ = {
@@ -442,6 +432,7 @@
 				316FE2750ADF74B3002BC846 /* NSArrayListfileAdditions.h in Headers */,
 				312443EB0B474D98004DB138 /* MPQErrors.h in Headers */,
 				312444120B47532F004DB138 /* PHSErrorMacros.h in Headers */,
+				31CEEFD90C04FA3D001ACC9A /* MPQFileDataSource.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -645,6 +636,7 @@
 				3173395B05B74E47003755C5 /* NSDateNTFSAdditions.m in Sources */,
 				316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */,
 				312444220B475387004DB138 /* MPQErrors.m in Sources */,
+				31CEEFDA0C04FA3D001ACC9A /* MPQFileDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
