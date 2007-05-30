@@ -230,6 +230,7 @@
 
 #pragma mark -
 
+// TODO: refactor for MPQFileDataSource
 @interface MPQFileData : MPQFile {
     NSData *data;
 }
