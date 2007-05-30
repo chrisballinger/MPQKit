@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import <MPQKit/MPQSharedConstants.h>
+#import <MPQKit/MPQFileDataSource.h>
 
 #import <openssl/rsa.h>
 
@@ -110,7 +112,7 @@ struct mpq_deferred_operation {
 typedef struct mpq_deferred_operation mpq_deferred_operation_t;
 
 struct mpq_deferred_operation_add_context {
-    NSData *data;
+    MPQFileDataSource *dataSource;
     uint32_t compressor;
     int32_t compression_quality;
 };
@@ -178,8 +180,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     uint32_t open_file_count;
     uint32_t *open_file_count_table;
     
-    char *read_buffer;
-    char *compression_buffer;
+    void *read_buffer;
+    void *compression_buffer;
     
     mpq_deferred_operation_t *last_operation;
     mpq_deferred_operation_t **operation_hash_table;
@@ -831,6 +833,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 */
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters;
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
+
+- (BOOL)addFileWithFileDataSource:(MPQFileDataSource *)dataSource filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
 
 #pragma mark delete
 

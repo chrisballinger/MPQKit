@@ -6,6 +6,8 @@
 //  Copyright 2006 MacStorm. All rights reserved.
 //
 
+#import <stdint.h>
+
 #import <Foundation/NSString.h>
 #import <Foundation/NSAutoreleasePool.h>
 
@@ -14,7 +16,7 @@
 extern NSString *const MPQErrorDomain;
 
 // MPQ errors
-typedef enum {
+enum {
     errUnknown = 1,
 	errBlockTableFull,
     errHashTableFull,
@@ -50,6 +52,10 @@ typedef enum {
     errDecompressionFailed,
     errEndOfFile,
     errInvalidAttributesFile,
-} MPQError;
+    errInvalidOperation,
+    errDataTooLarge,
+};
+
+typedef uint32_t MPQError;
 
 inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p);

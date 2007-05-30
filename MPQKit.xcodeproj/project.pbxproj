@@ -19,13 +19,13 @@
 		312311CC0549F0F100833907 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD34E04A1592C00A80102 /* crc32.c */; };
 		312311CE0549F0F100833907 /* explode.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD35004A1592C00A80102 /* explode.c */; };
 		312311CF0549F0F100833907 /* huffman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD35304A1592C00A80102 /* huffman.cpp */; };
-		312311D00549F0F100833907 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD35204A1592C00A80102 /* huffman.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		312311D00549F0F100833907 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD35204A1592C00A80102 /* huffman.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311D10549F0F100833907 /* implode.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD35104A1592C00A80102 /* implode.c */; };
-		312311D20549F0F100833907 /* pklib.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34F04A1592C00A80102 /* pklib.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		312311D20549F0F100833907 /* pklib.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34F04A1592C00A80102 /* pklib.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311D30549F0F100833907 /* SCompression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD3C704A1606D00A80102 /* SCompression.cpp */; };
-		312311D40549F0F100833907 /* SCompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 313E4BDE04A2C80700A80102 /* SCompression.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		312311D40549F0F100833907 /* SCompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 313E4BDE04A2C80700A80102 /* SCompression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311D50549F0F100833907 /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD34D04A1592C00A80102 /* wave.c */; };
-		312311D60549F0F100833907 /* wave.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34C04A1592C00A80102 /* wave.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		312311D60549F0F100833907 /* wave.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34C04A1592C00A80102 /* wave.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311E10549F18700833907 /* MPQCryptography.h in Headers */ = {isa = PBXBuildFile; fileRef = F568E751034FC7B001000102 /* MPQCryptography.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312311E20549F18A00833907 /* MPQCryptography.c in Sources */ = {isa = PBXBuildFile; fileRef = F568E752034FC7B001000102 /* MPQCryptography.c */; };
 		3123127A0549F1B900833907 /* MPQSharedConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AA721B034908F301000102 /* MPQSharedConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -33,7 +33,7 @@
 		3123128E0549F21A00833907 /* MPQFileInfoEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = F56CED40036B027201000102 /* MPQFileInfoEnumerator.m */; };
 		3123128F0549F21A00833907 /* MPQArchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 31BAC6BA03D63FDA00A80102 /* MPQArchive.m */; };
 		312312900549F21A00833907 /* MPQFile.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AA7218034908BB01000102 /* MPQFile.m */; };
-		312312990549F28700833907 /* MPQFileInfoEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F56CED3F036B027201000102 /* MPQFileInfoEnumerator.h */; settings = {ATTRIBUTES = (); }; };
+		312312990549F28700833907 /* MPQFileInfoEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F56CED3F036B027201000102 /* MPQFileInfoEnumerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3123129E0549F2A500833907 /* MPQArchive.h in Headers */ = {isa = PBXBuildFile; fileRef = F53AFA24034A8CA501000102 /* MPQArchive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3123129F0549F2A700833907 /* MPQFile.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AA7217034908BB01000102 /* MPQFile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312443EB0B474D98004DB138 /* MPQErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 312443EA0B474D98004DB138 /* MPQErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -63,7 +63,7 @@
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
 		31C2FF610B8FDA9C000C1DB5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */; };
-		31CEEFD90C04FA3D001ACC9A /* MPQFileDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQFileDataSource.h */; };
+		31CEEFD90C04FA3D001ACC9A /* MPQFileDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQFileDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31CEEFDA0C04FA3D001ACC9A /* MPQFileDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQFileDataSource.m */; };
 		31DD6C9A0AEAF41B002CDD2C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31DD6C990AEAF41B002CDD2C /* Security.framework */; };
 /* End PBXBuildFile section */

@@ -6,9 +6,17 @@
 //  Copyright 2005 MacStorm. All rights reserved.
 //
 
+#import <Foundation/NSError.h>
+
 #define ReturnWithError(errorDomain, errorCode, errorInfo, errorPtr)												\
 	{																												\
 		if((errorPtr)) *(errorPtr) = [NSError errorWithDomain:(errorDomain) code:(errorCode) userInfo:(errorInfo)];	\
+		return;																										\
+	}
+
+#define ReturnWithPOSIXError(errorInfo, errorPtr)												\
+	{																												\
+		if((errorPtr)) *(errorPtr) = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:(errorInfo)];	\
 		return;																										\
 	}
 
@@ -16,6 +24,12 @@
 	{																												\
 		if((errorPtr)) *(errorPtr) = [NSError errorWithDomain:(errorDomain) code:(errorCode) userInfo:(errorInfo)];	\
 		return (value);																								\
+	}
+
+#define ReturnValueWithPOSIXError(value, errorInfo, errorPtr)												\
+	{																												\
+		if((errorPtr)) *(errorPtr) = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:(errorInfo)];	\
+		return (value);																										\
 	}
 
 #define ReturnNULLWithError(errorDomain, errorCode, errorInfo, errorPtr)											\
