@@ -139,16 +139,16 @@
 - (uint32_t)seekToFileOffset:(uint32_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error { 
     switch (mode) {
         case MPQFileStart:
-            if (offset > block_entry.size) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
+            if (offset > [self length]) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
             file_pointer = offset;
             break;
         case MPQFileCurrent:
-            if (file_pointer + offset > block_entry.size) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
+            if (file_pointer + offset > [self length]) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
             file_pointer = file_pointer + offset;
             break;
         case MPQFileEnd:
-            if (block_entry.size < offset) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
-            file_pointer = block_entry.size - offset;
+            if ([self length] < offset) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
+            file_pointer = [self length] - offset;
             break;
         default:
             ReturnValueWithError(-1, MPQErrorDomain, errInvalidDisplacementMode, nil, error)
@@ -162,7 +162,7 @@
 }
 
 - (BOOL)eof {
-    return (file_pointer >= block_entry.size);
+    return (file_pointer >= [self length]);
 }
 
 - (NSData *)copyDataOfLength:(uint32_t)length {
@@ -182,11 +182,11 @@
 }
 
 - (NSData *)copyDataToEndOfFile {
-    return [self copyDataOfLength:block_entry.size error:nil];
+    return [self copyDataOfLength:[self length] error:nil];
 }
 
 - (NSData *)copyDataToEndOfFile:(NSError **)error {
-    return [self copyDataOfLength:block_entry.size error:error];
+    return [self copyDataOfLength:[self length] error:error];
 }
 
 - (NSData *)getDataOfLength:(uint32_t)length {
@@ -230,38 +230,45 @@
 
 #pragma mark -
 
-// TODO: refactor for MPQFileDataSource
-@interface MPQFileData : MPQFile {
-    NSData *data;
+@interface MPQFileDataSource : MPQFile {
+    MPQDataSource *dataSource;
 }
 @end
 
-@implementation MPQFileData
+@implementation MPQFileDataSource
 
 - (id)initForFile:(NSDictionary *)descriptor error:(NSError **)error {
     self = [super initForFile:descriptor error:error];
     if (!self) return nil;
     
-    data = [[descriptor objectForKey:@"Data"] retain];
-    NSAssert(data, @"Invalid data object");
+    dataSource = [(MPQDataSourceProxy *)[descriptor objectForKey:@"DataSourceProxy"] createActualDataSource:error];
+    NSAssert(dataSource, @"Invalid data object");
     
     ReturnValueWithNoError(self, error)
 }
 
 - (void)dealloc {
-    [data release];
+    [dataSource release];
     [super dealloc];
 }
 
+- (uint32_t)length {
+    off_t length = [dataSource length:NULL];
+    if (length == -1) return 0;
+    if (length > UINT32_MAX) return UINT32_MAX;
+    return length;
+}
+
 - (ssize_t)read:(void *)buf size:(size_t)size error:(NSError **)error {
-    if (file_pointer >= block_entry.size) ReturnValueWithNoError(0, error)
+    if (file_pointer >= [self length]) ReturnValueWithNoError(0, error)
     
-    size = MIN(size, block_entry.size - file_pointer);
+    size = MIN(size, [self length] - file_pointer);
     if (size == 0) ReturnValueWithNoError(0, error)
     
-    memcpy(buf, [data bytes] + file_pointer, size);
-    file_pointer += size;
-    ReturnValueWithNoError(size, error)
+    ssize_t read_bytes = [dataSource pread:buf size:size offset:file_pointer error:error];
+    if (read_bytes == -1) return -1;
+    file_pointer += read_bytes;
+    ReturnValueWithNoError(read_bytes, error)
 }
 
 @end
@@ -674,6 +681,7 @@ ErrorExit:
     if (size == 0) ReturnValueWithNoError(0, error)
 
     // If we haven't decompressed the file already, do it now
+    // TODO: stream decompression
     if (!data_cache_) {
         data_cache_ = malloc(block_entry.size);
         if (!data_cache_) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)

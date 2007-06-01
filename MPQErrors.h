@@ -54,6 +54,9 @@ enum {
     errInvalidAttributesFile,
     errInvalidOperation,
     errDataTooLarge,
+    errCouldNotConvertPathToURL,
+    errCouldNotConvertURLToFSRef,
+    errCouldNotConvertFSRefToURL,
 };
 
 typedef uint32_t MPQError;

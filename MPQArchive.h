@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import <MPQKit/MPQSharedConstants.h>
-#import <MPQKit/MPQFileDataSource.h>
+#import <MPQKit/MPQDataSource.h>
 
 #import <openssl/rsa.h>
 
@@ -112,7 +112,7 @@ struct mpq_deferred_operation {
 typedef struct mpq_deferred_operation mpq_deferred_operation_t;
 
 struct mpq_deferred_operation_add_context {
-    MPQFileDataSource *dataSource;
+    MPQDataSourceProxy *dataSourceProxy;
     uint32_t compressor;
     int32_t compression_quality;
 };
@@ -326,7 +326,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         * MPQSectorSizeShift: The full sector size binary shift as an integer.
         * MPQNumberOfFiles: The number of normal and deleted files in the archive as an integer.
         * MPQMaximumNumberOfFiles: The maximum number of files the archive may contain as an integer.
-        * MPQNumberOfNormalFiles: The number of normal files in the archive as an integer.
+        * MPQNumberOfValidFiles: The number of valid files in the archive as an integer.
         * MPQArchiveOffset: MPQ archives may be embedded in other files at 512 bytes boundaries.
         * MPQArchiveVersion: The version of the archive.
         This is the offset of the MPQ archive within its container file in bytes as an integer.
@@ -834,7 +834,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters;
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
 
-- (BOOL)addFileWithFileDataSource:(MPQFileDataSource *)dataSource filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
+- (BOOL)addFileWithDataSourceProxy:(MPQDataSourceProxy *)dataSourceProxy filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
 
 #pragma mark delete
 

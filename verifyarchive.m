@@ -102,6 +102,7 @@ int main(int argc, char *argv[]) {
                     [stringFlags release];
                 }
                 else if ([key isEqualToString:MPQFileLocale]) valueString = [[[MPQArchive localeForMPQLocale:[value unsignedShortValue]] localeIdentifier] UTF8String];
+                else if ([key isEqualToString:MPQFileCanOpenWithoutFilename]) valueString = ([value boolValue]) ? "YES" : "NO";
                 else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%016qx", [value unsignedLongLongValue]] UTF8String];
                 else valueString = [[value description] UTF8String];
                 

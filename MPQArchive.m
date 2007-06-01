@@ -292,7 +292,7 @@ FreeData:
     NSParameterAssert(hash_position < header.hash_table_length);
 
     // Check if we have a cached key
-    if (encryption_keys_cache[hash_position]) return encryption_keys_cache[hash_position];
+    if (encryption_keys_cache[hash_position] != 0) return encryption_keys_cache[hash_position];
     
     // Alias to the file table entry
     mpq_hash_table_entry_t *hash_entry = hash_table + hash_position;
@@ -321,7 +321,7 @@ FreeData:
     NSParameterAssert(hash_position < header.hash_table_length);
     
     // Check if we have a cached key.
-    if (encryption_keys_cache[hash_position]) return encryption_keys_cache[hash_position];
+    if (encryption_keys_cache[hash_position] != 0) return encryption_keys_cache[hash_position];
     
     // If we have the filename, redirect to the normal method
     if (filename_table[hash_position]) return [self getFileEncryptionKey:hash_position name:filename_table[hash_position]];
@@ -422,10 +422,14 @@ FreeData:
         hash_a = mpq_hash_cstring(filename, HASH_NAME_A),
         hash_b = mpq_hash_cstring(filename, HASH_NAME_B);
 
-    // Search through the hash table until we either find the file we're looking for, or we find an unused hash table entry, indicating the end of the cluster of used hash table entries
+    // Search through the hash table until we either find the file we're looking for, or we find an unused hash table entry, 
+    // indicating the end of the cluster of used hash table entries
     while (hash_table[current_position].block_table_index != HASH_TABLE_EMPTY) {
         if (hash_table[current_position].block_table_index != HASH_TABLE_DELETED) {
-            if (hash_table[current_position].hash_a == hash_a && hash_table[current_position].hash_b == hash_b && hash_table[current_position].locale == locale) {
+            if (hash_table[current_position].hash_a == hash_a && 
+                hash_table[current_position].hash_b == hash_b && 
+                hash_table[current_position].locale == locale)
+            {
                 ReturnValueWithNoError(current_position, error)
             }
         }
@@ -454,7 +458,7 @@ FreeData:
         }
         
         // If we are given the size of the file which will be represented by the new entry, try to recycle deleted entries
-        if (size) {
+        if (size != 0) {
             // Adjust the size to include a possible sector table
             // TODO: should be able to take into account MPQFileHasMetadata
             uint32_t sector_table_length = ((size + full_sector_size - 1) / full_sector_size) + 1;
@@ -574,7 +578,7 @@ FreeData:
 #pragma mark memory management
 
 void mpq_deferred_operation_add_context_free(mpq_deferred_operation_add_context_t *context) {
-    [context->dataSource release];
+    [context->dataSourceProxy release];
     free(context);
 }
 
@@ -1026,7 +1030,7 @@ AllocateFailure:
     if (extended_header.extended_block_offset_table_offset != 0) {
         mpq_extended_block_offset_table_entry_t *extended_block_offset_table = malloc(header.block_table_length * sizeof(mpq_extended_block_offset_table_entry_t));
         if (extended_block_offset_table == NULL) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
-        
+            
         // Read the extended block offset table
         bytes_read = pread(archive_fd, extended_block_offset_table, extended_block_offset_table_size, archive_offset + extended_header.extended_block_offset_table_offset);
         if (bytes_read < extended_block_offset_table_size) {
@@ -1065,7 +1069,8 @@ AllocateFailure:
     // Position the write offset at the beginning of the first structural table
     if (hash_table_offset < block_table_offset) archive_write_offset = hash_table_offset;
     else archive_write_offset = block_table_offset;
-    if (header.version == 1 && extended_header.extended_block_offset_table_offset < archive_write_offset) archive_write_offset = extended_header.extended_block_offset_table_offset;
+    if (header.version == 1 && extended_header.extended_block_offset_table_offset < archive_write_offset)
+        archive_write_offset = extended_header.extended_block_offset_table_offset;
     
     // If the archive contains a weak signature, cache its block table entry
     uint32_t signature_hash_position = [self findHashPosition:kSignatureEncryptionKey locale:MPQNeutral error:NULL];
@@ -1202,7 +1207,8 @@ AllocateFailure:
 }
 
 - (id)initWithFileLimit:(uint32_t)limit error:(NSError **)error {
-    return [self initWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:limit], MPQMaximumNumberOfFiles, nil] error:error];
+    return [self initWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithUnsignedInt:limit], MPQMaximumNumberOfFiles, nil] 
+                              error:error];
 }
 
 - (id)initWithPath:(NSString *)path {
@@ -1254,7 +1260,7 @@ AllocateFailure:
         [NSNumber numberWithUnsignedInt:header.sector_size_shift], MPQSectorSizeShift,
         [NSNumber numberWithUnsignedInt:[self fileCount]], MPQNumberOfFiles,
         [NSNumber numberWithUnsignedInt:[self maximumNumberOfFiles]], MPQMaximumNumberOfFiles,
-        [NSNumber numberWithUnsignedInt:[self normalFileCount]], MPQNumberOfNormalFiles,
+        [NSNumber numberWithUnsignedInt:[self normalFileCount]], MPQNumberOfValidFiles,
         [NSNumber numberWithLongLong:archive_offset], MPQArchiveOffset,
         [NSNumber numberWithUnsignedShort:header.version], MPQArchiveVersion,
         [NSNumber numberWithUnsignedLongLong:hash_table_offset], @"MPQArchiveHashTableOffset",
@@ -2055,32 +2061,39 @@ AbortDigest:
         [tempDict setObject:[NSString stringWithFormat:@"unknown %x", hash_position] forKey:MPQFilename];
     }
     
+    // If the file is pending addition, we need to get the size from the data source, not the block table entry
+    uint32_t file_size = block_entry->size;
+    
+    mpq_deferred_operation_t *operation = operation_hash_table[hash_position];
+    if (operation && operation->type == MPQDOAdd) {
+        MPQDataSource *dataSource = [((mpq_deferred_operation_add_context_t *)operation->context)->dataSourceProxy createActualDataSource:error];
+        if (!dataSource) return nil;
+        
+        file_size = [dataSource length:error];
+        [dataSource release];
+        if (file_size == -1) return nil;
+    }
+    
     // Give them the info from the block table
-    [tempDict setObject:[NSNumber numberWithUnsignedInt:block_entry->size] forKey:MPQFileSize];
+    [tempDict setObject:[NSNumber numberWithUnsignedInt:file_size] forKey:MPQFileSize];
     [tempDict setObject:[NSNumber numberWithUnsignedInt:block_entry->archived_size] forKey:MPQFileArchiveSize];
     [tempDict setObject:[NSNumber numberWithUnsignedInt:block_entry->flags] forKey:MPQFileFlags];
     
     // Attributes
     if (attributes_data) {
-        int iAttribute = 0;
-        NSDictionary *metaDict = nil;
-        NSData *dataWrapper = nil;
-        uint32_t attributeLength = 0;
-        SEL getter = nil;
-        
         mpq_attributes_header_t *attributes = (mpq_attributes_header_t *)attributes_data;
         uint32_t currentOffset = sizeof(mpq_attributes_header_t);
         
-        for (iAttribute = 0; iAttribute < [attribute_descriptions count]; iAttribute++) {
-            metaDict = [attribute_descriptions objectAtIndex:iAttribute];
-            
+        NSEnumerator *attributesEnum = [attribute_descriptions objectEnumerator];
+        NSDictionary *metaDict;
+        while ((metaDict = [attributesEnum nextObject])) {
             if ((attributes->attributes & [[metaDict objectForKey:@"Flag"] unsignedIntValue])) {
                 // We have that attribute
-                attributeLength = [[metaDict objectForKey:@"Size"] unsignedIntValue];
-                getter = NSSelectorFromString([metaDict objectForKey:@"Getter"]);
-                dataWrapper = [NSData dataWithBytesNoCopy:(attributes_data + currentOffset + attributeLength * hash_entry->block_table_index) 
-                                                   length:attributeLength 
-                                             freeWhenDone:NO];
+                uint32_t attributeLength = [[metaDict objectForKey:@"Size"] unsignedIntValue];
+                SEL getter = NSSelectorFromString([metaDict objectForKey:@"Getter"]);
+                NSData * dataWrapper = [NSData dataWithBytesNoCopy:(attributes_data + currentOffset + attributeLength * hash_entry->block_table_index) 
+                                                            length:attributeLength 
+                                                      freeWhenDone:NO];
                 [tempDict setObject:[MPQFile performSelector:getter withObject:dataWrapper] forKey:[metaDict objectForKey:@"Key"]];
                 currentOffset += attributeLength * header.block_table_length;
             }
@@ -2157,7 +2170,8 @@ AbortDigest:
     operation->primary_file_context.block_entry = *block_entry;
     operation->primary_file_context.block_offset = block_offset_table[hash_entry->block_table_index];
     operation->primary_file_context.encryption_key = encryption_keys_cache[hash_position];
-    operation->primary_file_context.filename = (filename_table[hash_position]) ? [[NSString alloc] initWithCString:filename_table[hash_position] encoding:NSASCIIStringEncoding] : nil;
+    operation->primary_file_context.filename = 
+        (filename_table[hash_position]) ? [[NSString alloc] initWithCString:filename_table[hash_position] encoding:NSASCIIStringEncoding] : nil;
     
     // Insert the deferred operation
     operation->previous = last_operation;
@@ -2243,11 +2257,11 @@ AbortDigest:
 - (BOOL)addFileWithPath:(NSString *)path filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error {
     NSParameterAssert(path != nil);
     
-    MPQFileDataSource *dataSource = [[MPQFileDataSource alloc] initWithPath:path error:error];
-    if (!dataSource) return NO;
+    MPQDataSourceProxy *dataSourceProxy = [[MPQDataSourceProxy alloc] initWithPath:path error:error];
+    if (!dataSourceProxy) return NO;
     
-    BOOL result = [self addFileWithFileDataSource:dataSource filename:filename parameters:parameters error:error];
-    [dataSource release];
+    BOOL result = [self addFileWithDataSourceProxy:dataSourceProxy filename:filename parameters:parameters error:error];
+    [dataSourceProxy release];
     return result;
 }
 
@@ -2258,16 +2272,16 @@ AbortDigest:
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error {
     NSParameterAssert(data != nil);
     
-    MPQFileDataSource *dataSource = [[MPQFileDataSource alloc] initWithData:data error:error];
-    if (!dataSource) return NO;
+    MPQDataSourceProxy *dataSourceProxy = [[MPQDataSourceProxy alloc] initWithData:data error:error];
+    if (!dataSourceProxy) return NO;
     
-    BOOL result = [self addFileWithFileDataSource:dataSource filename:filename parameters:parameters error:error];
-    [dataSource release];
+    BOOL result = [self addFileWithDataSourceProxy:dataSourceProxy filename:filename parameters:parameters error:error];
+    [dataSourceProxy release];
     return result;
 }
 
-- (BOOL)addFileWithFileDataSource:(MPQFileDataSource *)dataSource filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error {
-    NSParameterAssert(dataSource != nil);
+- (BOOL)addFileWithDataSourceProxy:(MPQDataSourceProxy *)dataSourceProxy filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error {
+    NSParameterAssert(dataSourceProxy != nil);
     NSParameterAssert(filename != nil);
     
     // Ask the delegate if we should add that file or not
@@ -2282,19 +2296,6 @@ AbortDigest:
     BOOL freeFilenameBuffer = YES;
     char *filename_cstring = _MPQKitCreateASCIIFilename(filename, error);
     if (!filename_cstring) return NO;
-    
-    // Cache the data length
-    off_t data_size = [dataSource length:error];
-    if (data_size == -1) {
-        free(filename_cstring);
-        return NO;
-    }
-    
-    // Check for data length overflow
-    if (data_size > UINT32_MAX) {
-        free(filename_cstring);
-        ReturnValueWithError(NO, MPQErrorDomain, errDataTooLarge, nil, error)
-    }
     
     // Prepare add parameters
     uint32_t flags = MPQFileCompressed;
@@ -2332,7 +2333,11 @@ AbortDigest:
             compressor = [tempNum unsignedIntValue];
             
             // Make sure the compressor is valid
-            if (compressor != MPQPKWARECompression && compressor != MPQZLIBCompression && compressor != MPQStereoADPCMCompression && compressor != MPQBZIP2Compression) {
+            if (compressor != MPQPKWARECompression && 
+                compressor != MPQZLIBCompression && 
+                compressor != MPQStereoADPCMCompression && 
+                compressor != MPQBZIP2Compression)
+            {
                 MPQDebugLog(@"invalid compressor");
                 free(filename_cstring);
                 ReturnValueWithError(NO, MPQErrorDomain, errInvalidCompressor, nil, error)
@@ -2357,15 +2362,6 @@ AbortDigest:
             else if (compressor == MPQBZIP2Compression && (compression_quality < 0 || compression_quality > 250)) compression_quality = 0;
         }
     }
-    
-    // If we have less data than the compression threshold, compression won't be very useful, and will just slow things down
-    if (data_size < COMPRESSION_THRESHOLD) {
-        MPQDebugLog(@"less data than compression threshold");
-        flags &= ~(MPQFileCompressed | MPQFileDiabloCompressed);
-    }
-    
-    // If we have less than 4 bytes, no encryption and no offset adjusted key
-    if (data_size < 4) flags &= ~(MPQFileOffsetAdjustedKey | MPQFileEncrypted);
     
     // The requested filename might already be in use
     uint32_t old_hash_position = [self findHashPosition:filename_cstring locale:locale error:error];
@@ -2401,7 +2397,7 @@ AbortDigest:
         return NO;
     }
     
-    uint32_t block_position = [self createBlockTablePosition:data_size error:error];
+    uint32_t block_position = [self createBlockTablePosition:0 error:error];
     if (block_position == 0xffffffff) {
         MPQDebugLog(@"no space in block table");
         if (freeFilenameBuffer) free(filename_cstring);
@@ -2432,7 +2428,7 @@ AbortDigest:
     operation->primary_file_context.encryption_key = encryption_key;
     operation->primary_file_context.filename = [filename copy];
     
-    context->dataSource = [dataSource retain];
+    context->dataSourceProxy = [dataSourceProxy retain];
     context->compressor = compressor;
     context->compression_quality = compression_quality;
         
@@ -2446,7 +2442,7 @@ AbortDigest:
     is_modified = YES;
 
     // Add the file to the block table
-    block_table[block_position].size = data_size;
+    block_table[block_position].size = 0;
     block_table[block_position].archived_size = 0;
     block_table[block_position].flags = (flags & MPQFileFlagsMask) | MPQFileValid;
 
@@ -2476,16 +2472,43 @@ AbortDigest:
     MPQDebugLog(@"adding %@", operation->primary_file_context.filename);
     MPQDebugLog(@"-------------------------");
     
+    // Get a data source from the data source proxy
+    MPQDataSource *dataSource = [context->dataSourceProxy createActualDataSource:error];
+    if (dataSource == nil) return NO;
+    
     uint32_t hash_position = operation->primary_file_context.hash_position;
     uint32_t block_position = hash_table[hash_position].block_table_index;
+    
+    // Get the size of the file to add
+    off_t data_size = [dataSource length:error];
+    if (data_size == -1) {
+        [dataSource release];
+        return NO;
+    }
+    MPQDebugLog(@"size of input file: %q", data_size);
+    
+    // Check for data length overflow
+    if (data_size > UINT32_MAX) {
+        [dataSource release];
+        ReturnValueWithError(NO, MPQErrorDomain, errDataTooLarge, nil, error)
+    }
+    
+    // We now know this cast is safe
+    uint32_t file_size = (uint32_t)data_size;
+    block_table[block_position].size = file_size;
+    
+    // If we have less data than the compression threshold, compression won't be very useful, and will just slow things down
+    if (file_size < COMPRESSION_THRESHOLD) {
+        MPQDebugLog(@"less data than compression threshold");
+        block_table[block_position].flags &= ~(MPQFileCompressed | MPQFileDiabloCompressed);
+    }
+    
+    // If we have less than 4 bytes, no encryption and no offset adjusted key
+    if (data_size < 4) block_table[block_position].flags &= ~(MPQFileOffsetAdjustedKey | MPQFileEncrypted);
     
     // Copy the file flags for easier access in this method
     uint32_t flags = block_table[block_position].flags;
     MPQDebugLog(@"compressor: %u\ncompression quality: %d", context->compressor, context->compression_quality);
-    
-    // Get the size of the file to add
-    uint32_t file_size = block_table[block_position].size;
-    MPQDebugLog(@"size of input file: %u", file_size);
     
     // Predicate for needing a sector table
     BOOL needs_sector_table = ((flags & (MPQFileDiabloCompressed | MPQFileCompressed)) && !(flags & MPQFileOneSector)) ? YES : NO;
@@ -2498,7 +2521,10 @@ AbortDigest:
     // Allocate memory for the file's compressed sector table (if we need one)
     uint32_t *sector_table = NULL;
     if (needs_sector_table) sector_table = malloc(sector_table_length * sizeof(uint32_t));
-    if (!sector_table && needs_sector_table) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
+    if (!sector_table && needs_sector_table) {
+        [dataSource release];
+        ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
+    }
     
     // Compression state
     uint32_t current_sector_size = 0;
@@ -2520,12 +2546,14 @@ AbortDigest:
         struct stat sb;
         if (fstat(archive_fd, &sb) == -1) {
             if (sector_table) free(sector_table);
+            [dataSource release];
             ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
         }
         
         // If the archive file size != archive_offset + archive_size, we can't resize (because data exists after the archive)
         if (sb.st_size != archive_offset + archive_size) {
             if (sector_table) free(sector_table);
+            [dataSource release];
             ReturnValueWithError(NO, MPQErrorDomain, errCannotResizeArchive, nil, error)
         }
         
@@ -2548,6 +2576,7 @@ AbortDigest:
             // Version 0 archives cannot be larger than UINT32_MAX
             if (header.version == 0 && archive_size + missing_space > UINT32_MAX) {
                 if (sector_table) free(sector_table);
+                [dataSource release];
                 ReturnValueWithError(NO, MPQErrorDomain, errArchiveSizeOverflow, nil, error)
             }
             
@@ -2558,6 +2587,7 @@ AbortDigest:
             // TODO: need to have a threshold beyond which we will dynamically resize the archive while processing the sectors
             if (ftruncate(archive_fd, archive_offset + archive_size) == -1) {
                 if (sector_table) free(sector_table);
+                [dataSource release];
                 ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
             }
         }
@@ -2589,9 +2619,10 @@ AbortDigest:
         compressed_size = full_sector_size << 1;
 
         // Read the current sector
-        read_sector_size = [context->dataSource pread:read_buffer size:current_sector_size offset:data_offset error:error];
+        read_sector_size = [dataSource pread:read_buffer size:current_sector_size offset:data_offset error:error];
         if (read_sector_size != current_sector_size) {
             if (sector_table) free(sector_table);
+            [dataSource release];
             return NO;
         }
 
@@ -2603,7 +2634,7 @@ AbortDigest:
         if ((flags & (MPQFileCompressed | MPQFileDiabloCompressed))) {
             int compression_error = 0;
             if (context->compressor == MPQStereoADPCMCompression) {
-                // Blizzard uses PKWARE compression on the first sector, so we'll do the same
+                // Make sure to use PKWARE on the first sector to not garble up AIFF / WAV / etc headers. Of course this is a naive workaround...
                 compression_error = SCompCompress(compression_buffer, 
                                                   (int *)&compressed_size, 
                                                   read_buffer, 
@@ -2619,7 +2650,13 @@ AbortDigest:
                     compressed_size--;
                 }
             } else if ((flags & MPQFileCompressed)) {
-                compression_error = SCompCompress(compression_buffer, (int *)&compressed_size, read_buffer, current_sector_size, context->compressor, 0, context->compression_quality);
+                compression_error = SCompCompress(compression_buffer, 
+                                                  (int *)&compressed_size, 
+                                                  read_buffer, 
+                                                  current_sector_size, 
+                                                  context->compressor, 
+                                                  0, 
+                                                  context->compression_quality);
             }
             
             // If the compression failed or we didn't save any bytes, we reject the compressed block
@@ -2640,6 +2677,7 @@ AbortDigest:
         // Write the sector
         if (pwrite(archive_fd, buffer_pointer, compressed_size, archive_offset + file_write_offset + file_compressed_size) == -1) {
             if (sector_table) free(sector_table);
+            [dataSource release];
             ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
         }
         
@@ -2667,6 +2705,7 @@ AbortDigest:
         // Write the sector table
         if (pwrite(archive_fd, sector_table, sector_table_size, archive_offset + file_write_offset) == -1) {
             if (sector_table) free(sector_table);
+            [dataSource release];
             ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
         }
     }
@@ -2683,6 +2722,7 @@ AbortDigest:
     MPQDebugLog(@"-------------------------");
     
     if (sector_table) free(sector_table);
+    [dataSource release];
     return YES;
 }
 
@@ -2702,7 +2742,10 @@ AbortDigest:
     char *filename_cstring = filename_table[hash_position];
     NSString *filename = nil;
     if (filename_cstring) {
-        filename = [[[NSString alloc] initWithBytesNoCopy:filename_cstring length:strlen(filename_cstring) encoding:NSASCIIStringEncoding freeWhenDone:NO] autorelease];
+        filename = [[[NSString alloc] initWithBytesNoCopy:filename_cstring 
+                                                   length:strlen(filename_cstring) 
+                                                 encoding:NSASCIIStringEncoding 
+                                             freeWhenDone:NO] autorelease];
     } else {
         // Generate a temporary filename for MPQFile
         filename = [NSString stringWithFormat:@"unknown %x", hash_position];
@@ -2715,14 +2758,14 @@ AbortDigest:
             // Client requested a file pending for addition
             NSDictionary *config = [[NSDictionary alloc] initWithObjectsAndKeys:
                 self, @"Parent", 
-                [NSNumber numberWithUnsignedInt:hash_position], @"Position", 
-                [NSNumber numberWithUnsignedInt:(uint32_t)hash_entry], @"HashTableEntry", 
-                [NSNumber numberWithUnsignedInt:(uint32_t)block_entry], @"FileTableEntry", 
-                ((mpq_deferred_operation_add_context_t *)operation->context)->dataSource, @"DataSource", 
-                filename, @"Filename", 
+                [NSNumber numberWithUnsignedInt:hash_position], @"Position",
+                [NSNumber numberWithUnsignedInt:(uint32_t)hash_entry], @"HashTableEntry",
+                [NSNumber numberWithUnsignedInt:(uint32_t)block_entry], @"FileTableEntry",
+                ((mpq_deferred_operation_add_context_t *)operation->context)->dataSourceProxy, @"DataSourceProxy",
+                filename, @"Filename",
                 nil];
             
-            Class fileClass = NSClassFromString(@"MPQFileData");
+            Class fileClass = NSClassFromString(@"MPQFileDataSource");
             MPQFile *file = [[[fileClass alloc] initForFile:config error:error] autorelease];
             
             [config release];
@@ -3040,7 +3083,10 @@ AbortDigest:
     if (extended_header.extended_block_offset_table_offset != 0) {
         size_t extended_block_offset_table_size = header.block_table_length * sizeof(mpq_extended_block_offset_table_entry_t);
         [self swap_extended_block_offset_table:extended_block_offset_table length:header.block_table_length];
-        bytes_written = pwrite(archive_fd, extended_block_offset_table, extended_block_offset_table_size, archive_offset + extended_header.extended_block_offset_table_offset);
+        bytes_written = pwrite(archive_fd, 
+                               extended_block_offset_table, 
+                               extended_block_offset_table_size, 
+                               archive_offset + extended_header.extended_block_offset_table_offset);
         free(extended_block_offset_table);
         if (bytes_written < extended_block_offset_table_size) ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
     }
@@ -3131,7 +3177,7 @@ AbortDigest:
         archive_fd = _MPQMakeTempFileInDirectory([path stringByDeletingLastPathComponent], &temp_path, error);
         if (archive_fd == -1) goto WriteFailed;
         
-        // Close up the file descriptor and copy the existing archive at temp_path. It someone manages to sneak in and drop a file there in-between, sucks to be them.
+        // Close up the file descriptor and copy the existing archive at temp_path. It someone manages to sneak in and drop a file there in-between, boo.
         close(archive_fd);
         
         // Copy the archive to temp_path
@@ -3208,7 +3254,35 @@ AbortDigest:
         operation = operation->previous;
     }
     
-    // TODO: optimize the block table
+    // Optimize the block table by removing any empty entries
+    uint32_t block_entry_index = 0;
+    uint32_t free_block_entry_index = 0xFFFFFFFF;
+    while (block_entry_index < header.block_table_length) {
+        mpq_block_table_entry_t *block_table_entry = block_table + block_entry_index;
+        
+        // If there is a free block table entry available, move the current entry into it, empty the current entry and mark it as the first empty entry
+        if (!(block_table_entry->size == 0 && block_table_entry->archived_size == 0 && block_table_entry->flags == 0) && free_block_entry_index != 0xFFFFFFFF) {
+            memcpy(block_table + free_block_entry_index, block_table + block_entry_index, sizeof(mpq_block_table_entry_t));
+            memset(block_table + block_entry_index, 0, sizeof(mpq_block_table_entry_t));
+            
+            // Scan the hash table for the entry using the block table entry we just moved
+            uint32_t hash_entry_index = 0;
+            while (hash_entry_index < header.hash_table_length) {
+                mpq_hash_table_entry_t *hash_table_entry = hash_table + hash_entry_index;
+                if (hash_table_entry->block_table_index == block_entry_index) {
+                    hash_table_entry->block_table_index = free_block_entry_index;
+                    break;
+                }
+                hash_entry_index++;
+            }
+            free_block_entry_index++;
+        } else if (free_block_entry_index == 0xFFFFFFFF) free_block_entry_index = block_entry_index;
+        
+        block_entry_index++;
+    }
+    
+    // We can cut the block table at free_block_entry_index
+    header.block_table_length = free_block_entry_index;
     
     // We can now compute the exact archive size
     archive_size = archive_write_offset + [self computeSizeOfStructuralTables];

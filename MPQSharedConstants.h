@@ -73,12 +73,12 @@
 #define MPQMaximumNumberOfFiles         @"MPQMaximumNumberOfFiles"
 
 /*!
-  @defined MPQNumberOfNormalFiles
-  @discussion Key for the number of normal files inside archive information dictionaries.
+  @defined MPQNumberOfValidFiles
+  @discussion Key for the number of valid files inside archive information dictionaries.
     
     The value of this key will be an NSNumber object.
 */
-#define MPQNumberOfNormalFiles          @"MPQNumberOfNormalFiles"
+#define MPQNumberOfValidFiles           @"MPQNumberOfValidFiles"
 
 /*!
   @defined MPQArchiveOffset
