@@ -2306,7 +2306,7 @@ AbortDigest:
     
     // Set the compression quality depending on the compressor
     if (compressor == MPQZLIBCompression) compression_quality = Z_DEFAULT_COMPRESSION;
-    else if (compressor == MPQBZIP2Compression) compression_quality = 0;
+    else if (compressor == MPQBZIP2Compression) compression_quality = 9;
     else if (compressor == MPQStereoADPCMCompression) compression_quality = MPQADPCMQuality4Bits;
     
     // If we have parameters, validate them now
@@ -2349,7 +2349,7 @@ AbortDigest:
         
         // Set the compression quality depending on the compressor
         if (compressor == MPQZLIBCompression) compression_quality = Z_DEFAULT_COMPRESSION;
-        else if (compressor == MPQBZIP2Compression) compression_quality = 0;
+        else if (compressor == MPQBZIP2Compression) compression_quality = 9;
         else if (compressor == MPQStereoADPCMCompression) compression_quality = MPQADPCMQuality4Bits;
         
         // Compression quality
@@ -2359,7 +2359,7 @@ AbortDigest:
             // Silently make sure the compression quality is valid for the compressor
             if (compressor == MPQZLIBCompression && (compression_quality < -1 || compression_quality > 9)) compression_quality = Z_DEFAULT_COMPRESSION;
             else if (compressor == MPQStereoADPCMCompression && (compression_quality < 0 || compression_quality > 2)) compression_quality = MPQADPCMQuality4Bits;
-            else if (compressor == MPQBZIP2Compression && (compression_quality < 0 || compression_quality > 250)) compression_quality = 0;
+            else if (compressor == MPQBZIP2Compression && (compression_quality < 1 || compression_quality > 9)) compression_quality = 9;
         }
     }
     
@@ -3255,6 +3255,7 @@ AbortDigest:
     }
     
     // Optimize the block table by removing any empty entries
+    // TODO: MUST also relocate associated file attributes, since those are block table indexed
     uint32_t block_entry_index = 0;
     uint32_t free_block_entry_index = 0xFFFFFFFF;
     while (block_entry_index < header.block_table_length) {

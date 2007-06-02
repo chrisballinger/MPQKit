@@ -207,8 +207,7 @@
 
 /*!
     @defined MPQOverwrite
-    @discussion Key to indicate if an exiting file should be deleted 
-        inside file addition parameters dictionaries.
+    @discussion Key to indicate if an exiting file should be deleted inside file addition parameters dictionaries.
     
     NSNumber objects are expected as the value of this key.
 */
@@ -317,7 +316,8 @@ typedef uint16_t MPQLocale;
     @discussion You can use the following constants to specify which compression algorithm should be 
         used to compress a particular file, or to set the default compressor for a particular archive. 
         Note that ADPCM compression is only suitable for audio data and will destroy binary data (it is a 
-        lossy compression algorithm).
+        lossy compression algorithm). Files are only compressed if the MPQFileEncrypted file flag is present.
+        If the MPQFileDiabloCompressed flag is present, MPQPKWARECompression is always used.
     @constant MPQPKWARECompression The standard PKWARE compressor which appeared in Starcraft. You will 
         need to use this compressor for new files in archives that will be used by Starcraft or 
         Diablo II. Note that the Mac OS X version of Starcraft and Diablo II support the zlib 
@@ -327,10 +327,11 @@ typedef uint16_t MPQLocale;
     @constant MPQStereoADPCMCompression ADPCM compressor suitable for audio data. Offers a 4:1 compression ratio. 
         Huffman coding is applied on the ADPCM data to further compress the bitstream.
         
-        The default compression quality for this compressor is MPQADPCMQualityHigh (see MPQADPCMQuality for details).
+        The default compression quality for this compressor is MPQADPCMQuality4Bits (see MPQADPCMQuality for details).
     @constant MPQBZIP2Compression The bzip2 compressor was added in World of Warcraft. Offers slightly better compression ratios than zlib.
         
-        The default compression quality for this compressor is 0. Please refer to the bzip2 documentation for more information.
+        The compression quality corresponds to the value of the blockSize100k parameter to the BZ2_bzCompressInit function. The default 
+        compression quality for this compressor is 9. Please refer to the bzip2 documentation for more information.
     @constant MPQZLIBCompression The zlib compressor was added in Warcraft 3. It is the default compressor.
         
         The default compression quality for this compressor is Z_DEFAULT_COMPRESSION. Please refer to the zlib documentation for more information.
