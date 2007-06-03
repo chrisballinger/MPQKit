@@ -62,6 +62,7 @@
 		31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31A8A4FB0BC14502001F583D /* mpqfsd */; };
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
+		31B954150C1278C100CFD540 /* compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 31B9540D0C1274E600CFD540 /* compression.m */; };
 		31C2FF610B8FDA9C000C1DB5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */; };
 		31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */; };
@@ -104,6 +105,13 @@
 			remoteGlobalIDString = 31A8A4FA0BC14502001F583D;
 			remoteInfo = mpqfsd;
 		};
+		31B953F60C125E5A00CFD540 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3123119E0549EE5D00833907 /* MPQKit */;
+			remoteInfo = MPQKit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -132,7 +140,7 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		310D91590BBECCC800FEA3C5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "mpqfs-Info.plist"; path = "mpqfs/mpqfs-Info.plist"; sourceTree = "<group>"; };
 		310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = mpqfs.nib; path = mpqfs/mpqfs.nib; sourceTree = "<group>"; };
 		310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFSApplicationDelegate.h; path = mpqfs/MPQFSApplicationDelegate.h; sourceTree = "<group>"; };
@@ -167,6 +175,10 @@
 		31B8088D0BB84E7E001F9B73 /* mpqfsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mpqfsd.m; path = mpqfs/mpqfsd.m; sourceTree = "<group>"; };
 		31B808930BB85067001F9B73 /* MPQFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFileSystem.h; path = mpqfs/MPQFileSystem.h; sourceTree = "<group>"; };
 		31B808940BB85067001F9B73 /* MPQFileSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFileSystem.m; path = mpqfs/MPQFileSystem.m; sourceTree = "<group>"; };
+		31B953F10C125E5000CFD540 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		31B953F20C125E5000CFD540 /* Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Test-Info.plist"; sourceTree = "<group>"; };
+		31B9540C0C1274E600CFD540 /* compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compression.h; path = tests/compression.h; sourceTree = "<group>"; };
+		31B9540D0C1274E600CFD540 /* compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = compression.m; path = tests/compression.m; sourceTree = "<group>"; };
 		31BAC6BA03D63FDA00A80102 /* MPQArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchive.m; sourceTree = "<group>"; };
 		31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQDataSource.h; sourceTree = "<group>"; };
@@ -241,6 +253,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		31B953EE0C125E5000CFD540 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -252,6 +271,7 @@
 				3199801A0B4D8B4600D4FE4E /* verifyarchive */,
 				310D91840BBECE5100FEA3C5 /* mpqfs.app */,
 				31A8A4FB0BC14502001F583D /* mpqfsd */,
+				31B953F10C125E5000CFD540 /* Test.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -269,11 +289,13 @@
 				F5F8743F037322BA01000102 /* Compression */,
 				F568E755034FC7B901000102 /* Cryptography */,
 				F5DEFEC803465B8001000102 /* Classes */,
+				31B954090C1274B300CFD540 /* Tests */,
 				31F0CF000BB849B800E24273 /* MPQFS */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Libraries */,
 				3150DBB50AF472EE00CF2965 /* Programs */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				31B953F20C125E5000CFD540 /* Test-Info.plist */,
 			);
 			name = "BZMPQ Framework";
 			sourceTree = "<group>";
@@ -353,6 +375,15 @@
 				319980080B4D8AFF00D4FE4E /* verifyarchive.m */,
 			);
 			name = Programs;
+			sourceTree = "<group>";
+		};
+		31B954090C1274B300CFD540 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				31B9540C0C1274E600CFD540 /* compression.h */,
+				31B9540D0C1274E600CFD540 /* compression.m */,
+			);
+			name = Tests;
 			sourceTree = "<group>";
 		};
 		31F0CF000BB849B800E24273 /* MPQFS */ = {
@@ -531,6 +562,25 @@
 			productReference = 31A8A4FB0BC14502001F583D /* mpqfsd */;
 			productType = "com.apple.product-type.tool";
 		};
+		31B953F00C125E5000CFD540 /* Test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 31B953F30C125E5100CFD540 /* Build configuration list for PBXNativeTarget "Test" */;
+			buildPhases = (
+				31B953EC0C125E5000CFD540 /* Resources */,
+				31B953ED0C125E5000CFD540 /* Sources */,
+				31B953EE0C125E5000CFD540 /* Frameworks */,
+				31B953EF0C125E5000CFD540 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				31B953F70C125E5A00CFD540 /* PBXTargetDependency */,
+			);
+			name = Test;
+			productName = Test;
+			productReference = 31B953F10C125E5000CFD540 /* Test.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -544,6 +594,7 @@
 			projectRoot = "";
 			targets = (
 				3123119E0549EE5D00833907 /* MPQKit */,
+				31B953F00C125E5000CFD540 /* Test */,
 				3150DBAD0AF45FA900CF2965 /* signaturecheck */,
 				3199800F0B4D8B4600D4FE4E /* verifyarchive */,
 				31A8A4FA0BC14502001F583D /* mpqfsd */,
@@ -572,6 +623,13 @@
 				31149A2C05CD52D800419143 /* attributes.plist in Resources */,
 				3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */,
 				3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		31B953EC0C125E5000CFD540 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -605,6 +663,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env python";
 			shellScript = "#-*- encoding: utf-8 -*-\n# Xcode auto-versioning script for Subversion\n# by Axel Andersson, modified by Daniel Jalkut to use\n# svnversion instead of svn info, so that the current version\n# the highest local revision  number is always used.\n# Python version by Jean-Francois Roy\n        \nimport os, re\n\nif os.getenv(\"BUILT_PRODUCTS_DIR\") is None:\n    print \"Must be run from Xcode\"\n    sys.exit(1)\n\n# Add a few common directories to PATH\npathEntries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in pathEntries: pathEntries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in pathEntries: pathEntries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in pathEntries: pathEntries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(pathEntries)\n\n# Get the current subversion revision number and use it to set the CFBundleVersion value\np = os.popen2(['svnversion', '-n'])[1]\nREV = p.read()\np.close()\nINFO = \"%s/%s\" % (os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\n\nmatchObject = re.compile(\"([\\d]+:)?(\\d+[M|S]*).*\").match(REV)\nif not matchObject:\n    print \"No Subversion revision found\"\n    sys.exit(1)\nversion = matchObject.groups()[1]\n\nFH = open(INFO, 'a+')\nFH.seek(0)\n\ninfo = FH.read()\ninfo_re = re.compile(\"([\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(</string>)\", re.S | re.M)\ninfo = info_re.sub(r'\\g<1>%s\\g<2>' % version, info)\n\nFH.truncate(0)\nFH.write(info)\nFH.close()\n";
+		};
+		31B953EF0C125E5000CFD540 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -667,6 +738,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		31B953ED0C125E5000CFD540 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31B954150C1278C100CFD540 /* compression.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -694,6 +773,11 @@
 			isa = PBXTargetDependency;
 			target = 31A8A4FA0BC14502001F583D /* mpqfsd */;
 			targetProxy = 31A8A5030BC14511001F583D /* PBXContainerItemProxy */;
+		};
+		31B953F70C125E5A00CFD540 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3123119E0549EE5D00833907 /* MPQKit */;
+			targetProxy = 31B953F60C125E5A00CFD540 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -901,6 +985,52 @@
 			};
 			name = Release;
 		};
+		31B953F40C125E5100CFD540 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "Test-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					SenTestingKit,
+					"-framework",
+					MPQKit,
+				);
+				PRODUCT_NAME = Test;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		31B953F50C125E5100CFD540 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = "Test-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					SenTestingKit,
+					"-framework",
+					MPQKit,
+				);
+				PRODUCT_NAME = Test;
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
 		31EB3EFB085CCCD800290137 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -979,7 +1109,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				WARNING_CFLAGS = "-Wall";
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -988,7 +1124,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				WARNING_CFLAGS = "-Wall";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1028,6 +1170,15 @@
 			buildConfigurations = (
 				31A8A5090BC14526001F583D /* Debug */,
 				31A8A50A0BC14526001F583D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		31B953F30C125E5100CFD540 /* Build configuration list for PBXNativeTarget "Test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31B953F40C125E5100CFD540 /* Debug */,
+				31B953F50C125E5100CFD540 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
