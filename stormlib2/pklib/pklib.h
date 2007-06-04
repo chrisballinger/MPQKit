@@ -11,6 +11,10 @@
 #ifndef __PKLIB_H__
 #define __PKLIB_H__
 
+#ifdef __cplusplus
+   extern "C" {
+#endif
+
 //-----------------------------------------------------------------------------
 // Defines
 
@@ -95,10 +99,6 @@ typedef struct
 
 //-----------------------------------------------------------------------------
 // Public functions
-
-#ifdef __cplusplus
-   extern "C" {
-#endif
 
 unsigned int pk_implode(
    unsigned int (*read_buf)(char *buf, unsigned int *size, void *param),
