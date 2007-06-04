@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <stdint.h>
  
-// Input stream for Huffmann decompression
+// Input stream for Huffman decompression
 class TInputStream {
 public:
     TInputStream(uint8_t *data, uint32_t data_size) {
@@ -42,7 +42,7 @@ private:
     uint32_t bit_count;
 };
  
-// Output stream for Huffmann compression
+// Output stream for Huffman compression
 class TOutputStream {
 public:
     void PutBits(uint32_t dwBuff, uint32_t nPutBits);
@@ -54,7 +54,7 @@ public:
     uint32_t nBits;                         // 10 - Number of bits in the bit buffer
 };
  
-// Huffmann tree item (?)
+// Huffman tree item (?)
 struct THTreeItem {
 public:
     THTreeItem * Call1501DB70(THTreeItem *pLast);
@@ -92,12 +92,12 @@ struct TQDecompress {
 // Structure for Huffman tree (Size 0x3674 bytes). Because I'm not expert
 // for the decompression, I do not know actually if the class is really a Hufmann
 // tree. If someone knows the decompression details, please let me know
-class THuffmannTree {
+class THuffmanTree {
 private:
-    THuffmannTree();
+    THuffmanTree();
 
 public:
-    static THuffmannTree * AllocateTree();
+    static THuffmanTree * AllocateTree();
 
     void InitTree(bool bCompression);
     

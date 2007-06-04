@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /* huffman.cpp                       Copyright (c) Ladislav Zezula 1998-2003 */
 /*---------------------------------------------------------------------------*/
-/* This module contains Huffmann (de)compression methods                     */
+/* This module contains Huffman (de)compression methods                     */
 /*                                                                           */
 /* Authors : Ladislav Zezula (ladik.zezula.net)                              */
 /*           ShadowFlare     (BlakFlare@hotmail.com)                         */
@@ -296,12 +296,12 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, uint32_t where,
 }
  
 //-----------------------------------------------------------------------------
-// THuffmannTree class functions
+// THuffmanTree class functions
  
-THuffmannTree* THuffmannTree::AllocateTree() {
-    THuffmannTree* instance = new THuffmannTree();
+THuffmanTree* THuffmanTree::AllocateTree() {
+    THuffmanTree* instance = new THuffmanTree();
     if ((intptr_t)instance > 0 && (intptr_t)(instance + 1) < 0) {
-        THuffmannTree* instance2 = new THuffmannTree();
+        THuffmanTree* instance2 = new THuffmanTree();
         assert(!((intptr_t)instance2 > 0 && (intptr_t)(instance2 + 1) < 0));
         delete instance;
         instance = instance2;
@@ -309,12 +309,12 @@ THuffmannTree* THuffmannTree::AllocateTree() {
     return instance;
 }
 
-THuffmannTree::THuffmannTree()
+THuffmanTree::THuffmanTree()
 {
     addr_multiplier = ((intptr_t)this < 0) ? -1 : 1;
 }
  
-void THuffmannTree::InitTree(bool bCompression)
+void THuffmanTree::InitTree(bool bCompression)
 {
     THTreeItem * pItem;
     uint32_t     nCount;
@@ -346,7 +346,7 @@ void THuffmannTree::InitTree(bool bCompression)
 }
  
 // Builds Huffman tree. Called with the first 8 bits loaded from input stream
-void THuffmannTree::BuildTree(uint32_t nCmpType)
+void THuffmanTree::BuildTree(uint32_t nCmpType)
 {
     uint32_t        maxByte;                            // [ESP+10] - The greatest character found in table
     THTreeItem   ** itemPtr;                            // [ESP+14] - Pointer to Huffman tree item pointer array
@@ -537,7 +537,7 @@ void THuffmannTree::BuildTree(uint32_t nCmpType)
     offs0004 = 1;
 }
  
-THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
+THTreeItem * THuffmanTree::Call1500E740(unsigned int nValue)
 {
     THTreeItem * pItem1 = pItem3058;    // EDX
     THTreeItem * pItem2;                // EAX
@@ -614,7 +614,7 @@ THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
     return pItem2;
 }
  
-void THuffmannTree::Call1500E820(THTreeItem * pItem)
+void THuffmanTree::Call1500E820(THTreeItem * pItem)
 {
     THTreeItem * pItem1;                // edi
     THTreeItem * pItem2 = 0;            // eax
@@ -688,7 +688,7 @@ void THuffmannTree::Call1500E820(THTreeItem * pItem)
 }
  
 // 1500E920
-uint32_t THuffmannTree::DoCompression(TOutputStream *os, uint8_t *pbInBuffer, int32_t nInLength, int32_t nCmpType)
+uint32_t THuffmanTree::DoCompression(TOutputStream *os, uint8_t *pbInBuffer, int32_t nInLength, int32_t nCmpType)
 {
     THTreeItem * pItem1;
     THTreeItem * pItem2;
@@ -866,7 +866,7 @@ uint32_t THuffmannTree::DoCompression(TOutputStream *os, uint8_t *pbInBuffer, in
 }
  
 // Decompression using Huffman tree (1500E450)
-uint32_t THuffmannTree::DoDecompression(uint8_t *pbOutBuffer, uint32_t dwOutLength, TInputStream *is)
+uint32_t THuffmanTree::DoDecompression(uint8_t *pbOutBuffer, uint32_t dwOutLength, TInputStream *is)
 {
     TQDecompress  * qd;
     THTreeItem    * pItem1;
@@ -996,7 +996,7 @@ _1500E549:
 }
  
 // Table for (de)compression. Every compression type has 258 entries
-uint8_t THuffmannTree::Table1502A630[] =
+uint8_t THuffmanTree::Table1502A630[] =
 {
     // Data for compression type 0x00
     0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

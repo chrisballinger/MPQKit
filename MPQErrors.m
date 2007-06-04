@@ -11,7 +11,7 @@
 
 NSString *const MPQErrorDomain = @"MPQErrorDomain";
 
-inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p) {
+void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p) {
     NSError *e = (error) ? *error : nil;
     [e retain];
     [p release];

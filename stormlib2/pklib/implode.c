@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /* implode.c                              Copyright (c) Ladislav Zezula 2003 */
 /*---------------------------------------------------------------------------*/
-/* pk_implode function of PKWARE Data Compression library                       */
+/* pk_implode function of PKWARE Data Compression library                    */
 /*---------------------------------------------------------------------------*/
 /*   Date    Ver   Who  Comment                                              */
 /* --------  ----  ---  -------                                              */
@@ -19,40 +19,6 @@
 
 #define DICT_OFFSET   0x204
 #define UNCMP_OFFSET  (pWork->dsize_bytes + DICT_OFFSET)
-
-//-----------------------------------------------------------------------------
-// Local structures
-
-// Compression structure (Size 36312 bytes)
-typedef struct
-{
-    unsigned int   offs0000;            // 0000 : 
-    unsigned int   out_bytes;           // 0004 : # bytes available in out_buff            
-    unsigned int   out_bits;            // 0008 : # of bits available in the last out byte
-    unsigned int   dsize_bits;          // 000C : Dict size : 4=0x400, 5=0x800, 6=0x1000
-    unsigned int   dsize_mask;          // 0010 : Dict size : 0x0F=0x400, 0x1F=0x800, 0x3F=0x1000
-    unsigned int   ctype;               // 0014 : Compression type (Ascii or binary)
-    unsigned int   dsize_bytes;         // 0018 : Dictionary size in bytes
-    unsigned char  dist_bits[0x40];     // 001C : Distance bits
-    unsigned char  dist_codes[0x40];    // 005C : Distance codes
-    unsigned char  nChBits[0x306];      // 009C : 
-    unsigned short nChCodes[0x306];     // 03A2 : 
-    unsigned short offs09AE;            // 09AE : 
-
-    void         * param;               // 09B0 : User parameter
-    unsigned int (*read_buf)(char *buf, unsigned int *size, void *param);  // 9B4
-    void         (*write_buf)(char *buf, unsigned int *size, void *param); // 9B8
-
-    unsigned short offs09BC[0x204];     // 09BC :
-    unsigned long  offs0DC4;            // 0DC4 : 
-    unsigned short offs0DC8[0x900];     // 0DC8 :
-    unsigned short offs1FC8;            // 1FC8 : 
-    char           out_buff[0x802];     // 1FCA : Output (compressed) data
-    unsigned char  work_buff[0x2204];   // 27CC : Work buffer
-                                        //  + DICT_OFFSET  => Dictionary
-                                        //  + UNCMP_OFFSET => Uncompressed data
-    unsigned short offs49D0[0x2000];    // 49D0 : 
-} TCmpStruct;
 
 //-----------------------------------------------------------------------------
 // Tables
@@ -153,7 +119,7 @@ static void SortBuffer(TCmpStruct * pWork, unsigned char * uncmp_data, unsigned 
     unsigned int     add;
 
     // Fill 0x480 dwords (0x1200 bytes)
-    ndwords = (pWork->out_buff - (char *)pWork->offs0DC8 + 1) >> 2;
+    ndwords = (unsigned long)((pWork->out_buff - (char *)pWork->offs0DC8 + 1) >> 2);
     if(ndwords <= 1)
         ndwords = 1;
     memset(pWork->offs0DC8, 0, ndwords << 2);
@@ -171,7 +137,7 @@ static void SortBuffer(TCmpStruct * pWork, unsigned char * uncmp_data, unsigned 
     for(work_end--; work_end >= uncmp_data; work_end--)
     {
         offs1 = (work_end[0] * 4) + (work_end[1] * 5);  // EAX
-        offs2 = (work_end - pWork->work_buff);          // EDI
+        offs2 = (unsigned long)(work_end - pWork->work_buff);          // EDI
 
         pWork->offs0DC8[offs1]--;
         pWork->offs49D0[pWork->offs0DC8[offs1]] = (unsigned short)offs2;
@@ -253,7 +219,7 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
     unsigned short   di;
 
     pin0DC8 = pWork->offs0DC8 + (srcbuff[0] * 4) + (srcbuff[1] * 5);
-    esi     = (srcbuff - pWork->dsize_bytes) - pWork->work_buff + 1;
+    esi     = (unsigned long)(srcbuff - pWork->dsize_bytes - pWork->work_buff + 1);
     esp18   = *pin0DC8;
     pin49D0 = pWork->offs49D0 + esp18;
 
@@ -280,6 +246,7 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
         {
             pin27CC++;
             srcbuff3++;
+
             for(ebx = 2; ebx < DICT_OFFSET; ebx++)
             {
                 pin27CC++;
@@ -291,7 +258,7 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
             srcbuff3 = srcbuff;
             if(ebx >= nreps)
             {
-                pWork->offs0000 = srcbuff3 - pin27CC + ebx - 1;
+                pWork->offs0000 = (unsigned int)(srcbuff3 - pin27CC + ebx - 1);
                 if((nreps = ebx) > 10)
                     break;
             }
@@ -390,7 +357,7 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
 
         if(esi < nreps)
             continue;
-        pWork->offs0000 = srcbuff - pin27CC - 1;
+        pWork->offs0000 = (unsigned int)(srcbuff - pin27CC - 1);
         if(esi <= nreps)
             continue;
         nreps = esi;
@@ -537,7 +504,8 @@ __Exit:
     return;
 
 _004022DB:
-    if((nreps1 = uncmp_end - uncmp_begin) < 2)
+    nreps1 = (unsigned long)(uncmp_end - uncmp_begin);
+    if(nreps1 < 2)
         goto _0040222F;
 
     if(nreps1 != 2 || pWork->offs0000 < 0x100)
