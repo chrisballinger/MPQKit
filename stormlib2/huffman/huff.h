@@ -64,8 +64,8 @@ public:
  
     THTreeItem *next;                       // 00 - Pointer to next THTreeItem
     THTreeItem *prev;                       // 04 - Pointer to prev THTreeItem (< 0 if none)
-    unsigned long dcmpByte;                 // 08 - Index of this item in item pointer array, decompressed byte value
-    unsigned long byteValue;                // 0C - Some byte value
+    uint32_t dcmpByte;                      // 08 - Index of this item in item pointer array, decompressed byte value
+    uint32_t byteValue;                     // 0C - Some byte value
     THTreeItem *parent;                     // 10 - Pointer to parent THTreeItem (NULL if none)
     THTreeItem *child;                      // 14 - Pointer to child  THTreeItem
     
@@ -80,8 +80,8 @@ public:
 // structure first. If corresponding entry found, decompression routine will
 // not walk through Huffman tree and directly stores output byte to output stream.
 struct TQDecompress {
-    unsigned long offs00;                   // 00 - 1 if resolved
-    unsigned long nBits;                    // 04 - Bit count
+    uint32_t offs00;                        // 00 - 1 if resolved
+    uint32_t nBits;                         // 04 - Bit count
     union
     {
         uintptr_t dcmpByte;                 // 08 - Byte value for decompress (if bitCount <= 7)
@@ -101,17 +101,17 @@ public:
 
     void InitTree(bool bCompression);
     
-    unsigned int DoCompression(TOutputStream *os, unsigned char *pbInBuffer, int nInLength, int nCmpType);
-    unsigned int DoDecompression(unsigned char *pbOutBuffer, unsigned int dwOutLength, TInputStream *is);
+    uint32_t DoCompression(TOutputStream *os, uint8_t *pbInBuffer, int32_t nInLength, int32_t nCmpType);
+    uint32_t DoDecompression(uint8_t *pbOutBuffer, uint32_t dwOutLength, TInputStream *is);
 
 private:
-    void BuildTree(unsigned int nCmpType);
+    void BuildTree(uint32_t nCmpType);
  
-    THTreeItem * Call1500E740(unsigned int nValue);
+    THTreeItem * Call1500E740(uint32_t nValue);
     void Call1500E820(THTreeItem *pItem);
  
-    unsigned long bIsCmp0;                  // 0000 - 1 if compression type 0
-    unsigned long offs0004;                 // 0004 - Some flag
+    uint32_t bIsCmp0;                       // 0000 - 1 if compression type 0
+    uint32_t offs0004;                      // 0004 - Some flag
     THTreeItem items0008[0x203];            // 0008 - HTree items
  
     //- Sometimes used as HTree item -----------
@@ -123,7 +123,7 @@ private:
     THTreeItem *pItem305C;                  // 305C - Usually NULL
     THTreeItem *pFirst;                     // 3060 - Pointer to top (first) Huffman tree item
     THTreeItem *pLast;                      // 3064 - Pointer to bottom (last) Huffman tree item (< 0 if invalid)
-    unsigned long nItems;                   // 3068 - Number of used HTree items
+    uint32_t nItems;                        // 3068 - Number of used HTree items
  
     //-------------------------------------------
     THTreeItem *items306C[0x102];           // 306C - THTreeItem pointer array
@@ -131,7 +131,7 @@ private:
     
     intptr_t addr_multiplier;               // 1 or -1, determined by the address of the parent tree
  
-    static unsigned char Table1502A630[];   // Some table
+    static uint8_t Table1502A630[];         // Some table
 };
  
 #endif // __HUFFMAN_H__
