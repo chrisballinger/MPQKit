@@ -17,66 +17,72 @@
 
 #include <assert.h>
 #include <string.h>
-#include <stdio.h>
-
-#if defined(__APPLE__)
 #include <CoreFoundation/CFByteOrder.h>
-#endif
 
-#include "huffman.h"
+#include "huff.h"
+
+#define PTR_NOT(ptr)                (THTreeItem *)(~(uintptr_t)(ptr))
+#define PTR_PTR(ptr)                ((THTreeItem *)(ptr))
+#define PTR_INT(ptr)                (intptr_t)(ptr)
+#define PTR_VALID(ptr)              (((intptr_t)(ptr) * addr_multiplier) > 0)
+#define PTR_INVALID(ptr)            (((intptr_t)(ptr) * addr_multiplier) < 0)
+#define PTR_INVALID_OR_NULL(ptr)    (((intptr_t)(ptr) * addr_multiplier) < 0)
+
+#define INSERT_ITEM 1                   
+#define SWITCH_ITEMS 2 // Switch the item1 and item2
 
 //-----------------------------------------------------------------------------
 // Methods of the THTreeItem struct
- 
+
 // 1501DB70
 THTreeItem * THTreeItem::Call1501DB70(THTreeItem * pLast)
 {
-    if(pLast == NULL)
+    if(pLast == 0)
         pLast = this + 1;
     return pLast;
 }
- 
-// Gets previous Huffman tree item (?)
-THTreeItem * THTreeItem::GetPrevItem(long value)
-{
-    if(PTR_INT(prev) < 0)
-        return PTR_NOT(prev);
 
-    if(value < 0)
-        value = this - next->prev;
+// Gets previous Huffman tree item (?)
+THTreeItem * THTreeItem::GetPrevItem(intptr_t value)
+{
+    if(PTR_INVALID(prev))
+        return PTR_NOT(prev);
+    
+    if(value == -1 || PTR_INVALID(value))
+        value = (intptr_t)(this - next->prev);
     return prev + value;
 }
- 
+
 // 1500F5E0
 void THTreeItem::ClearItemLinks()
 {
-    next = prev = NULL;
+    next = prev = 0;
 }
- 
+
 // 1500BC90
 void THTreeItem::RemoveItem()
 {
     THTreeItem * pTemp;                // EDX
  
-    if(next != NULL)
+    if(next != 0)
     {
         pTemp = prev;
-        
-        if(PTR_INT(pTemp) <= 0)
+       
+        if(PTR_INVALID_OR_NULL(pTemp))
             pTemp = PTR_NOT(pTemp);
         else
             pTemp += (this - next->prev);
  
         pTemp->next = next;
         next->prev  = prev;
-        next = prev = NULL;
+        next = prev = 0;
     }
 }
- 
+
 //-----------------------------------------------------------------------------
 // TOutputStream functions
  
-void TOutputStream::PutBits(unsigned long dwBuff, unsigned int nPutBits)
+void TOutputStream::PutBits(uint32_t dwBuff, uint32_t nPutBits)
 {
     dwBitBuff |= (dwBuff << nBits);
     nBits     += nPutBits;
@@ -224,13 +230,14 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, unsigned long w
 {
     THTreeItem * next = item->next;     // EDI - next to the first item
     THTreeItem * prev = item->prev;     // ESI - prev to the first item
-    long next2;                         // Pointer to the next item
     THTreeItem * prev2;                 // Pointer to previous item
+    intptr_t next2;                     // Pointer to the next item
+    intptr_t addr_multiplier = item->addr_multiplier;
    
     // The same code like in RemoveItem(item);
     if(next != 0)                       // If the first item already has next one
     {
-        if(PTR_INT(prev) < 0)
+        if(PTR_INVALID(prev))
             prev = PTR_NOT(prev);
         else
             prev += (item - next->prev);
@@ -245,7 +252,7 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, unsigned long w
         item->prev = 0;
     }
  
-    if(item2 == NULL)                   // EDX - If the second item is not entered,
+    if(item2 == 0)                   // EDX - If the second item is not entered,
         item2 = PTR_PTR(&itemPtr[1]);   // take the first tree item
  
     switch(where)
@@ -261,10 +268,10 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, unsigned long w
             item->next = item2;         // Set next item (or pointer to pointer to first item)
             item->prev = item2->prev;   // Set prev item (or last item in the tree)
  
-            next2 = PTR_INT(itemPtr[0]);// Usually NULL
+            next2 = PTR_INT(itemPtr[0]);// Usually 0
             prev2 = item2->prev;        // Prev item to the second (or last tree item)
-            
-            if(PTR_INT(prev2) < 0)
+           
+            if(PTR_INVALID(prev2))
             {
                 prev2 = PTR_NOT(prev);
  
@@ -272,12 +279,12 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, unsigned long w
                 item2->prev = item;     // Next after last item
                 return;
             }
-
-            if(next2 < 0)
-                next2 = item2 - item2->next->prev;
-//              next2 = (THTreeItem *)(uint32_t)((unsigned char *)item2 - (unsigned char *)(item2->next->prev));
  
-//          prev2 = (THTreeItem *)((char *)prev2 + (uint32_t)next2);// ???
+            if(PTR_INVALID(next2))
+                next2 = (long)(item2 - item2->next->prev);
+//              next2 = (THTreeItem *)(unsigned long)((unsigned char *)item2 - (unsigned char *)(item2->next->prev));
+ 
+//          prev2 = (THTreeItem *)((char *)prev2 + (unsigned long)next2);// ???
             prev2 += next2;
             prev2->next = item;
             item2->prev = item;         // Set the next/last item
@@ -290,21 +297,40 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, unsigned long w
  
 //-----------------------------------------------------------------------------
 // THuffmannTree class functions
+ 
+THuffmannTree* THuffmannTree::AllocateTree() {
+    THuffmannTree* instance = new THuffmannTree();
+    if ((intptr_t)instance > 0 && (intptr_t)(instance + 1) < 0) {
+        THuffmannTree* instance2 = new THuffmannTree();
+        assert(!((intptr_t)instance2 > 0 && (intptr_t)(instance2 + 1) < 0));
+        delete instance;
+        instance = instance2;
+    }
+    return instance;
+}
 
+THuffmannTree::THuffmannTree()
+{
+    addr_multiplier = ((intptr_t)this < 0) ? -1 : 1;
+}
+ 
 void THuffmannTree::InitTree(bool bCompression)
 {
     THTreeItem * pItem;
-    unsigned long nCount;
-
+    unsigned int nCount;
+ 
     // Clear links for all the items in the tree
     for(pItem = items0008, nCount = 0x203; nCount != 0; pItem++, nCount--)
+    {
         pItem->ClearItemLinks();
+        pItem->addr_multiplier = addr_multiplier;
+    }
  
-    pItem3050 = NULL;
+    pItem3050 = 0;
     pItem3054 = PTR_PTR(&pItem3054);
     pItem3058 = PTR_NOT(pItem3054);
    
-    pItem305C = NULL;
+    pItem305C = 0;
     pFirst    = PTR_PTR(&pFirst);
     pLast     = PTR_NOT(pFirst);
  
@@ -314,7 +340,7 @@ void THuffmannTree::InitTree(bool bCompression)
     // Clear all TQDecompress items. Do this only if preparing for decompression
     if(bCompression == false)
     {
-        for(nCount = 0; nCount < (sizeof(qd3474) / sizeof(TQDecompress)); nCount++)
+        for(nCount = 0; nCount < sizeof(qd3474) / sizeof(TQDecompress); nCount++)
             qd3474[nCount].offs00 = 0;
     }
 }
@@ -327,13 +353,13 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
     unsigned char * byteArray;          // [ESP+1C] - Pointer to unsigned char in Table1502A630
     THTreeItem    * child1;
     unsigned long   i;                  // egcs in linux doesn't like multiple for loops without an explicit i
-
-    // Loop while pointer has a negative value
-    while(PTR_INT(pLast) > 0)           // ESI - Last entry
+ 
+    // Loop while pointer has a valid value
+    while(PTR_VALID(pLast))             // ESI - Last entry
     {
         THTreeItem * temp;              // EAX
  
-        if(pLast->next != NULL)         // ESI->next
+        if(pLast->next != 0)         // ESI->next
             pLast->RemoveItem();
                                         // EDI = &offs3054
         pItem3058   = PTR_PTR(&pItem3054);// [EDI+4]
@@ -366,14 +392,14 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
             continue;
  
         // If not valid pointer, take the first available item in the array
-        if(PTR_INT(item) <= 0)    
+        if(PTR_INVALID_OR_NULL(item))
             item = &items0008[nItems++];
-
-        // Insert this item as the top of the tree
-        InsertItem(&pItem305C, item, SWITCH_ITEMS, NULL);
  
-        item->parent    = NULL;                 // Invalidate child and parent
-        item->child     = NULL;
+        // Insert this item as the top of the tree
+        InsertItem(&pItem305C, item, SWITCH_ITEMS, 0);
+ 
+        item->parent    = 0;                 // Invalidate child and parent
+        item->child     = 0;
         *itemPtr        = item;                 // Store pointer into pointer array
  
         item->dcmpByte  = i;                    // Store counter
@@ -385,10 +411,10 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
         }
  
         // Find the first item which has byte value greater than current one byte
-        if(PTR_INT((pItem3 = pLast)) > 0)        // EDI - Pointer to the last item
+        if(PTR_VALID(pItem3 = pLast))           // EDI - Pointer to the last item
         {
             // 15006AF7
-            if(pItem3 != NULL)
+            if(pItem3 != 0)
             {
                 do  // 15006AFB
                 {
@@ -396,18 +422,18 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
                         goto _15006B09;
                     pItem3 = pItem3->prev;
                 }
-                while(PTR_INT(pItem3) > 0);
+                while(PTR_VALID(pItem3));
             }
         }
-        pItem3 = NULL;
-
+        pItem3 = 0;
+ 
         // 15006B09
         _15006B09:
-        if(item->next != NULL)
+        if(item->next != 0)
             item->RemoveItem();
  
         // 15006B15
-        if(pItem3 == NULL)
+        if(pItem3 == 0)
             pItem3 = PTR_PTR(&pFirst);
  
         // 15006B1F
@@ -420,48 +446,48 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
     // 15006B4A
     for(; i < 0x102; i++)
     {
-        THTreeItem ** itemPtr2 = &items306C[i];  // EDI
+        THTreeItem ** itemPtr = &items306C[i];  // EDI
  
         // 15006B59
         THTreeItem * item = pItem3058;          // ESI
-        if(PTR_INT(item) <= 0)
+        if(PTR_INVALID_OR_NULL(item))
             item = &items0008[nItems++];
-
-        InsertItem(&pItem305C, item, INSERT_ITEM, NULL);
+ 
+        InsertItem(&pItem305C, item, INSERT_ITEM, 0);
  
         // 15006B89
         item->dcmpByte   = i;
         item->byteValue  = 1;
-        item->parent     = NULL;
-        item->child      = NULL;
-        *itemPtr2++ = item;
+        item->parent     = 0;
+        item->child      = 0;
+        *itemPtr++ = item;
     }
  
     // 15006BAA
-    if(PTR_INT((child1 = pLast)) > 0)               // EDI - last item (first child to item
+    if(PTR_VALID(child1 = pLast))                   // EDI - last item (first child to item
     {
         THTreeItem * child2;                        // EBP
         THTreeItem * item;                          // ESI
  
         // 15006BB8
-        while(PTR_INT((child2 = child1->prev)) > 0)
+        while(PTR_VALID(child2 = child1->prev))
         {
-            if(PTR_INT((item = pItem3058)) <= 0)
+            if(PTR_INVALID_OR_NULL(item = pItem3058))
                 item = &items0008[nItems++];
  
             // 15006BE3
-            InsertItem(&pItem305C, item, SWITCH_ITEMS, NULL);
+            InsertItem(&pItem305C, item, SWITCH_ITEMS, 0);
  
             // 15006BF3
-            item->parent = NULL;
-            item->child  = NULL;
+            item->parent = 0;
+            item->child  = 0;
  
             //EDX = child2->byteValue + child1->byteValue;
             //EAX = child1->byteValue;
             //ECX = maxByte;                        // The greatest character (0xFF usually)
  
             item->byteValue = child1->byteValue + child2->byteValue; // 0x02
-            item->child     = child1;                                // Prev item in the 
+            item->child     = child1;                                // Prev item in the
             child1->parent  = item;
             child2->parent  = item;
  
@@ -473,13 +499,13 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
                 THTreeItem * pItem2 = child2->prev;   // EDI
  
                 // 15006C2D
-                while(PTR_INT(pItem2) > 0)
+                while(PTR_VALID(pItem2))
                 {
                     if(pItem2->byteValue >= item->byteValue)
                         goto _15006C3B;
                     pItem2 = pItem2->prev;
                 }
-                pItem2 = NULL;
+                pItem2 = 0;
  
                 _15006C3B:
                 if(item->next != 0)
@@ -488,12 +514,12 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
                                                                    
                     temp4->next      = item->next;                 // The first item changed
                     item->next->prev = item->prev;                 // First->prev changed to negative value
-                    item->next = NULL;
-                    item->prev = NULL;
+                    item->next = 0;
+                    item->prev = 0;
                 }
  
                 // 15006C62
-                if(pItem2 == NULL)
+                if(pItem2 == 0)
                     pItem2 = PTR_PTR(&pFirst);
  
                 item->next = pItem2->next;                           // Set item with 0x100 byte value
@@ -503,7 +529,7 @@ void THuffmannTree::BuildTree(unsigned int nCmpType)
             }
 
             // 15006C7B
-            if(PTR_INT((child1 = child2->prev)) <= 0)
+            if(PTR_INVALID_OR_NULL(child1 = child2->prev))
                 break;
         }
     }
@@ -518,10 +544,10 @@ THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
     THTreeItem * pNext;
     THTreeItem * pPrev;
     THTreeItem ** ppItem;
-
-    if(PTR_INT(pItem1) <= 0 || (pItem2 = pItem1) == NULL)
+ 
+    if(PTR_INVALID_OR_NULL(pItem1) || (pItem2 = pItem1) == 0)
     {
-        if((pItem2 = &items0008[nItems++]) != NULL)
+        if((pItem2 = &items0008[nItems++]) != 0)
             pItem1 = pItem2;
         else
             pItem1 = pFirst;
@@ -530,18 +556,18 @@ THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
         pItem1 = pItem2;
  
     pNext = pItem1->next;
-    if(pNext != NULL)
+    if(pNext != 0)
     {
         pPrev = pItem1->prev;
-        if(PTR_INT(pPrev) <= 0)
+        if(PTR_INVALID_OR_NULL(pPrev))
             pPrev = PTR_NOT(pPrev);
         else
             pPrev += (pItem1 - pItem1->next->prev);
  
         pPrev->next = pNext;
         pNext->prev = pPrev;
-        pItem1->next = NULL;
-        pItem1->prev = NULL;
+        pItem1->next = 0;
+        pItem1->prev = 0;
     }
  
     ppItem = &pFirst;       // esi
@@ -554,8 +580,8 @@ THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
         (*ppItem)->prev = pItem2;
         *ppItem = pItem1;
  
-        pItem2->parent = NULL;
-        pItem2->child  = NULL;
+        pItem2->parent = 0;
+        pItem2->child  = 0;
     }
     else
     {
@@ -563,26 +589,26 @@ THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
         pItem1->prev = ppItem[1];
         // edi = pItem305C;
         pPrev = ppItem[1];      // ecx
-        if(pPrev <= 0)
+        if(PTR_INVALID_OR_NULL(pPrev))
         {
             pPrev = PTR_NOT(pPrev);
             pPrev->next = pItem1;
             pPrev->prev = pItem2;
-
-            pItem2->parent = NULL;
-            pItem2->child  = NULL;
+ 
+            pItem2->parent = 0;
+            pItem2->child  = 0;
         }
         else
         {
-            if(PTR_INT(pItem305C) < 0)
+            if(PTR_INVALID(pItem305C))
                 pPrev += (THTreeItem *)ppItem - (*ppItem)->prev;
             else
                 pPrev += PTR_INT(pItem305C);
  
             pPrev->next    = pItem1;
             ppItem[1]      = pItem2;
-            pItem2->parent = NULL;
-            pItem2->child  = NULL;
+            pItem2->parent = 0;
+            pItem2->child  = 0;
         }
     }
     return pItem2;
@@ -591,20 +617,20 @@ THTreeItem * THuffmannTree::Call1500E740(unsigned int nValue)
 void THuffmannTree::Call1500E820(THTreeItem * pItem)
 {
     THTreeItem * pItem1;                // edi
-    THTreeItem * pItem2 = NULL;         // eax
+    THTreeItem * pItem2 = 0;         // eax
     THTreeItem * pItem3;                // edx
     THTreeItem * pPrev;                 // ebx
  
-    for(; pItem != NULL; pItem = pItem->parent)
+    for(; pItem != 0; pItem = pItem->parent)
     {
         pItem->byteValue++;
        
         for(pItem1 = pItem; ; pItem1 = pPrev)
         {
             pPrev = pItem1->prev;
-            if(PTR_INT(pPrev) <= 0)
+            if(PTR_INVALID_OR_NULL(pPrev))
             {
-                pPrev = NULL;
+                pPrev = 0;
                 break;
             }
  
@@ -615,13 +641,13 @@ void THuffmannTree::Call1500E820(THTreeItem * pItem)
         if(pItem1 == pItem)
             continue;
  
-        if(pItem1->next != NULL)
+        if(pItem1->next != 0)
         {
             pItem2 = pItem1->GetPrevItem(-1);
             pItem2->next = pItem1->next;
             pItem1->next->prev = pItem1->prev;
-            pItem1->next = NULL;
-            pItem1->prev = NULL;
+            pItem1->next = 0;
+            pItem1->prev = 0;
         }
  
         pItem2 = pItem->next;
@@ -629,16 +655,16 @@ void THuffmannTree::Call1500E820(THTreeItem * pItem)
         pItem1->prev = pItem2->prev;
         pItem2->prev = pItem1;
         pItem->next = pItem1;
-        if((pItem2 = pItem1) != NULL)
+        if((pItem2 = pItem1) != 0)
         {
             pItem2 = pItem->GetPrevItem(-1);
             pItem2->next = pItem->next;
             pItem->next->prev = pItem->prev;
-            pItem->next = NULL;
-            pItem->prev = NULL;
+            pItem->next = 0;
+            pItem->prev = 0;
         }
  
-        if(pPrev == NULL)
+        if(pPrev == 0)
             pPrev = PTR_PTR(&pFirst);
  
         pItem2       = pPrev->next;
@@ -696,14 +722,14 @@ unsigned int THuffmannTree::DoCompression(TOutputStream * os, unsigned char * pb
     {
         unsigned char bOneByte = *pbInBuffer++;
  
-        if((pItem1 = items306C[bOneByte]) == NULL)
+        if((pItem1 = items306C[bOneByte]) == 0)
         {
             pItem2    = items306C[0x101];  // ecx
             pItem3    = pItem2->parent;    // eax
             dwBitBuff = 0;
             nBits     = 0;
  
-            for(; pItem3 != NULL; pItem3 = pItem3->parent)
+            for(; pItem3 != 0; pItem3 = pItem3->parent)
             {
                 nBit      = (pItem3->child != pItem2) ? 1 : 0;
                 dwBitBuff = (dwBitBuff << 1) | nBit;
@@ -727,30 +753,30 @@ unsigned int THuffmannTree::DoCompression(TOutputStream * os, unsigned char * pb
                 os->dwBitBuff >>= 8;
                 os->nBits -= 8;
             }
-
-            pItem1 = (PTR_INT(pLast) <= 0) ? NULL : pLast;
+ 
+            pItem1 = (PTR_INVALID_OR_NULL(pLast)) ? 0 : pLast;
             pItem2 = Call1500E740(1);
             pItem2->dcmpByte  = pItem1->dcmpByte;
             pItem2->byteValue = pItem1->byteValue;
             pItem2->parent    = pItem1;
             items306C[pItem2->dcmpByte] = pItem2;
-
+ 
             pItem2 = Call1500E740(1);
             pItem2->dcmpByte  = bOneByte;
             pItem2->byteValue = 0;
             pItem2->parent    = pItem1;
             items306C[pItem2->dcmpByte] = pItem2;
             pItem1->child = pItem2;
-
+ 
             Call1500E820(pItem2);
-
+ 
             if(bIsCmp0 != 0)
             {
                 Call1500E820(items306C[bOneByte]);
                 continue;
             }
  
-            for(pItem1 = items306C[bOneByte]; pItem1 != NULL; pItem1 = pItem1->parent)
+            for(pItem1 = items306C[bOneByte]; pItem1 != 0; pItem1 = pItem1->parent)
             {
                 pItem1->byteValue++;
                 pItem2 = pItem1;
@@ -758,9 +784,9 @@ unsigned int THuffmannTree::DoCompression(TOutputStream * os, unsigned char * pb
                 for(;;)
                 {
                     pItem3 = pItem2->prev;
-                    if(PTR_INT(pItem3) <= 0)
+                    if(PTR_INVALID_OR_NULL(pItem3))
                     {
-                        pItem3 = NULL;
+                        pItem3 = 0;
                         break;
                     }
                     if(pItem3->byteValue >= pItem1->byteValue)
@@ -792,7 +818,7 @@ unsigned int THuffmannTree::DoCompression(TOutputStream * os, unsigned char * pb
         {
             dwBitBuff = 0;
             nBits = 0;
-            for(pItem2 = pItem1->parent; pItem2 != NULL; pItem2 = pItem2->parent)
+            for(pItem2 = pItem1->parent; pItem2 != 0; pItem2 = pItem2->parent)
             {
                 nBit      = (pItem2->child != pItem1) ? 1 : 0;
                 dwBitBuff = (dwBitBuff << 1) | nBit;
@@ -812,7 +838,7 @@ unsigned int THuffmannTree::DoCompression(TOutputStream * os, unsigned char * pb
     pItem1 = items306C[0x100];
     dwBitBuff = 0;
     nBits = 0;
-    for(pItem2 = pItem1->parent; pItem2 != NULL; pItem2 = pItem2->parent)
+    for(pItem2 = pItem1->parent; pItem2 != 0; pItem2 = pItem2->parent)
     {
         nBit      = (pItem2->child != pItem1) ? 1 : 0;
         dwBitBuff = (dwBitBuff << 1) | nBit;
@@ -836,7 +862,7 @@ unsigned int THuffmannTree::DoCompression(TOutputStream * os, unsigned char * pb
         os->nBits -= ((os->nBits > 8) ? 8 : os->nBits);
     }
  
-    return (os->pbOutPos - os->pbOutBuffer);
+    return (unsigned int)(os->pbOutPos - os->pbOutBuffer);
 }
  
 // Decompression using Huffman tree (1500E450)
@@ -852,10 +878,10 @@ unsigned int THuffmannTree::DoDecompression(unsigned char * pbOutBuffer, unsigne
     unsigned int n7Bits;                // 7 bits loaded from input stream
     bool bHasQdEntry;
    
-    // Test the output length. Must not be NULL.
+    // Test the output length. Must not be 0.
     if(dwOutLength == 0)
         return 0;
-    
+ 
     // Get the compression type from the input stream
     n8Bits = is->Get8Bits();
  
@@ -889,11 +915,11 @@ unsigned int THuffmannTree::DoDecompression(unsigned char * pbOutBuffer, unsigne
         else
         {
             pItem1 = pFirst->next->prev;
-            if(PTR_INT(pItem1) <= 0)
-                pItem1 = NULL;
-_1500E549:
+            if(PTR_INVALID_OR_NULL(pItem1))
+                pItem1 = 0;
+_1500E549:           
             nBitCount = 0;
-            pItem2 = NULL;
+            pItem2 = 0;
  
             do
             {
@@ -904,7 +930,7 @@ _1500E549:
                 if(++nBitCount == 7)        // If we are at 7th bit, save current HTree item.
                     pItem2 = pItem1;
             }
-            while(pItem1->child != NULL);   // Walk until tree has no deeper level
+            while(pItem1->child != 0);   // Walk until tree has no deeper level
  
             if(bHasQdEntry == false)
             {
@@ -933,14 +959,14 @@ _1500E549:
         if(nDcmpByte == 0x101)          // Huffman tree needs to be modified
         {
             n8Bits = is->Get8Bits();
-            pItem1 = (pLast <= 0) ? NULL : pLast;
-
+            pItem1 = (PTR_INVALID_OR_NULL(pLast)) ? 0 : pLast;
+ 
             pItem2 = Call1500E740(1);
             pItem2->parent    = pItem1;
             pItem2->dcmpByte  = pItem1->dcmpByte;
             pItem2->byteValue = pItem1->byteValue;
             items306C[pItem2->dcmpByte] = pItem2;
-
+ 
             pItem2 = Call1500E740(1);
             pItem2->parent    = pItem1;
             pItem2->dcmpByte  = n8Bits;
@@ -966,7 +992,7 @@ _1500E549:
             Call1500E820(items306C[nDcmpByte]);
     }
  
-    return (pbOutPos - pbOutBuffer);
+    return (unsigned int)(pbOutPos - pbOutBuffer);
 }
  
 // Table for (de)compression. Every compression type has 258 entries
