@@ -62,7 +62,7 @@
 		31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31A8A4FB0BC14502001F583D /* mpqfsd */; };
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
-		31B954150C1278C100CFD540 /* compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 31B9540D0C1274E600CFD540 /* compression.m */; };
+		31B954150C1278C100CFD540 /* compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31B9540D0C1274E600CFD540 /* compression.mm */; };
 		31C2FF610B8FDA9C000C1DB5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */; };
 		31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */; };
@@ -109,7 +109,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3123119E0549EE5D00833907 /* MPQKit */;
+			remoteGlobalIDString = 3123119E0549EE5D00833907;
 			remoteInfo = MPQKit;
 		};
 /* End PBXContainerItemProxy section */
@@ -178,7 +178,7 @@
 		31B953F10C125E5000CFD540 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		31B953F20C125E5000CFD540 /* Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Test-Info.plist"; sourceTree = "<group>"; };
 		31B9540C0C1274E600CFD540 /* compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compression.h; path = tests/compression.h; sourceTree = "<group>"; };
-		31B9540D0C1274E600CFD540 /* compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = compression.m; path = tests/compression.m; sourceTree = "<group>"; };
+		31B9540D0C1274E600CFD540 /* compression.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = compression.mm; path = tests/compression.mm; sourceTree = "<group>"; };
 		31BAC6BA03D63FDA00A80102 /* MPQArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchive.m; sourceTree = "<group>"; };
 		31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQDataSource.h; sourceTree = "<group>"; };
@@ -381,7 +381,7 @@
 			isa = PBXGroup;
 			children = (
 				31B9540C0C1274E600CFD540 /* compression.h */,
-				31B9540D0C1274E600CFD540 /* compression.m */,
+				31B9540D0C1274E600CFD540 /* compression.mm */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -742,7 +742,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31B954150C1278C100CFD540 /* compression.m in Sources */,
+				31B954150C1278C100CFD540 /* compression.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

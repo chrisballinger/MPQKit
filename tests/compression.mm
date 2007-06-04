@@ -7,7 +7,10 @@
 //
 
 #import <unistd.h>
+
 #import <MPQKit/pklib.h>
+#import <MPQKit/huffman.h>
+
 #import "compression.h"
 
 typedef struct {
@@ -67,17 +70,41 @@ static void pkware_write(char *buf, unsigned int *size, void *param) {
 }
 
 - (void)testPKWAREInternal {
-    TDataInfo ct = {random_buffer, 0, 0x1000, compression_buffer, 0, 0x2000};
+    TDataInfo ct = {(char *)random_buffer, 0, 0x1000, (char *)compression_buffer, 0, 0x2000};
     char cbuf[CMP_BUFFER_SIZE];
     unsigned int ctype = CMP_BINARY;
     unsigned int dict_size = 0x1000;
     pk_implode(pkware_read, pkware_write, cbuf, &ct, &ctype, &dict_size);
     
-    TDataInfo dt = {compression_buffer, 0, ct.nOutPos, decompression_buffer, 0, 0x2000};
+    TDataInfo dt = {(char *)compression_buffer, 0, ct.nOutPos, (char *)decompression_buffer, 0, 0x2000};
     char dbuf[EXP_BUFFER_SIZE];
     pk_explode(pkware_read, pkware_write, dbuf, &dt);
     
     STAssertEquals(dt.nOutPos, ct.nInBytes, @"decompressed buffer size does not match input buffer size");
+    STAssertFalse(memcmp(decompression_buffer, random_buffer, 0x1000), @"decompressed buffer does not match input buffer");
+}
+
+- (void)testHuffmanInternal {
+    THuffmannTree *ht = new THuffmannTree;
+    TOutputStream os;
+    
+    os.pbOutBuffer = (unsigned char *)compression_buffer;
+    os.dwOutSize   = 0x2000;
+    os.pbOutPos    = (unsigned char *)compression_buffer;
+    os.dwBitBuff   = 0;
+    os.nBits       = 0;
+
+    ht->InitTree(true);
+    unsigned int compressed_size = ht->DoCompression(&os, (unsigned char *)random_buffer, 0x1000, 0);
+    delete ht;
+    
+    ht = new THuffmannTree;
+    TInputStream is((uint8_t*)compression_buffer, compressed_size);
+    ht->InitTree(false);
+    unsigned int decompressed_size = ht->DoDecompression((unsigned char *)decompression_buffer, 0x2000, &is);
+    delete ht;
+    
+    STAssertEquals(decompressed_size, (unsigned int)0x1000, @"decompressed buffer size does not match input buffer size");
     STAssertFalse(memcmp(decompression_buffer, random_buffer, 0x1000), @"decompressed buffer does not match input buffer");
 }
 
