@@ -17,14 +17,10 @@
 #include <zlib.h>
 #include <bzlib.h>
 
-#if defined(__APPLE__)
-    #include <CoreFoundation/CFByteOrder.h>
-#endif
-
 #include "SCompression.h"
 
 #include "pklib/pklib.h" 
-#include "huffman/huffman.h"  
+#include "huffman/huff.h"  
 #include "wave/wave.h"
 
 #ifndef max
@@ -328,10 +324,9 @@ int Decompress_bz2(uint8_t* pbOutBuffer, int32_t* pdwOutLength, uint8_t* pbInBuf
 /*****************************************************************************/
 
 // 1500F4C0
-int Compress_huff(char * pbOutBuffer, int * pdwOutLength, char * pbInBuffer, int dwInLength, int * pCmpType, int /* nCmpLevel */)
-{
-    THuffmannTree *ht = new THuffmannTree;  // Huffmann tree for compression
-    TOutputStream os;                   	// Output stream
+int Compress_huff(char * pbOutBuffer, int * pdwOutLength, char * pbInBuffer, int dwInLength, int * pCmpType, int /* nCmpLevel */) {
+    THuffmannTree *ht = THuffmannTree::AllocateTree();
+    TOutputStream os;
 
     // Initialize output stream
     os.pbOutBuffer = (unsigned char *)pbOutBuffer;
@@ -345,33 +340,21 @@ int Compress_huff(char * pbOutBuffer, int * pdwOutLength, char * pbInBuffer, int
 
     *pdwOutLength = ht->DoCompression(&os, (unsigned char *)pbInBuffer, dwInLength, *pCmpType);
 
-    // The following code is not necessary to run, because it has no
-    // effect on the output data. It only clears the huffmann tree, but when
-    // the tree is on the stack, who cares ?
-//  ht.UninitTree();
-
     delete ht;
-
     return 0;
 }
 
 // 1500F5F0
 int Decompress_huff(uint8_t* pbOutBuffer, int32_t* pdwOutLength, uint8_t* pbInBuffer, int32_t dwInLength) {
-    THuffmannTree *ht = new THuffmannTree;
-    TInputStream  is(pbInBuffer, dwInLength);
+    THuffmannTree *ht = THuffmannTree::AllocateTree();
+    TInputStream is(pbInBuffer, dwInLength);
 
     // Initialize the Huffmann tree for decompression
     ht->InitTree(false);
 
     *pdwOutLength = ht->DoDecompression((unsigned char *)pbOutBuffer, *pdwOutLength, &is);
-
-    // The following code is not necessary to run, because it has no
-    // effect on the output data. It only clears the huffmann tree, but when
-    // the tree is on the stack, who cares ?
-//    ht->UninitTree();
     
     delete ht;
-    
     return 0;
 }
 

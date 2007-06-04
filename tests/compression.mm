@@ -9,7 +9,7 @@
 #import <unistd.h>
 
 #import <MPQKit/pklib.h>
-#import <MPQKit/huffman.h>
+#import <MPQKit/huff.h>
 
 #import "compression.h"
 
@@ -85,7 +85,7 @@ static void pkware_write(char *buf, unsigned int *size, void *param) {
 }
 
 - (void)testHuffmanInternal {
-    THuffmannTree *ht = new THuffmannTree;
+    THuffmannTree *ht = THuffmannTree::AllocateTree();
     TOutputStream os;
     
     os.pbOutBuffer = (unsigned char *)compression_buffer;
@@ -98,7 +98,7 @@ static void pkware_write(char *buf, unsigned int *size, void *param) {
     unsigned int compressed_size = ht->DoCompression(&os, (unsigned char *)random_buffer, 0x1000, 0);
     delete ht;
     
-    ht = new THuffmannTree;
+    ht = THuffmannTree::AllocateTree();
     TInputStream is((uint8_t*)compression_buffer, compressed_size);
     ht->InitTree(false);
     unsigned int decompressed_size = ht->DoDecompression((unsigned char *)decompression_buffer, 0x2000, &is);

@@ -18,8 +18,6 @@
 		312311C80549F0D300833907 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3133BFC404C8EB0800A80102 /* NSStringAdditions.m */; };
 		312311CC0549F0F100833907 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD34E04A1592C00A80102 /* crc32.c */; };
 		312311CE0549F0F100833907 /* explode.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD35004A1592C00A80102 /* explode.c */; };
-		312311CF0549F0F100833907 /* huffman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD35304A1592C00A80102 /* huffman.cpp */; };
-		312311D00549F0F100833907 /* huffman.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD35204A1592C00A80102 /* huffman.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311D10549F0F100833907 /* implode.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD35104A1592C00A80102 /* implode.c */; };
 		312311D20549F0F100833907 /* pklib.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34F04A1592C00A80102 /* pklib.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311D30549F0F100833907 /* SCompression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD3C704A1606D00A80102 /* SCompression.cpp */; };
@@ -48,6 +46,8 @@
 		316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */; };
 		3173395A05B74E47003755C5 /* NSDateNTFSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3173395B05B74E47003755C5 /* NSDateNTFSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */; };
+		31767CCC0C13A4FA0015A006 /* huff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31767CCA0C13A4FA0015A006 /* huff.cpp */; };
+		31767CCD0C13A4FA0015A006 /* huff.h in Headers */ = {isa = PBXBuildFile; fileRef = 31767CCB0C13A4FA0015A006 /* huff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		319811340BC2EF85009C3E08 /* listfiles in Resources */ = {isa = PBXBuildFile; fileRef = 319811260BC2EF85009C3E08 /* listfiles */; };
 		319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
 		319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
@@ -163,6 +163,8 @@
 		316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArrayListfileAdditions.m; sourceTree = "<group>"; };
 		3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateNTFSAdditions.h; sourceTree = "<group>"; };
 		3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDateNTFSAdditions.m; sourceTree = "<group>"; };
+		31767CCA0C13A4FA0015A006 /* huff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = huff.cpp; path = stormlib2/huffman/huff.cpp; sourceTree = "<group>"; };
+		31767CCB0C13A4FA0015A006 /* huff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huff.h; path = stormlib2/huffman/huff.h; sourceTree = "<group>"; };
 		3191CA7D0BB859180004E8AA /* libfuse.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse.dylib; path = /usr/local/lib/libfuse.dylib; sourceTree = "<absolute>"; };
 		319811260BC2EF85009C3E08 /* listfiles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = listfiles; path = mpqfs/listfiles; sourceTree = "<group>"; };
 		319980080B4D8AFF00D4FE4E /* verifyarchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = verifyarchive.m; sourceTree = "<group>"; };
@@ -189,8 +191,6 @@
 		31CFD34F04A1592C00A80102 /* pklib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pklib.h; path = stormlib2/pklib/pklib.h; sourceTree = "<group>"; };
 		31CFD35004A1592C00A80102 /* explode.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = explode.c; path = stormlib2/pklib/explode.c; sourceTree = "<group>"; };
 		31CFD35104A1592C00A80102 /* implode.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = implode.c; path = stormlib2/pklib/implode.c; sourceTree = "<group>"; };
-		31CFD35204A1592C00A80102 /* huffman.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = huffman.h; path = stormlib2/huffman/huffman.h; sourceTree = "<group>"; };
-		31CFD35304A1592C00A80102 /* huffman.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = huffman.cpp; path = stormlib2/huffman/huffman.cpp; sourceTree = "<group>"; };
 		31CFD3C704A1606D00A80102 /* SCompression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SCompression.cpp; path = stormlib2/SCompression.cpp; sourceTree = "<group>"; };
 		31DD6C990AEAF41B002CDD2C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		31E15FAB0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataCryptoAdditions.h; sourceTree = "<group>"; };
@@ -360,8 +360,8 @@
 		31445E3904A35B3A00A80102 /* huffman */ = {
 			isa = PBXGroup;
 			children = (
-				31CFD35204A1592C00A80102 /* huffman.h */,
-				31CFD35304A1592C00A80102 /* huffman.cpp */,
+				31767CCA0C13A4FA0015A006 /* huff.cpp */,
+				31767CCB0C13A4FA0015A006 /* huff.h */,
 			);
 			name = huffman;
 			sourceTree = "<group>";
@@ -449,7 +449,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				312311C70549F0D300833907 /* NSStringAdditions.h in Headers */,
-				312311D00549F0F100833907 /* huffman.h in Headers */,
 				312311D20549F0F100833907 /* pklib.h in Headers */,
 				312311D40549F0F100833907 /* SCompression.h in Headers */,
 				312311D60549F0F100833907 /* wave.h in Headers */,
@@ -464,6 +463,7 @@
 				312443EB0B474D98004DB138 /* MPQErrors.h in Headers */,
 				312444120B47532F004DB138 /* PHSErrorMacros.h in Headers */,
 				31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */,
+				31767CCD0C13A4FA0015A006 /* huff.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,7 +696,6 @@
 				312311C80549F0D300833907 /* NSStringAdditions.m in Sources */,
 				312311CC0549F0F100833907 /* crc32.c in Sources */,
 				312311CE0549F0F100833907 /* explode.c in Sources */,
-				312311CF0549F0F100833907 /* huffman.cpp in Sources */,
 				312311D10549F0F100833907 /* implode.c in Sources */,
 				312311D30549F0F100833907 /* SCompression.cpp in Sources */,
 				312311D50549F0F100833907 /* wave.c in Sources */,
@@ -708,6 +707,7 @@
 				316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */,
 				312444220B475387004DB138 /* MPQErrors.m in Sources */,
 				31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */,
+				31767CCC0C13A4FA0015A006 /* huff.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
