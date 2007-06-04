@@ -85,7 +85,7 @@ static void pkware_write(char *buf, unsigned int *size, void *param) {
 }
 
 - (void)testHuffmanInternal {
-    THuffmannTree *ht = THuffmannTree::AllocateTree();
+    THuffmanTree *ht = THuffmanTree::AllocateTree();
     TOutputStream os;
     
     os.pbOutBuffer = (uint8_t *)compression_buffer;
@@ -98,7 +98,7 @@ static void pkware_write(char *buf, unsigned int *size, void *param) {
     uint32_t compressed_size = ht->DoCompression(&os, (uint8_t *)random_buffer, 0x1000, 0);
     delete ht;
     
-    ht = THuffmannTree::AllocateTree();
+    ht = THuffmanTree::AllocateTree();
     TInputStream is((uint8_t*)compression_buffer, compressed_size);
     ht->InitTree(false);
     uint32_t decompressed_size = ht->DoDecompression((uint8_t *)decompression_buffer, 0x2000, &is);
