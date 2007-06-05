@@ -11,6 +11,8 @@
 #ifndef __WAVE_H__
 #define __WAVE_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,8 +20,8 @@ extern "C" {
 //-----------------------------------------------------------------------------
 // Functions
 
-int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffer, int dwInLength, int nCmpType, int nChannels);
-int DecompressWave(unsigned char * pbOutBuffer, int dwOutLength, unsigned char * pbInBuffer, int dwInLength, int nChannels);
+int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffer, int dwInLength, int nChannels, int nCmpLevel);
+uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint8_t *inputBuffer, uint32_t inputBufferLength, uint8_t channels);
 
 #ifdef __cplusplus
 }

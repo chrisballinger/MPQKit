@@ -2636,7 +2636,7 @@ AbortDigest:
             if (context->compressor == MPQStereoADPCMCompression) {
                 // Make sure to use PKWARE on the first sector to not garble up AIFF / WAV / etc headers. Of course this is a naive workaround...
                 compression_error = SCompCompress(compression_buffer, 
-                                                  (int *)&compressed_size, 
+                                                  &compressed_size, 
                                                   read_buffer, 
                                                   current_sector_size, 
                                                   (current_sector == 0) ? MPQPKWARECompression : context->compressor, 
@@ -2644,14 +2644,14 @@ AbortDigest:
                                                   context->compression_quality);
             } else if ((flags & MPQFileDiabloCompressed)) {
                 // Diablo compression means to assume PKWARE compression, and therefore no compression type byte is prepended to the bitstream
-                compression_error = SCompCompress(compression_buffer, (int *)&compressed_size, read_buffer, current_sector_size, context->compressor, 0, 0);
+                compression_error = SCompCompress(compression_buffer, &compressed_size, read_buffer, current_sector_size, context->compressor, 0, 0);
                 if (compression_error && compressed_size < current_sector_size) {
                     buffer_pointer++;
                     compressed_size--;
                 }
             } else if ((flags & MPQFileCompressed)) {
                 compression_error = SCompCompress(compression_buffer, 
-                                                  (int *)&compressed_size, 
+                                                  &compressed_size, 
                                                   read_buffer, 
                                                   current_sector_size, 
                                                   context->compressor, 

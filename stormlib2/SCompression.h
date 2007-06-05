@@ -16,9 +16,9 @@
 extern "C" {
 #endif
 
-int32_t Decompress_pklib(uint8_t* pbOutBuffer, int32_t* pdwOutLength, uint8_t* pbInBuffer, int32_t dwInLength);
+int Decompress_pklib(void *outputBuffer, uint32_t *outputBufferLength, void *inputBuffer, uint32_t inputBufferLength);
 
-int32_t SCompDecompress(uint8_t* pbOutBuffer, int32_t* pdwOutLength, uint8_t* pbInBuffer, int32_t dwInLength);
+int SCompDecompress(uint8_t *outputBuffer, uint32_t *ouputBufferLength, uint8_t *inputBuffer, uint32_t inputBufferLength);
 int SCompCompress(char* pbCompressed, int* pdwOutLength, char* pbUncompressed, int dwInLength, int uCompressions, int nCmpType, int nCmpLevel);
 
 #ifdef __cplusplus
