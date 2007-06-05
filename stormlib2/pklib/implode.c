@@ -119,7 +119,7 @@ static void SortBuffer(TCmpStruct * pWork, unsigned char * uncmp_data, unsigned 
     unsigned int     add;
 
     // Fill 0x480 dwords (0x1200 bytes)
-    ndwords = (unsigned long)((pWork->out_buff - (char *)pWork->offs0DC8 + 1) >> 2);
+    ndwords = (unsigned long)((pWork->out_buff - (uint8_t *)pWork->offs0DC8 + 1) >> 2);
     if(ndwords <= 1)
         ndwords = 1;
     memset(pWork->offs0DC8, 0, ndwords << 2);
@@ -404,7 +404,7 @@ static void WriteCmpData(TCmpStruct * pWork)
 
         for(bytes_required = 0x1000; bytes_required != 0; )
         {
-            int loaded = pWork->read_buf((char *)pWork->work_buff + UNCMP_OFFSET + total_loaded,
+            int loaded = pWork->read_buf(pWork->work_buff + UNCMP_OFFSET + total_loaded,
                        &bytes_required, pWork->param);
 
             if(loaded == 0)
@@ -538,13 +538,13 @@ _004022FF:
 //-----------------------------------------------------------------------------
 // Main imploding function
 
-unsigned int pk_implode(
-    unsigned int (*read_buf)(char *buf, unsigned int *size, void *param),
-    void         (*write_buf)(char *buf, unsigned int *size, void *param),
-    char         *work_buf,
-    void         *param,
-    unsigned int *type,
-    unsigned int *dsize)
+uint32_t pk_implode(
+   uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
+   void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
+   uint8_t      *work_buf,
+   void         *param,
+   uint32_t     *type,
+   uint32_t     *dsize)
 {
     TCmpStruct * pWork = (TCmpStruct *)work_buf;
     unsigned int nChCode;

@@ -221,7 +221,7 @@ static int WasteBits(TDcmpStruct * pWork, unsigned long nBits)
     if(pWork->in_pos == pWork->in_bytes)
     {
         pWork->in_pos = sizeof(pWork->in_buff);
-        if((pWork->in_bytes = pWork->read_buf((char *)pWork->in_buff, &pWork->in_pos, pWork->param)) == 0)
+        if((pWork->in_bytes = pWork->read_buf(pWork->in_buff, &pWork->in_pos, pWork->param)) == 0)
             return 1;
         pWork->in_pos = 0;
     }
@@ -391,7 +391,7 @@ static unsigned long Expand(TDcmpStruct * pWork)
         {
             // Copy decompressed data into user buffer
             copyBytes = 0x1000;
-            pWork->write_buf((char *)&pWork->out_buff[0x1000], &copyBytes, pWork->param);
+            pWork->write_buf(&pWork->out_buff[0x1000], &copyBytes, pWork->param);
 
             // If there are some data left, keep them alive
             memcpy(pWork->out_buff, &pWork->out_buff[0x1000], pWork->outputPos - 0x1000);
@@ -400,7 +400,7 @@ static unsigned long Expand(TDcmpStruct * pWork)
     }
 
     copyBytes = pWork->outputPos - 0x1000;
-    pWork->write_buf((char *)&pWork->out_buff[0x1000], &copyBytes, pWork->param);
+    pWork->write_buf(&pWork->out_buff[0x1000], &copyBytes, pWork->param);
     return dwResult;
 }
 
@@ -408,11 +408,11 @@ static unsigned long Expand(TDcmpStruct * pWork)
 //-----------------------------------------------------------------------------
 // Main exploding function.
 
-unsigned int pk_explode(
-        unsigned int (*read_buf)(char *buf, unsigned  int *size, void *param),
-        void         (*write_buf)(char *buf, unsigned  int *size, void *param),
-        char         *work_buf,
-        void         *param)
+uint32_t pk_explode(
+   uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
+   void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
+   uint8_t      *work_buf,
+   void         *param)
 {
     TDcmpStruct * pWork = (TDcmpStruct *)work_buf;
 
@@ -424,7 +424,7 @@ unsigned int pk_explode(
     pWork->write_buf  = write_buf;
     pWork->param      = param;
     pWork->in_pos     = sizeof(pWork->in_buff);
-    pWork->in_bytes   = pWork->read_buf((char *)pWork->in_buff, &pWork->in_pos, pWork->param);
+    pWork->in_bytes   = pWork->read_buf(pWork->in_buff, &pWork->in_pos, pWork->param);
     if(pWork->in_bytes <= 4)
         return CMP_BAD_DATA;
 

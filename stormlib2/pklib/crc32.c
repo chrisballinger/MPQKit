@@ -12,7 +12,7 @@
 
 #include "pklib.h"
 
-static unsigned long crc_table[] =
+static uint32_t crc_table[] =
 {
     0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
     0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988, 0x09B64C2B, 0x7EB17CBD, 0xE7B82D07, 0x90BF1D91,
@@ -48,18 +48,12 @@ static unsigned long crc_table[] =
     0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
-unsigned long pk_crc32(char * buffer, unsigned int * psize, unsigned long * old_crc)
-{
-    unsigned int  size = *psize;
-    unsigned long ch;
-    unsigned long crc_value = *old_crc;
-
-    while(size-- != 0)
-    {
-        ch = *buffer++ ^ (char)crc_value;
-        crc_value >>= 8;
-
-        crc_value = crc_table[ch & 0x0FF] ^ crc_value;
+uint32_t pk_crc32(uint8_t *buffer, uint32_t size, uint32_t crc) {
+    uint32_t ch;
+    while (size-- != 0) {
+        ch = *buffer++ ^ (uint8_t)crc;
+        crc >>= 8;
+        crc = crc_table[ch & 0x0FF] ^ crc;
     }
-    return crc_value;
+    return crc;
 }

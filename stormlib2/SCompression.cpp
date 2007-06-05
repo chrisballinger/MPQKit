@@ -36,10 +36,10 @@
 // Information about the input and output buffers for pklib
 typedef struct
 {
-    char   * pInBuff;                   // Pointer to input data buffer
+    uint8_t *pInBuff;                   // Pointer to input data buffer
     uint32_t nInPos;                    // Current offset in input data buffer
     uint32_t nInBytes;                  // Number of bytes in the input buffer
-    char   * pOutBuff;                  // Pointer to output data buffer
+    uint8_t *pOutBuff;                  // Pointer to output data buffer
     uint32_t nOutPos;                   // Position in the output buffer
     uint32_t nMaxOut;                   // Maximum number of bytes in the output buffer
 } TDataInfo;
@@ -75,11 +75,11 @@ typedef struct
 //   unsigned int * size - Max. number of bytes to read
 //   void * param        - Custom pointer, parameter of pk_implode/pk_explode
 
-static unsigned int ReadInputData(char * buf, unsigned int * size, void * param)
+static uint32_t ReadInputData(uint8_t *buf, uint32_t *size, void *param)
 {
-    TDataInfo * pInfo = (TDataInfo *)param;
-    unsigned int nMaxAvail = (pInfo->nInBytes - pInfo->nInPos);
-    unsigned int nToRead = *size;
+    TDataInfo *pInfo = (TDataInfo *)param;
+    uint32_t nMaxAvail = (pInfo->nInBytes - pInfo->nInPos);
+    uint32_t nToRead = *size;
 
     // Check the case when not enough data available
     if(nToRead > nMaxAvail)
@@ -99,11 +99,11 @@ static unsigned int ReadInputData(char * buf, unsigned int * size, void * param)
 //   unsigned int * size - Number of bytes to write
 //   void * param        - Custom pointer, parameter of pk_implode/pk_explode
 
-static void WriteOutputData(char * buf, unsigned int * size, void * param)
+static void WriteOutputData(uint8_t *buf, uint32_t *size, void *param)
 {
-    TDataInfo * pInfo = (TDataInfo *)param;
-    unsigned int nMaxWrite = (pInfo->nMaxOut - pInfo->nOutPos);
-    unsigned int nToWrite = *size;
+    TDataInfo *pInfo = (TDataInfo *)param;
+    uint32_t nMaxWrite = (pInfo->nMaxOut - pInfo->nOutPos);
+    uint32_t nToWrite = *size;
 
     // Check the case when not enough space in the output buffer
     if(nToWrite > nMaxWrite)
@@ -285,15 +285,15 @@ int Decompress_zlib(void *outputBuffer, uint32_t *outputBufferLength, void *inpu
 int Compress_pklib(char * pbOutBuffer, int * pdwOutLength, char * pbInBuffer, int dwInLength, int * pCmpType, int /* nCmpLevel */)
 {
     TDataInfo Info;                     // Data information
-    char work_buf[CMP_BUFFER_SIZE];     // Pklib's work buffer
-    unsigned int dict_size;             // Dictionary size
-    unsigned int ctype;                 // Compression type
+    uint8_t work_buf[CMP_BUFFER_SIZE];  // Pklib's work buffer
+    uint32_t dict_size;                 // Dictionary size
+    uint32_t ctype;                     // Compression type
 
     // Fill data information structure
-    Info.pInBuff  = pbInBuffer;
+    Info.pInBuff  = (uint8_t *)pbInBuffer;
     Info.nInPos   = 0;
     Info.nInBytes = dwInLength;
-    Info.pOutBuff = pbOutBuffer;
+    Info.pOutBuff = (uint8_t *)pbOutBuffer;
     Info.nOutPos  = 0;
     Info.nMaxOut  = *pdwOutLength;
 
@@ -314,13 +314,13 @@ int Compress_pklib(char * pbOutBuffer, int * pdwOutLength, char * pbInBuffer, in
 
 int Decompress_pklib(void *outputBuffer, uint32_t *outputBufferLength, void *inputBuffer, uint32_t inputBufferLength) {
     TDataInfo Info;                     // Data information
-    char work_buf[EXP_BUFFER_SIZE];     // Pklib's work buffer
+    uint8_t work_buf[EXP_BUFFER_SIZE];  // Pklib's work buffer
 
     // Fill data information structure
-    Info.pInBuff  = (char *)inputBuffer;
+    Info.pInBuff  = (uint8_t *)inputBuffer;
     Info.nInPos   = 0;
     Info.nInBytes = inputBufferLength;
-    Info.pOutBuff = (char *)outputBuffer;
+    Info.pOutBuff = (uint8_t *)outputBuffer;
     Info.nOutPos  = 0;
     Info.nMaxOut  = *outputBufferLength;
 

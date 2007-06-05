@@ -36,9 +36,9 @@ union TWordAndByteArray
 typedef union TWordAndByteArray TWordAndByteArray;
 
 //-----------------------------------------------------------------------------
-// Tables necessary dor decompression
+// Tables necessary for decompression
 
-static long Table1503F120[] =
+static int32_t Table1503F120[] =
 {
     0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000004, 0xFFFFFFFF, 0x00000002, 0xFFFFFFFF, 0x00000006,
     0xFFFFFFFF, 0x00000001, 0xFFFFFFFF, 0x00000005, 0xFFFFFFFF, 0x00000003, 0xFFFFFFFF, 0x00000007,
@@ -46,7 +46,7 @@ static long Table1503F120[] =
     0xFFFFFFFF, 0x00000002, 0xFFFFFFFF, 0x00000004, 0xFFFFFFFF, 0x00000006, 0xFFFFFFFF, 0x00000008  
 };
 
-static long Table1503F1A0[] =
+static int32_t Table1503F1A0[] =
 {
     0x00000007, 0x00000008, 0x00000009, 0x0000000A, 0x0000000B, 0x0000000C, 0x0000000D, 0x0000000E,
     0x00000010, 0x00000011, 0x00000013, 0x00000015, 0x00000017, 0x00000019, 0x0000001C, 0x0000001F,

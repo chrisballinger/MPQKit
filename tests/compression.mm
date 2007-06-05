@@ -13,30 +13,44 @@
 
 #import "compression.h"
 
-typedef struct {
-    char * pInBuff;                     // Pointer to input data buffer
-    int    nInPos;                      // Current offset in input data buffer
-    int    nInBytes;                    // Number of bytes in the input buffer
-    char * pOutBuff;                    // Pointer to output data buffer
-    int    nOutPos;                     // Position in the output buffer
-    int    nMaxOut;                     // Maximum number of bytes in the output buffer
+typedef struct
+{
+    uint8_t *pInBuff;                   // Pointer to input data buffer
+    uint32_t nInPos;                    // Current offset in input data buffer
+    uint32_t nInBytes;                  // Number of bytes in the input buffer
+    uint8_t *pOutBuff;                  // Pointer to output data buffer
+    uint32_t nOutPos;                   // Position in the output buffer
+    uint32_t nMaxOut;                   // Maximum number of bytes in the output buffer
 } TDataInfo;
 
-static unsigned int pkware_read(char *buf, unsigned int *size, void *param) {
+static uint32_t ReadInputData(uint8_t *buf, uint32_t *size, void *param)
+{
     TDataInfo *pInfo = (TDataInfo *)param;
-    unsigned int nMaxAvail = (pInfo->nInBytes - pInfo->nInPos);
-    unsigned int nToRead = *size;
-    if (nToRead > nMaxAvail) nToRead = nMaxAvail;
+    uint32_t nMaxAvail = (pInfo->nInBytes - pInfo->nInPos);
+    uint32_t nToRead = *size;
+
+    // Check the case when not enough data available
+    if(nToRead > nMaxAvail)
+        nToRead = nMaxAvail;
+    
+    // Load data and increment offsets
     memcpy(buf, pInfo->pInBuff + pInfo->nInPos, nToRead);
     pInfo->nInPos += nToRead;
+
     return nToRead;
 }
 
-static void pkware_write(char *buf, unsigned int *size, void *param) {
-    TDataInfo * pInfo = (TDataInfo *)param;
-    unsigned int nMaxWrite = (pInfo->nMaxOut - pInfo->nOutPos);
-    unsigned int nToWrite = *size;
-    if (nToWrite > nMaxWrite) nToWrite = nMaxWrite;
+static void WriteOutputData(uint8_t *buf, uint32_t *size, void *param)
+{
+    TDataInfo *pInfo = (TDataInfo *)param;
+    uint32_t nMaxWrite = (pInfo->nMaxOut - pInfo->nOutPos);
+    uint32_t nToWrite = *size;
+
+    // Check the case when not enough space in the output buffer
+    if(nToWrite > nMaxWrite)
+        nToWrite = nMaxWrite;
+
+    // Write output data and increments offsets
     memcpy(pInfo->pOutBuff + pInfo->nOutPos, buf, nToWrite);
     pInfo->nOutPos += nToWrite;
 }
@@ -70,15 +84,15 @@ static void pkware_write(char *buf, unsigned int *size, void *param) {
 }
 
 - (void)testPKWAREInternal {
-    TDataInfo ct = {(char *)random_buffer, 0, 0x1000, (char *)compression_buffer, 0, 0x2000};
-    char cbuf[CMP_BUFFER_SIZE];
+    TDataInfo ct = {(uint8_t *)random_buffer, 0, 0x1000, (uint8_t *)compression_buffer, 0, 0x2000};
+    uint8_t cbuf[CMP_BUFFER_SIZE];
     uint32_t ctype = CMP_BINARY;
     uint32_t dict_size = 0x1000;
-    pk_implode(pkware_read, pkware_write, cbuf, &ct, &ctype, &dict_size);
+    pk_implode(ReadInputData, WriteOutputData, cbuf, &ct, &ctype, &dict_size);
     
-    TDataInfo dt = {(char *)compression_buffer, 0, ct.nOutPos, (char *)decompression_buffer, 0, 0x2000};
-    char dbuf[EXP_BUFFER_SIZE];
-    pk_explode(pkware_read, pkware_write, dbuf, &dt);
+    TDataInfo dt = {(uint8_t *)compression_buffer, 0, ct.nOutPos, (uint8_t *)decompression_buffer, 0, 0x2000};
+    uint8_t dbuf[EXP_BUFFER_SIZE];
+    pk_explode(ReadInputData, WriteOutputData, dbuf, &dt);
     
     STAssertEquals(dt.nOutPos, ct.nInBytes, @"decompressed buffer size does not match input buffer size");
     STAssertFalse(memcmp(decompression_buffer, random_buffer, 0x1000), @"decompressed buffer does not match input buffer");
