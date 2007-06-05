@@ -23,7 +23,7 @@
 //-----------------------------------------------------------------------------
 // Tables
 
-static unsigned char DistBits[] = 
+static uint8_t DistBits[] = 
 {
     0x02, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
     0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
@@ -31,7 +31,7 @@ static unsigned char DistBits[] =
     0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08
 };
 
-static unsigned char DistCode[] = 
+static uint8_t DistCode[] = 
 {
     0x03, 0x0D, 0x05, 0x19, 0x09, 0x11, 0x01, 0x3E, 0x1E, 0x2E, 0x0E, 0x36, 0x16, 0x26, 0x06, 0x3A,
     0x1A, 0x2A, 0x0A, 0x32, 0x12, 0x22, 0x42, 0x02, 0x7C, 0x3C, 0x5C, 0x1C, 0x6C, 0x2C, 0x4C, 0x0C,
@@ -39,22 +39,22 @@ static unsigned char DistCode[] =
     0xF0, 0x70, 0xB0, 0x30, 0xD0, 0x50, 0x90, 0x10, 0xE0, 0x60, 0xA0, 0x20, 0xC0, 0x40, 0x80, 0x00
 };
 
-static unsigned char ExLenBits[] =
+static uint8_t ExLenBits[] =
 {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
 };
 
-static unsigned char LenBits[] =
+static uint8_t LenBits[] =
 {
     0x03, 0x02, 0x03, 0x03, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x07, 0x07
 };
 
-static unsigned char LenCode[] =
+static uint8_t LenCode[] =
 {
     0x05, 0x03, 0x01, 0x06, 0x0A, 0x02, 0x0C, 0x14, 0x04, 0x18, 0x08, 0x30, 0x10, 0x20, 0x40, 0x00
 };
 
-static unsigned char ChBitsAsc[] =
+static uint8_t ChBitsAsc[] =
 {
     0x0B, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x08, 0x07, 0x0C, 0x0C, 0x07, 0x0C, 0x0C,
     0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0D, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C,
@@ -74,7 +74,7 @@ static unsigned char ChBitsAsc[] =
     0x0D, 0x0D, 0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D
 };
 
-static unsigned short ChCodeAsc[] = 
+static uint16_t ChCodeAsc[] = 
 {
     0x0490, 0x0FE0, 0x07E0, 0x0BE0, 0x03E0, 0x0DE0, 0x05E0, 0x09E0,
     0x01E0, 0x00B8, 0x0062, 0x0EE0, 0x06E0, 0x0022, 0x0AE0, 0x02E0,
@@ -110,16 +110,16 @@ static unsigned short ChCodeAsc[] =
     0x1C00, 0x0C00, 0x1400, 0x0400, 0x1800, 0x0800, 0x1000, 0x0000  
 };
 
-static void SortBuffer(TCmpStruct * pWork, unsigned char * uncmp_data, unsigned char * work_end)
+static void SortBuffer(TCmpStruct * pWork, uint8_t * uncmp_data, uint8_t * work_end)
 {
-    unsigned short * pin0DC8;
-    unsigned char  * puncmp;
-    unsigned long    offs1, offs2;
-    unsigned long    ndwords;
-    unsigned int     add;
+    uint16_t * pin0DC8;
+    uint8_t  * puncmp;
+    uint32_t    offs1, offs2;
+    uint32_t    ndwords;
+    uint32_t     add;
 
     // Fill 0x480 dwords (0x1200 bytes)
-    ndwords = (unsigned long)((pWork->out_buff - (uint8_t *)pWork->offs0DC8 + 1) >> 2);
+    ndwords = (uint32_t)((pWork->out_buff - (uint8_t *)pWork->offs0DC8 + 1) >> 2);
     if(ndwords <= 1)
         ndwords = 1;
     memset(pWork->offs0DC8, 0, ndwords << 2);
@@ -131,24 +131,24 @@ static void SortBuffer(TCmpStruct * pWork, unsigned char * uncmp_data, unsigned 
     for(pin0DC8 = pWork->offs0DC8; pin0DC8 < &pWork->offs1FC8; pin0DC8++)
     {
         add     += *pin0DC8;
-        *pin0DC8 = (unsigned short)add;
+        *pin0DC8 = (uint16_t)add;
     }
 
     for(work_end--; work_end >= uncmp_data; work_end--)
     {
         offs1 = (work_end[0] * 4) + (work_end[1] * 5);  // EAX
-        offs2 = (unsigned long)(work_end - pWork->work_buff);          // EDI
+        offs2 = (uint32_t)(work_end - pWork->work_buff);          // EDI
 
         pWork->offs0DC8[offs1]--;
-        pWork->offs49D0[pWork->offs0DC8[offs1]] = (unsigned short)offs2;
+        pWork->offs49D0[pWork->offs0DC8[offs1]] = (uint16_t)offs2;
     }
 }
 
 static void FlushBuf(TCmpStruct * pWork)
 {
-    unsigned char save_ch1;
-    unsigned char save_ch2;
-    unsigned int size = 0x800;
+    uint8_t save_ch1;
+    uint8_t save_ch2;
+    uint32_t size = 0x800;
 
     pWork->write_buf(pWork->out_buff, &size, pWork->param);
 
@@ -164,9 +164,9 @@ static void FlushBuf(TCmpStruct * pWork)
         pWork->out_buff[pWork->out_bytes] = save_ch2;
 }
 
-static void OutputBits(TCmpStruct * pWork, unsigned int nbits, unsigned long bit_buff)
+static void OutputBits(TCmpStruct * pWork, uint32_t nbits, uint32_t bit_buff)
 {
-    unsigned int out_bits;
+    uint32_t out_bits;
 
     // If more than 8 bits to output, do recursion
     if(nbits > 8)
@@ -178,7 +178,7 @@ static void OutputBits(TCmpStruct * pWork, unsigned int nbits, unsigned long bit
 
     // Add bits to the last out byte in out_buff;
     out_bits = pWork->out_bits;
-    pWork->out_buff[pWork->out_bytes] |= (unsigned char)(bit_buff << out_bits);
+    pWork->out_buff[pWork->out_bytes] |= (uint8_t)(bit_buff << out_bits);
     pWork->out_bits += nbits;
 
     // If 8 or more bits, increment number of bytes
@@ -187,7 +187,7 @@ static void OutputBits(TCmpStruct * pWork, unsigned int nbits, unsigned long bit
         pWork->out_bytes++;
         bit_buff >>= (8 - out_bits);
         
-        pWork->out_buff[pWork->out_bytes] = (unsigned char)bit_buff;
+        pWork->out_buff[pWork->out_bytes] = (uint8_t)bit_buff;
         pWork->out_bits &= 7;
     }
     else
@@ -202,24 +202,24 @@ static void OutputBits(TCmpStruct * pWork, unsigned int nbits, unsigned long bit
         FlushBuf(pWork);
 }
 
-static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
+static uint32_t FindRep(TCmpStruct * pWork, uint8_t * srcbuff)
 {
-    unsigned short  esp12;
-    unsigned char * esp14;
-    unsigned short  esp18;
-    unsigned char * srcbuff2;
-    unsigned char   esp20;
+    uint16_t  esp12;
+    uint8_t * esp14;
+    uint16_t  esp18;
+    uint8_t * srcbuff2;
+    uint8_t   esp20;
 
-    unsigned char  * srcbuff3;
-    unsigned short * pin0DC8;
-    unsigned char  * pin27CC;
-    unsigned short * pin49D0;
-    unsigned long    nreps = 1;         // EAX
-    unsigned long    ebx, esi;
-    unsigned short   di;
+    uint8_t  * srcbuff3;
+    uint16_t * pin0DC8;
+    uint8_t  * pin27CC;
+    uint16_t * pin49D0;
+    uint32_t    nreps = 1;         // EAX
+    uint32_t    ebx, esi;
+    uint16_t   di;
 
     pin0DC8 = pWork->offs0DC8 + (srcbuff[0] * 4) + (srcbuff[1] * 5);
-    esi     = (unsigned long)(srcbuff - pWork->dsize_bytes - pWork->work_buff + 1);
+    esi     = (uint32_t)(srcbuff - pWork->dsize_bytes - pWork->work_buff + 1);
     esp18   = *pin0DC8;
     pin49D0 = pWork->offs49D0 + esp18;
 
@@ -258,7 +258,7 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
             srcbuff3 = srcbuff;
             if(ebx >= nreps)
             {
-                pWork->offs0000 = (unsigned int)(srcbuff3 - pin27CC + ebx - 1);
+                pWork->offs0000 = (uint32_t)(srcbuff3 - pin27CC + ebx - 1);
                 if((nreps = ebx) > 10)
                     break;
             }
@@ -357,7 +357,7 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
 
         if(esi < nreps)
             continue;
-        pWork->offs0000 = (unsigned int)(srcbuff - pin27CC - 1);
+        pWork->offs0000 = (uint32_t)(srcbuff - pin27CC - 1);
         if(esi <= nreps)
             continue;
         nreps = esi;
@@ -380,14 +380,14 @@ static unsigned long FindRep(TCmpStruct * pWork, unsigned char * srcbuff)
 
 static void WriteCmpData(TCmpStruct * pWork)
 {
-    unsigned int    nreps = 0;          // ESP+10 : Number of repeats
-    unsigned char * uncmp_end;          // ESP+14 : End of uncompressed data
-    unsigned int    esp18 = 0;          // ESP+18 :
-    unsigned int    bytes_required;     // ESP+1C : Number of bytes required to read
-    unsigned int    esp20 = 0;          // ESP+20 :
-    unsigned char * uncmp_begin = pWork->work_buff + UNCMP_OFFSET; // EDI
-    unsigned long   nreps1;
-    unsigned long   save_offs0000 = 0;
+    uint32_t    nreps = 0;          // ESP+10 : Number of repeats
+    uint8_t   * uncmp_end;          // ESP+14 : End of uncompressed data
+    uint32_t    esp18 = 0;          // ESP+18 :
+    uint32_t    bytes_required;     // ESP+1C : Number of bytes required to read
+    uint32_t    esp20 = 0;          // ESP+20 :
+    uint8_t   * uncmp_begin = pWork->work_buff + UNCMP_OFFSET; // EDI
+    uint32_t    nreps1;
+    uint32_t    save_offs0000 = 0;
 
     // Store the compression type and dictionary size
     pWork->out_buff[0] = (char)pWork->ctype;
@@ -400,11 +400,11 @@ static void WriteCmpData(TCmpStruct * pWork)
 
     do
     {
-        int total_loaded = 0;
+        uint32_t total_loaded = 0;
 
         for(bytes_required = 0x1000; bytes_required != 0; )
         {
-            int loaded = pWork->read_buf(pWork->work_buff + UNCMP_OFFSET + total_loaded,
+            uint32_t loaded = pWork->read_buf(pWork->work_buff + UNCMP_OFFSET + total_loaded,
                        &bytes_required, pWork->param);
 
             if(loaded == 0)
@@ -504,7 +504,7 @@ __Exit:
     return;
 
 _004022DB:
-    nreps1 = (unsigned long)(uncmp_end - uncmp_begin);
+    nreps1 = (uint32_t)(uncmp_end - uncmp_begin);
     if(nreps1 < 2)
         goto _0040222F;
 
@@ -547,9 +547,9 @@ uint32_t pk_implode(
    uint32_t     *dsize)
 {
     TCmpStruct * pWork = (TCmpStruct *)work_buf;
-    unsigned int nChCode;
-    unsigned int nCount;
-    unsigned int i;
+    uint32_t nChCode;
+    uint32_t nCount;
+    uint32_t i;
 
     // Initialize the work buffer. This is not in the Pklib,
     // but it seems to be a bug. Storm always pre-fills the data with zeros,
@@ -594,7 +594,7 @@ uint32_t pk_implode(
             for(nChCode = 0, nCount = 0; nCount < 0x100; nCount++)
             {
                 pWork->nChBits[nCount]  = 9;
-                pWork->nChCodes[nCount] = (unsigned short)nChCode;
+                pWork->nChCodes[nCount] = (uint16_t)nChCode;
                 nChCode = (nChCode & 0x0000FFFF) + 2;
             }
             break;
@@ -603,8 +603,8 @@ uint32_t pk_implode(
         case CMP_ASCII: // We will compress data with ASCII compression type
             for(nCount = 0; nCount < 0x100; nCount++)
             {
-                pWork->nChBits[nCount]  = (unsigned char )(ChBitsAsc[nCount] + 1);
-                pWork->nChCodes[nCount] = (unsigned short)(ChCodeAsc[nCount] * 2);
+                pWork->nChBits[nCount]  = (uint8_t )(ChBitsAsc[nCount] + 1);
+                pWork->nChCodes[nCount] = (uint16_t)(ChCodeAsc[nCount] * 2);
             }
             break;
 
@@ -614,15 +614,15 @@ uint32_t pk_implode(
 
     for(i = 0; i < 0x10; i++)
     {
-        int nCount2 = 0;    // EBX 
+        int32_t nCount2 = 0;    // EBX 
 
         if((1 << ExLenBits[i]) == 0)
             continue;
 
         do
         {
-            pWork->nChBits[nCount]  = (unsigned char)(ExLenBits[i] + LenBits[i] + 1);
-            pWork->nChCodes[nCount] = (unsigned short)((nCount2 << (LenBits[i] + 1)) | ((LenCode[i] & 0xFFFF00FF) * 2) | 1);
+            pWork->nChBits[nCount]  = (uint8_t)(ExLenBits[i] + LenBits[i] + 1);
+            pWork->nChCodes[nCount] = (uint16_t)((nCount2 << (LenBits[i] + 1)) | ((LenCode[i] & 0xFFFF00FF) * 2) | 1);
 
             nCount2++;
             nCount++;

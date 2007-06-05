@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 // Tables
 
-static unsigned char DistBits[] = 
+static uint8_t DistBits[] = 
 {
     0x02, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06,
     0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07, 0x07,
@@ -26,7 +26,7 @@ static unsigned char DistBits[] =
     0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08
 };
 
-static unsigned char DistCode[] = 
+static uint8_t DistCode[] = 
 {
     0x03, 0x0D, 0x05, 0x19, 0x09, 0x11, 0x01, 0x3E, 0x1E, 0x2E, 0x0E, 0x36, 0x16, 0x26, 0x06, 0x3A,
     0x1A, 0x2A, 0x0A, 0x32, 0x12, 0x22, 0x42, 0x02, 0x7C, 0x3C, 0x5C, 0x1C, 0x6C, 0x2C, 0x4C, 0x0C,
@@ -34,28 +34,28 @@ static unsigned char DistCode[] =
     0xF0, 0x70, 0xB0, 0x30, 0xD0, 0x50, 0x90, 0x10, 0xE0, 0x60, 0xA0, 0x20, 0xC0, 0x40, 0x80, 0x00
 };
 
-static unsigned char ExLenBits[] =
+static uint8_t ExLenBits[] =
 {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
 };
 
-static unsigned short LenBase[] =
+static uint16_t LenBase[] =
 {
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007,
     0x0008, 0x000A, 0x000E, 0x0016, 0x0026, 0x0046, 0x0086, 0x0106
 };
 
-static unsigned char LenBits[] =
+static uint8_t LenBits[] =
 {
     0x03, 0x02, 0x03, 0x03, 0x04, 0x04, 0x04, 0x05, 0x05, 0x05, 0x05, 0x06, 0x06, 0x06, 0x07, 0x07
 };
 
-static unsigned char LenCode[] =
+static uint8_t LenCode[] =
 {
     0x05, 0x03, 0x01, 0x06, 0x0A, 0x02, 0x0C, 0x14, 0x04, 0x18, 0x08, 0x30, 0x10, 0x20, 0x40, 0x00
 };
 
-static unsigned char ChBitsAsc[] =
+static uint8_t ChBitsAsc[] =
 {
     0x0B, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x08, 0x07, 0x0C, 0x0C, 0x07, 0x0C, 0x0C,
     0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0D, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C,
@@ -75,7 +75,7 @@ static unsigned char ChBitsAsc[] =
     0x0D, 0x0D, 0x0C, 0x0C, 0x0C, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D
 };
 
-static unsigned short ChCodeAsc[] = 
+static uint16_t ChCodeAsc[] = 
 {
     0x0490, 0x0FE0, 0x07E0, 0x0BE0, 0x03E0, 0x0DE0, 0x05E0, 0x09E0,
     0x01E0, 0x00B8, 0x0062, 0x0EE0, 0x06E0, 0x0022, 0x0AE0, 0x02E0,
@@ -111,18 +111,18 @@ static unsigned short ChCodeAsc[] =
     0x1C00, 0x0C00, 0x1400, 0x0400, 0x1800, 0x0800, 0x1000, 0x0000  
 };
 
-static void GenDecodeTabs(long count, unsigned char * bits, unsigned char * pCode, unsigned char * buffer2)
+static void GenDecodeTabs(int32_t count, uint8_t * bits, uint8_t * pCode, uint8_t * buffer2)
 {
-    long i;
+    int32_t i;
 
     for(i = count-1; i >= 0; i--)             // EBX - count
     {
-        unsigned long idx1 = pCode[i];
-        unsigned long idx2 = 1 << bits[i];
+        uint32_t idx1 = pCode[i];
+        uint32_t idx2 = 1 << bits[i];
 
         do
         {
-            buffer2[idx1] = (unsigned char)i;
+            buffer2[idx1] = (uint8_t)i;
             idx1         += idx2;
         }
         while(idx1 < 0x100);
@@ -131,14 +131,14 @@ static void GenDecodeTabs(long count, unsigned char * bits, unsigned char * pCod
 
 static void GenAscTabs(TDcmpStruct * pWork)
 {
-    unsigned short * pChCodeAsc = &ChCodeAsc[0xFF];
-    unsigned long  acc, add;
-    unsigned short count;
+    uint16_t * pChCodeAsc = &ChCodeAsc[0xFF];
+    uint32_t  acc, add;
+    uint16_t count;
 
     for(count = 0x00FF; pChCodeAsc >= ChCodeAsc; pChCodeAsc--, count--)
     {
-        unsigned char * pChBitsAsc = pWork->ChBitsAsc + count;
-        unsigned char bits_asc = *pChBitsAsc;
+        uint8_t * pChBitsAsc = pWork->ChBitsAsc + count;
+        uint8_t bits_asc = *pChBitsAsc;
 
         if(bits_asc <= 8)
         {
@@ -147,7 +147,7 @@ static void GenAscTabs(TDcmpStruct * pWork)
 
             do
             {
-                pWork->offs2C34[acc] = (unsigned char)count;
+                pWork->offs2C34[acc] = (uint8_t)count;
                 acc += add;
             }
             while(acc < 0x100);
@@ -165,7 +165,7 @@ static void GenAscTabs(TDcmpStruct * pWork)
                 acc = *pChCodeAsc >> 4;
                 do
                 {
-                    pWork->offs2D34[acc] = (unsigned char)count;
+                    pWork->offs2D34[acc] = (uint8_t)count;
                     acc += add;
                 }
                 while(acc < 0x100);
@@ -179,7 +179,7 @@ static void GenAscTabs(TDcmpStruct * pWork)
                 acc = *pChCodeAsc >> 6;
                 do
                 {
-                    pWork->offs2E34[acc] = (unsigned char)count;
+                    pWork->offs2E34[acc] = (uint8_t)count;
                     acc += add;
                 }
                 while(acc < 0x80);
@@ -194,7 +194,7 @@ static void GenAscTabs(TDcmpStruct * pWork)
             acc = *pChCodeAsc >> 8;
             do
             {
-                pWork->offs2EB4[acc] = (unsigned char)count;
+                pWork->offs2EB4[acc] = (uint8_t)count;
                 acc += add;
             }
             while(acc < 0x100);
@@ -206,7 +206,7 @@ static void GenAscTabs(TDcmpStruct * pWork)
 // Skips given number of bits in bit buffer. Result is stored in pWork->bit_buff
 // If no data in input buffer, returns true
 
-static int WasteBits(TDcmpStruct * pWork, unsigned long nBits)
+static int32_t WasteBits(TDcmpStruct * pWork, uint32_t nBits)
 {
     // If number of bits required is less than number of (bits in the buffer) ?
     if(nBits <= pWork->extra_bits)
@@ -238,10 +238,10 @@ static int WasteBits(TDcmpStruct * pWork, unsigned long nBits)
 //           0x100 - 0x305 : Copy previous block (0x100 = 1 byte)
 //           0x306         : Out of buffer (?)
 
-static unsigned long DecodeLit(TDcmpStruct * pWork)
+static uint32_t DecodeLit(TDcmpStruct * pWork)
 {
-    unsigned long nBits;                // Number of bits to skip
-    unsigned long value;                // Position in buffers
+    uint32_t nBits;                // Number of bits to skip
+    uint32_t value;                // Position in buffers
 
     // Test the current bit in byte buffer. If is not set, simply return the next byte.
     if(pWork->bit_buff & 1)
@@ -259,7 +259,7 @@ static unsigned long DecodeLit(TDcmpStruct * pWork)
 
         if((nBits = pWork->ExLenBits[value]) != 0)
         {
-            unsigned long val2 = pWork->bit_buff & ((1 << nBits) - 1);
+            uint32_t val2 = pWork->bit_buff & ((1 << nBits) - 1);
 
             if(WasteBits(pWork, nBits))
             {
@@ -321,10 +321,10 @@ static unsigned long DecodeLit(TDcmpStruct * pWork)
 //-----------------------------------------------------------------------------
 // Retrieves the number of bytes to move back 
 
-static unsigned long DecodeDist(TDcmpStruct * pWork, unsigned long dwLength)
+static uint32_t DecodeDist(TDcmpStruct * pWork, uint32_t dwLength)
 {
-    unsigned long pos   = pWork->position1[(pWork->bit_buff & 0xFF)];
-    unsigned long nSkip = pWork->DistBits[pos];     // Number of bits to skip
+    uint32_t pos   = pWork->position1[(pWork->bit_buff & 0xFF)];
+    uint32_t nSkip = pWork->DistBits[pos];     // Number of bits to skip
 
     // Skip the appropriate number of bits
     if(WasteBits(pWork, nSkip) == 1)
@@ -348,11 +348,11 @@ static unsigned long DecodeDist(TDcmpStruct * pWork, unsigned long dwLength)
     return pos+1;
 }
 
-static unsigned long Expand(TDcmpStruct * pWork)
+static uint32_t Expand(TDcmpStruct * pWork)
 {
-    unsigned int  copyBytes;            // Number of bytes to copy
-    unsigned long oneByte;              // One byte from compressed file
-    unsigned long dwResult;
+    uint32_t  copyBytes;            // Number of bytes to copy
+    uint32_t oneByte;              // One byte from compressed file
+    uint32_t dwResult;
 
     pWork->outputPos = 0x1000;          // Initialize output buffer position
 
@@ -362,10 +362,10 @@ static unsigned long Expand(TDcmpStruct * pWork)
         // If one byte is greater than 0x100, means "Repeat n - 0xFE bytes"
         if(oneByte >= 0x100)
         {
-            unsigned char * source;          // ECX
-            unsigned char * target;          // EDX
-            unsigned long  copyLength = oneByte - 0xFE;
-            unsigned long  moveBack;
+            uint8_t * source;          // ECX
+            uint8_t * target;          // EDX
+            uint32_t  copyLength = oneByte - 0xFE;
+            uint32_t  moveBack;
 
             // Get length of data to copy
             if((moveBack = DecodeDist(pWork, copyLength)) == 0)
@@ -383,7 +383,7 @@ static unsigned long Expand(TDcmpStruct * pWork)
                 *target++ = *source++;
         }
         else
-            pWork->out_buff[pWork->outputPos++] = (unsigned char)oneByte;
+            pWork->out_buff[pWork->outputPos++] = (uint8_t)oneByte;
     
         // If number of extracted bytes has reached 1/2 of output buffer,
         // flush output buffer.

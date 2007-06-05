@@ -360,9 +360,9 @@ int Compress_bz2(char * pbOutBuffer, int * pdwOutLength, char * pbInBuffer, int 
 	
 	// Fill the stream structure for bz2
     s.next_in   = pbInBuffer;
-    s.avail_in  = (unsigned int)dwInLength;
+    s.avail_in  = (uint32_t)dwInLength;
     s.next_out  = pbOutBuffer;
-    s.avail_out = *((unsigned int *)pdwOutLength);
+    s.avail_out = *((uint32_t *)pdwOutLength);
 	
 	// Call bz2 to compress the data
     do {

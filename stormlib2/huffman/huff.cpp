@@ -537,7 +537,7 @@ void THuffmanTree::BuildTree(uint32_t nCmpType)
     offs0004 = 1;
 }
  
-THTreeItem * THuffmanTree::Call1500E740(unsigned int nValue)
+THTreeItem * THuffmanTree::Call1500E740(uint32_t nValue)
 {
     THTreeItem * pItem1 = pItem3058;    // EDX
     THTreeItem * pItem2;                // EAX
