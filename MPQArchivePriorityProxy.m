@@ -24,8 +24,8 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	struct _archive_binary_tree *t1 = (struct _archive_binary_tree *)v1;
 	struct _archive_binary_tree *t2 = (struct _archive_binary_tree *)v2;
 	
-	if(t1->priority < t2->priority) return -1;
-	if(t1->priority == t2->priority) return 0;
+	if (t1->priority < t2->priority) return -1;
+	if (t1->priority == t2->priority) return 0;
 	return 1;
 }
 
