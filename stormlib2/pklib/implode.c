@@ -538,7 +538,7 @@ _004022FF:
 //-----------------------------------------------------------------------------
 // Main imploding function
 
-uint32_t pk_implode(
+int pk_implode(
    uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
    void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
    uint8_t      *work_buf,

@@ -31,6 +31,7 @@
 #define INSERT_ITEM 1                   
 #define SWITCH_ITEMS 2 // Switch the item1 and item2
 
+#pragma mark THTreeItem
 //-----------------------------------------------------------------------------
 // Methods of the THTreeItem struct
 
@@ -79,6 +80,7 @@ void THTreeItem::RemoveItem()
     }
 }
 
+#pragma mark TOutputStream
 //-----------------------------------------------------------------------------
 // TOutputStream functions
  
@@ -100,12 +102,15 @@ void TOutputStream::PutBits(uint32_t dwBuff, uint32_t nPutBits)
         nBits      -= 8;
     }
 }
- 
+
+#pragma mark TInputStream
 //-----------------------------------------------------------------------------
 // TInputStream functions
  
 // Gets one bit from input stream
 uint32_t TInputStream::GetBit() {
+//	printf("GetBit >> buffer_bit_size: %llu, bit_count: %u\n", buffer_bit_size, bit_count);
+//	fflush(stdout);
     assert(buffer_bit_size + bit_count >= 1);
     
     if(bit_count == 0) {
@@ -136,6 +141,8 @@ uint32_t TInputStream::GetBit() {
 
 // Gets the whole byte from the input stream.
 uint32_t TInputStream::Get8Bits() {
+//	printf("Get8Bits >> buffer_bit_size: %llu, bit_count: %u\n", buffer_bit_size, bit_count);
+//	fflush(stdout);
     assert(buffer_bit_size + bit_count >= 8);
     
     if(bit_count <= 8) {
@@ -165,9 +172,11 @@ uint32_t TInputStream::Get8Bits() {
 
 // Peek 7 bits from the stream
 uint32_t TInputStream::Peek7Bits() {
+//	printf("Peek7Bits >> buffer_bit_size: %llu, bit_count: %u\n", buffer_bit_size, bit_count);
+//	fflush(stdout);
     assert(buffer_bit_size + bit_count >= 7);
     
-    if(bit_count <= 7) {
+    if(bit_count < 7) {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 16) {
@@ -190,7 +199,9 @@ uint32_t TInputStream::Peek7Bits() {
 }
 
 void TInputStream::ConsumeBits(uint32_t count) {
-    assert(buffer_bit_size + bit_count >= count);
+//	printf("ConsumeBits(%u) >> buffer_bit_size: %llu, bit_count: %u\n", count, buffer_bit_size, bit_count);
+//	fflush(stdout);
+	assert(buffer_bit_size + bit_count >= count);
     
     if (count <= bit_count) {
         bit_bucket >>= count;
@@ -294,10 +305,11 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, uint32_t where,
             return;
     }
 }
- 
+
+#pragma mark THuffmanTree
 //-----------------------------------------------------------------------------
 // THuffmanTree class functions
- 
+
 THuffmanTree* THuffmanTree::AllocateTree() {
     THuffmanTree* instance = new THuffmanTree();
     if ((intptr_t)instance > 0 && (intptr_t)(instance + 1) < 0) {
@@ -697,7 +709,7 @@ uint32_t THuffmanTree::DoCompression(TOutputStream *os, uint8_t *pbInBuffer, int
     uint32_t     dwBitBuff;
     uint32_t     nBits;
     uint32_t     nBit;
- 
+	
     BuildTree(nCmpType);
     bIsCmp0 = (nCmpType == 0);
  
@@ -873,7 +885,7 @@ uint32_t THuffmanTree::DoDecompression(uint8_t *pbOutBuffer, uint32_t dwOutLengt
     THTreeItem    * pItem2;
     uint8_t       * pbOutPos = pbOutBuffer;
     uint32_t        nBitCount;
-    uint32_t        nDcmpByte = 0;
+    uintptr_t       nDcmpByte = 0;
     uint32_t        n8Bits;                // 8 bits loaded from input stream
     uint32_t        n7Bits;                // 7 bits loaded from input stream
     bool            bHasQdEntry;
@@ -881,6 +893,9 @@ uint32_t THuffmanTree::DoDecompression(uint8_t *pbOutBuffer, uint32_t dwOutLengt
     // Test the output length. Must not be 0.
     if(dwOutLength == 0)
         return 0;
+		
+	// If the input size is 0, we're done
+	if (is->GetBufferBitSize() == 0) return 0;
  
     // Get the compression type from the input stream
     n8Bits = is->Get8Bits();
@@ -994,7 +1009,7 @@ _1500E549:
  
     return (uint32_t)(pbOutPos - pbOutBuffer);
 }
- 
+
 // Table for (de)compression. Every compression type has 258 entries
 uint8_t THuffmanTree::Table1502A630[] =
 {

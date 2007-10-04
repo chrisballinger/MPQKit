@@ -21,8 +21,11 @@
 
 #include "MPQCryptography.h"
 
+#define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
+
 static Boolean crypt_table_initialized = FALSE;
 static uint32_t crypt_table[0x500];
+static const uLongf *crc_table;
 
 static void memrev(unsigned char *buf, size_t count) {
     unsigned char *r;
@@ -68,9 +71,11 @@ void mpq_init_cryptography() {
     OpenSSL_add_all_algorithms();
     OpenSSL_add_all_ciphers();
     ERR_load_crypto_strings();
+	
+	crc_table = get_crc_table();
 }
 
-void mpq_encrypt(char *data, uint32_t length, uint32_t key, bool disable_input_swapping) {
+void mpq_encrypt(void *data, size_t length, uint32_t key, bool disable_input_swapping) {
     assert(crypt_table_initialized);
     assert(data);
     
@@ -107,7 +112,7 @@ void mpq_encrypt(char *data, uint32_t length, uint32_t key, bool disable_input_s
     }
 }
 
-void mpq_decrypt(char *data, uint32_t length, uint32_t key, bool disable_output_swapping) {
+void mpq_decrypt(void *data, size_t length, uint32_t key, bool disable_output_swapping) {
     assert(crypt_table_initialized);
     assert(data);
     
@@ -165,7 +170,7 @@ uint32_t mpq_hash_cstring(const char *string, uint32_t type) {
     uint32_t seed1 = 0x7FED7FED;
     uint32_t seed2 = 0xEEEEEEEE;
     uint32_t shifted_type = (type << 8);
-    int32_t ch;
+    uint32_t ch;
     
     while (*string != 0) {
         ch = *string++;
@@ -178,38 +183,42 @@ uint32_t mpq_hash_cstring(const char *string, uint32_t type) {
     return seed1;
 }
 
-uint32_t mpq_hash_data(const char *data, uint32_t length, uint32_t type) {
+uint32_t mpq_hash_data(const void *data, size_t length, uint32_t type) {
     assert(crypt_table_initialized);
     assert(data);
     
+	const uint8_t *data_stream = data;
+	const uint8_t *data_stream_end = BUFFER_OFFSET(data, length);
+	
     uint32_t seed1 = 0x7FED7FED;
     uint32_t seed2 = 0xEEEEEEEE;
     uint32_t shifted_type = (type << 8);
-    int32_t ch;
+    uint32_t ch;
     
-    while (length > 0) {
-        ch = *data++;
+    while (data_stream < data_stream_end) {
+        ch = *data_stream++;
 
         seed1 = crypt_table[shifted_type + ch] ^ (seed1 + seed2);
         seed2 = ch + seed1 + seed2 + (seed2 << 5) + 3;
-        length--;
     }
 
     return seed1;
 }
 
-void mpq_crc32(const unsigned char *buffer, uint32_t length, uint32_t *crc, uint32_t flags) {
+void mpq_crc32(const void *buffer, size_t length, uint32_t *crc, uint32_t flags) {
     uint32_t local_crc = 0;
-    const uint32_t *crc_table = (uint32_t *)get_crc_table();
-    const unsigned char *buffer_end = buffer + length;
+    
+	const uint8_t *data_stream = buffer;
+	const uint8_t *data_stream_end = BUFFER_OFFSET(buffer, length);
     
     if (crc) local_crc = *crc;
     if (flags & MPQ_CRC_INIT) local_crc = 0xFFFFFFFF;
     
     if (flags & MPQ_CRC_UPDATE) {
-        while (buffer < buffer_end) {
-            local_crc = ((local_crc >> 8) & 0x00FFFFFF) ^ crc_table[(local_crc ^ *buffer) & 0xFF];
-            buffer++;
+        while (data_stream < data_stream_end) {
+			// Explicit cast is OK here, crc32 is 32-bit
+            local_crc = ((local_crc >> 8) & 0x00FFFFFF) ^ (uint32_t)crc_table[(local_crc ^ *data_stream) & 0xFF];
+            data_stream++;
         }
     }
     
@@ -217,24 +226,24 @@ void mpq_crc32(const unsigned char *buffer, uint32_t length, uint32_t *crc, uint
     if (crc) *crc = local_crc;
 }
 
-int mpq_verify_weak_signature(RSA *public_key, const unsigned char *signature, const unsigned char *digest) {
+int mpq_verify_weak_signature(RSA *public_key, const void *signature, const void *digest) {
     unsigned char reversed_signature[MPQ_WEAK_SIGNATURE_SIZE];
-    memcpy(reversed_signature, signature + 8, MPQ_WEAK_SIGNATURE_SIZE);
+    memcpy(reversed_signature, BUFFER_OFFSET(signature, 8), MPQ_WEAK_SIGNATURE_SIZE);
     memrev(reversed_signature, MPQ_WEAK_SIGNATURE_SIZE);
     
     return RSA_verify(NID_md5, digest, MD5_DIGEST_LENGTH, reversed_signature, MPQ_WEAK_SIGNATURE_SIZE, public_key);
 }
 
-int mpq_verify_strong_signature(RSA *public_key, const unsigned char *signature, const unsigned char *digest) {
+int mpq_verify_strong_signature(RSA *public_key, const void *signature, const void *digest) {
     unsigned char reversed_signature[MPQ_STRONG_SIGNATURE_SIZE];
-    memcpy(reversed_signature, signature + 4, MPQ_STRONG_SIGNATURE_SIZE);
+    memcpy(reversed_signature, BUFFER_OFFSET(signature, 4), MPQ_STRONG_SIGNATURE_SIZE);
     memrev(reversed_signature, MPQ_STRONG_SIGNATURE_SIZE);
 
     unsigned char real_digest[MPQ_STRONG_SIGNATURE_SIZE];
     memset(real_digest, 0xbb, sizeof(real_digest));
     real_digest[0] = 0x0b;
 
-    uint32_t digest_offset = sizeof(real_digest) - SHA_DIGEST_LENGTH;
+    size_t digest_offset = sizeof(real_digest) - SHA_DIGEST_LENGTH;
     memcpy(real_digest + digest_offset, digest, SHA_DIGEST_LENGTH);
     memrev(real_digest + digest_offset, SHA_DIGEST_LENGTH);
 

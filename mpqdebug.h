@@ -8,16 +8,14 @@
  */
 
 #if defined(DEBUG)
-static inline void MPQDebugLog(NSString * x, ...)
-{
+static inline void MPQDebugLog(NSString * x, ...) {
     va_list va;
     va_start(va, x);
     NSLogv(x, va);
     va_end(va);
 }
 #else
-static inline void MPQDebugLog(NSString * x, ...)
-{
+static inline void MPQDebugLog(NSString * x, ...) {
 
 }
 #endif

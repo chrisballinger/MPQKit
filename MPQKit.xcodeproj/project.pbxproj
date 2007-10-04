@@ -13,7 +13,8 @@
 		310D91BA0BBED0BC00FEA3C5 /* mpqfs.nib in Resources */ = {isa = PBXBuildFile; fileRef = 310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */; };
 		310D91F50BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */; };
 		310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */ = {isa = PBXBuildFile; fileRef = 310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */; };
-		31149A2C05CD52D800419143 /* attributes.plist in Resources */ = {isa = PBXBuildFile; fileRef = 31149A2B05CD52D800419143 /* attributes.plist */; };
+		3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3112FEEA0C38A0B100992F8F /* MPQArchivePriorityProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */; };
 		312311C70549F0D300833907 /* NSStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3133BFC304C8EB0800A80102 /* NSStringAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312311C80549F0D300833907 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3133BFC404C8EB0800A80102 /* NSStringAdditions.m */; };
 		312311CC0549F0F100833907 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD34E04A1592C00A80102 /* crc32.c */; };
@@ -22,7 +23,6 @@
 		312311D20549F0F100833907 /* pklib.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34F04A1592C00A80102 /* pklib.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311D30549F0F100833907 /* SCompression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD3C704A1606D00A80102 /* SCompression.cpp */; };
 		312311D40549F0F100833907 /* SCompression.h in Headers */ = {isa = PBXBuildFile; fileRef = 313E4BDE04A2C80700A80102 /* SCompression.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		312311D50549F0F100833907 /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD34D04A1592C00A80102 /* wave.c */; };
 		312311D60549F0F100833907 /* wave.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CFD34C04A1592C00A80102 /* wave.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		312311E10549F18700833907 /* MPQCryptography.h in Headers */ = {isa = PBXBuildFile; fileRef = F568E751034FC7B001000102 /* MPQCryptography.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312311E20549F18A00833907 /* MPQCryptography.c in Sources */ = {isa = PBXBuildFile; fileRef = F568E752034FC7B001000102 /* MPQCryptography.c */; };
@@ -37,11 +37,13 @@
 		312443EB0B474D98004DB138 /* MPQErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 312443EA0B474D98004DB138 /* MPQErrors.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312444120B47532F004DB138 /* PHSErrorMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 312444110B47532F004DB138 /* PHSErrorMacros.h */; };
 		312444220B475387004DB138 /* MPQErrors.m in Sources */ = {isa = PBXBuildFile; fileRef = 312444210B475387004DB138 /* MPQErrors.m */; };
+		314C60E40C18B114005BBE02 /* MPQFilePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 314C60E30C18B114005BBE02 /* MPQFilePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		314C61000C18B273005BBE02 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
+		314C610C0C18B43E005BBE02 /* mpqdumpsectors.m in Sources */ = {isa = PBXBuildFile; fileRef = 314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */; };
 		3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */ = {isa = PBXBuildFile; fileRef = 3150DB8C0AF455C300CF2965 /* Public RSA Keys */; };
-		3150DBB70AF4730900CF2965 /* signaturecheck.m in Sources */ = {isa = PBXBuildFile; fileRef = 3150DBB60AF4730900CF2965 /* signaturecheck.m */; };
-		3150DBBD0AF4814300CF2965 /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
-		3150DBCB0AF481E600CF2965 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */ = {isa = PBXBuildFile; fileRef = 3150DBF60AF5266700CF2965 /* MPQKit.pem */; };
+		315FB6D40C374F9A00475D07 /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 315FB6D30C374F9A00475D07 /* wave.c */; };
+		316186EF0C3DF5830024CABB /* MPQArchivePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE2750ADF74B3002BC846 /* NSArrayListfileAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		316FE2760ADF74B3002BC846 /* NSArrayListfileAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */; };
 		3173395A05B74E47003755C5 /* NSDateNTFSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -51,8 +53,9 @@
 		319811340BC2EF85009C3E08 /* listfiles in Resources */ = {isa = PBXBuildFile; fileRef = 319811260BC2EF85009C3E08 /* listfiles */; };
 		319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
 		319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
-		3199802C0B4D8C3000D4FE4E /* verifyarchive.m in Sources */ = {isa = PBXBuildFile; fileRef = 319980080B4D8AFF00D4FE4E /* verifyarchive.m */; };
+		3199802C0B4D8C3000D4FE4E /* mpqdump.m in Sources */ = {isa = PBXBuildFile; fileRef = 319980080B4D8AFF00D4FE4E /* mpqdump.m */; };
 		31A6B007068C07F80089D443 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31A6B005068C07F80089D443 /* Foundation.framework */; };
+		31A82B9D0C5A8CFA0011E8E4 /* MPQKitPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31A8A50E0BC1455A001F583D /* mpqfs.m in Sources */ = {isa = PBXBuildFile; fileRef = 31A8A50D0BC1455A001F583D /* mpqfs.m */; };
 		31A8A51A0BC145CD001F583D /* mpqfsd.m in Sources */ = {isa = PBXBuildFile; fileRef = 31B8088D0BB84E7E001F9B73 /* mpqfsd.m */; };
 		31A8A51B0BC145D1001F583D /* MPQFileSystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 31B808940BB85067001F9B73 /* MPQFileSystem.m */; };
@@ -62,7 +65,6 @@
 		31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31A8A4FB0BC14502001F583D /* mpqfsd */; };
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
-		31B954150C1278C100CFD540 /* compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31B9540D0C1274E600CFD540 /* compression.mm */; };
 		31C2FF610B8FDA9C000C1DB5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */; };
 		31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */; };
@@ -70,7 +72,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3150DBBE0AF4814900CF2965 /* PBXContainerItemProxy */ = {
+		314C60FB0C18B273005BBE02 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -104,13 +106,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 31A8A4FA0BC14502001F583D;
 			remoteInfo = mpqfsd;
-		};
-		31B953F60C125E5A00CFD540 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3123119E0549EE5D00833907;
-			remoteInfo = MPQKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -146,7 +141,8 @@
 		310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFSApplicationDelegate.h; path = mpqfs/MPQFSApplicationDelegate.h; sourceTree = "<group>"; };
 		310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFSApplicationDelegate.m; path = mpqfs/MPQFSApplicationDelegate.m; sourceTree = "<group>"; };
 		310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Fuse.icns; path = mpqfs/Fuse.icns; sourceTree = "<group>"; };
-		31149A2B05CD52D800419143 /* attributes.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = attributes.plist; sourceTree = "<group>"; };
+		3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchivePriorityProxy.h; sourceTree = "<group>"; };
+		3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchivePriorityProxy.m; sourceTree = "<group>"; };
 		3123119F0549EE5D00833907 /* MPQKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPQKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		312311A60549EF9B00833907 /* MPQ-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist; path = "MPQ-Info.plist"; sourceTree = "<group>"; };
 		312443EA0B474D98004DB138 /* MPQErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQErrors.h; sourceTree = "<group>"; };
@@ -155,10 +151,13 @@
 		3133BFC304C8EB0800A80102 /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditions.h; sourceTree = "<group>"; };
 		3133BFC404C8EB0800A80102 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
 		313E4BDE04A2C80700A80102 /* SCompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCompression.h; path = stormlib2/SCompression.h; sourceTree = "<group>"; };
+		314C60E30C18B114005BBE02 /* MPQFilePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQFilePrivate.h; sourceTree = "<group>"; };
+		314C61040C18B273005BBE02 /* mpqdumpsectors */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqdumpsectors; sourceTree = BUILT_PRODUCTS_DIR; };
+		314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mpqdumpsectors.m; sourceTree = "<group>"; };
 		3150DB8C0AF455C300CF2965 /* Public RSA Keys */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Public RSA Keys"; sourceTree = "<group>"; };
-		3150DBAE0AF45FA900CF2965 /* signaturecheck */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = signaturecheck; sourceTree = BUILT_PRODUCTS_DIR; };
-		3150DBB60AF4730900CF2965 /* signaturecheck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = signaturecheck.m; sourceTree = "<group>"; };
 		3150DBF60AF5266700CF2965 /* MPQKit.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MPQKit.pem; sourceTree = "<group>"; };
+		315FB6D30C374F9A00475D07 /* wave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = stormlib2/wave/wave.c; sourceTree = "<group>"; };
+		316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchivePrivate.h; sourceTree = "<group>"; };
 		316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayListfileAdditions.h; sourceTree = "<group>"; };
 		316FE2740ADF74B3002BC846 /* NSArrayListfileAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSArrayListfileAdditions.m; sourceTree = "<group>"; };
 		3173395805B74E47003755C5 /* NSDateNTFSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDateNTFSAdditions.h; sourceTree = "<group>"; };
@@ -167,9 +166,13 @@
 		31767CCB0C13A4FA0015A006 /* huff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = huff.h; path = stormlib2/huffman/huff.h; sourceTree = "<group>"; };
 		3191CA7D0BB859180004E8AA /* libfuse.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfuse.dylib; path = /usr/local/lib/libfuse.dylib; sourceTree = "<absolute>"; };
 		319811260BC2EF85009C3E08 /* listfiles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = listfiles; path = mpqfs/listfiles; sourceTree = "<group>"; };
-		319980080B4D8AFF00D4FE4E /* verifyarchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = verifyarchive.m; sourceTree = "<group>"; };
-		3199801A0B4D8B4600D4FE4E /* verifyarchive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = verifyarchive; sourceTree = BUILT_PRODUCTS_DIR; };
+		319980080B4D8AFF00D4FE4E /* mpqdump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mpqdump.m; sourceTree = "<group>"; };
+		3199801A0B4D8B4600D4FE4E /* mpqdump */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqdump; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A6B005068C07F80089D443 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		31A82B290C5A87E50011E8E4 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
+		31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MPQKit.xcconfig; sourceTree = "<group>"; };
+		31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKitPrivate.h; sourceTree = "<group>"; };
 		31A8A4FB0BC14502001F583D /* mpqfsd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqfsd; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A8A50D0BC1455A001F583D /* mpqfs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mpqfs.m; path = mpqfs/mpqfs.m; sourceTree = "<group>"; };
 		31A8A5B10BC14B43001F583D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = mpqfs/English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -177,21 +180,19 @@
 		31B8088D0BB84E7E001F9B73 /* mpqfsd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mpqfsd.m; path = mpqfs/mpqfsd.m; sourceTree = "<group>"; };
 		31B808930BB85067001F9B73 /* MPQFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFileSystem.h; path = mpqfs/MPQFileSystem.h; sourceTree = "<group>"; };
 		31B808940BB85067001F9B73 /* MPQFileSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFileSystem.m; path = mpqfs/MPQFileSystem.m; sourceTree = "<group>"; };
-		31B953F10C125E5000CFD540 /* Test.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Test.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		31B953F20C125E5000CFD540 /* Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Test-Info.plist"; sourceTree = "<group>"; };
-		31B9540C0C1274E600CFD540 /* compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compression.h; path = tests/compression.h; sourceTree = "<group>"; };
-		31B9540D0C1274E600CFD540 /* compression.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = compression.mm; path = tests/compression.mm; sourceTree = "<group>"; };
-		31BAC6BA03D63FDA00A80102 /* MPQArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchive.m; sourceTree = "<group>"; };
+		31BAC6BA03D63FDA00A80102 /* MPQArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchive.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQDataSource.h; sourceTree = "<group>"; };
 		31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQDataSource.m; sourceTree = "<group>"; };
 		31CFD34C04A1592C00A80102 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = wave.h; path = stormlib2/wave/wave.h; sourceTree = "<group>"; };
-		31CFD34D04A1592C00A80102 /* wave.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = stormlib2/wave/wave.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		31CFD34E04A1592C00A80102 /* crc32.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = crc32.c; path = stormlib2/pklib/crc32.c; sourceTree = "<group>"; };
 		31CFD34F04A1592C00A80102 /* pklib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pklib.h; path = stormlib2/pklib/pklib.h; sourceTree = "<group>"; };
 		31CFD35004A1592C00A80102 /* explode.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = explode.c; path = stormlib2/pklib/explode.c; sourceTree = "<group>"; };
 		31CFD35104A1592C00A80102 /* implode.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = implode.c; path = stormlib2/pklib/implode.c; sourceTree = "<group>"; };
 		31CFD3C704A1606D00A80102 /* SCompression.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SCompression.cpp; path = stormlib2/SCompression.cpp; sourceTree = "<group>"; };
+		31D009FE0C34B69900F72368 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
+		31D009FF0C34B69900F72368 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		31D00A000C34B69900F72368 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		31DD6C990AEAF41B002CDD2C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		31E15FAB0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataCryptoAdditions.h; sourceTree = "<group>"; };
 		31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataCryptoAdditions.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
@@ -227,11 +228,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3150DBAC0AF45FA900CF2965 /* Frameworks */ = {
+		314C60FF0C18B273005BBE02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3150DBCB0AF481E600CF2965 /* MPQKit.framework in Frameworks */,
+				314C61000C18B273005BBE02 /* MPQKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,13 +254,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		31B953EE0C125E5000CFD540 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -267,11 +261,10 @@
 			isa = PBXGroup;
 			children = (
 				3123119F0549EE5D00833907 /* MPQKit.framework */,
-				3150DBAE0AF45FA900CF2965 /* signaturecheck */,
-				3199801A0B4D8B4600D4FE4E /* verifyarchive */,
+				3199801A0B4D8B4600D4FE4E /* mpqdump */,
 				310D91840BBECE5100FEA3C5 /* mpqfs.app */,
 				31A8A4FB0BC14502001F583D /* mpqfsd */,
-				31B953F10C125E5000CFD540 /* Test.octest */,
+				314C61040C18B273005BBE02 /* mpqdumpsectors */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -279,9 +272,11 @@
 		0867D691FE84028FC02AAC07 /* BZMPQ Framework */ = {
 			isa = PBXGroup;
 			children = (
+				31A82B280C5A87E50011E8E4 /* Configuration */,
 				312444110B47532F004DB138 /* PHSErrorMacros.h */,
 				31F591D90498F32500A80102 /* mpqdebug.h */,
 				F525C282035CB03701000102 /* MPQKit.h */,
+				31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */,
 				312443EA0B474D98004DB138 /* MPQErrors.h */,
 				312444210B475387004DB138 /* MPQErrors.m */,
 				F5AA721B034908F301000102 /* MPQSharedConstants.h */,
@@ -289,13 +284,11 @@
 				F5F8743F037322BA01000102 /* Compression */,
 				F568E755034FC7B901000102 /* Cryptography */,
 				F5DEFEC803465B8001000102 /* Classes */,
-				31B954090C1274B300CFD540 /* Tests */,
+				3150DBB50AF472EE00CF2965 /* Programs */,
 				31F0CF000BB849B800E24273 /* MPQFS */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Libraries */,
-				3150DBB50AF472EE00CF2965 /* Programs */,
 				034768DFFF38A50411DB9C8B /* Products */,
-				31B953F20C125E5000CFD540 /* Test-Info.plist */,
 			);
 			name = "BZMPQ Framework";
 			sourceTree = "<group>";
@@ -303,6 +296,9 @@
 		0867D69AFE84028FC02AAC07 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				31D009FE0C34B69900F72368 /* AudioToolbox.framework */,
+				31D009FF0C34B69900F72368 /* AudioUnit.framework */,
+				31D00A000C34B69900F72368 /* CoreAudio.framework */,
 				310D91590BBECCC800FEA3C5 /* Cocoa.framework */,
 				3191CA7D0BB859180004E8AA /* libfuse.dylib */,
 				31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */,
@@ -317,7 +313,6 @@
 			children = (
 				3150DBF60AF5266700CF2965 /* MPQKit.pem */,
 				3150DB8C0AF455C300CF2965 /* Public RSA Keys */,
-				31149A2B05CD52D800419143 /* attributes.plist */,
 				312311A60549EF9B00833907 /* MPQ-Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
 			);
@@ -341,7 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				31CFD34C04A1592C00A80102 /* wave.h */,
-				31CFD34D04A1592C00A80102 /* wave.c */,
+				315FB6D30C374F9A00475D07 /* wave.c */,
 			);
 			name = wave;
 			sourceTree = "<group>";
@@ -369,21 +364,22 @@
 		3150DBB50AF472EE00CF2965 /* Programs */ = {
 			isa = PBXGroup;
 			children = (
+				319980080B4D8AFF00D4FE4E /* mpqdump.m */,
+				314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */,
 				31E15FAB0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.h */,
 				31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */,
-				3150DBB60AF4730900CF2965 /* signaturecheck.m */,
-				319980080B4D8AFF00D4FE4E /* verifyarchive.m */,
 			);
 			name = Programs;
 			sourceTree = "<group>";
 		};
-		31B954090C1274B300CFD540 /* Tests */ = {
+		31A82B280C5A87E50011E8E4 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				31B9540C0C1274E600CFD540 /* compression.h */,
-				31B9540D0C1274E600CFD540 /* compression.mm */,
+				31A82B290C5A87E50011E8E4 /* Base.xcconfig */,
+				31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */,
+				31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */,
 			);
-			name = Tests;
+			path = Configuration;
 			sourceTree = "<group>";
 		};
 		31F0CF000BB849B800E24273 /* MPQFS */ = {
@@ -419,12 +415,16 @@
 			children = (
 				F53AFA24034A8CA501000102 /* MPQArchive.h */,
 				31BAC6BA03D63FDA00A80102 /* MPQArchive.m */,
+				3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */,
+				3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */,
+				316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */,
+				31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */,
+				31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */,
 				F5AA7217034908BB01000102 /* MPQFile.h */,
 				F5AA7218034908BB01000102 /* MPQFile.m */,
 				F56CED3F036B027201000102 /* MPQFileInfoEnumerator.h */,
 				F56CED40036B027201000102 /* MPQFileInfoEnumerator.m */,
-				31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */,
-				31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */,
+				314C60E30C18B114005BBE02 /* MPQFilePrivate.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -464,6 +464,10 @@
 				312444120B47532F004DB138 /* PHSErrorMacros.h in Headers */,
 				31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */,
 				31767CCD0C13A4FA0015A006 /* huff.h in Headers */,
+				314C60E40C18B114005BBE02 /* MPQFilePrivate.h in Headers */,
+				3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */,
+				316186EF0C3DF5830024CABB /* MPQArchivePrivate.h in Headers */,
+				31A82B9D0C5A8CFA0011E8E4 /* MPQKitPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,26 +515,26 @@
 			productReference = 3123119F0549EE5D00833907 /* MPQKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		3150DBAD0AF45FA900CF2965 /* signaturecheck */ = {
+		314C60F90C18B273005BBE02 /* mpqdumpsectors */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3150DBB20AF45FC800CF2965 /* Build configuration list for PBXNativeTarget "signaturecheck" */;
+			buildConfigurationList = 314C61010C18B273005BBE02 /* Build configuration list for PBXNativeTarget "mpqdumpsectors" */;
 			buildPhases = (
-				3150DBAB0AF45FA900CF2965 /* Sources */,
-				3150DBAC0AF45FA900CF2965 /* Frameworks */,
+				314C60FC0C18B273005BBE02 /* Sources */,
+				314C60FF0C18B273005BBE02 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3150DBBF0AF4814900CF2965 /* PBXTargetDependency */,
+				314C60FA0C18B273005BBE02 /* PBXTargetDependency */,
 			);
-			name = signaturecheck;
+			name = mpqdumpsectors;
 			productName = signaturecheck;
-			productReference = 3150DBAE0AF45FA900CF2965 /* signaturecheck */;
+			productReference = 314C61040C18B273005BBE02 /* mpqdumpsectors */;
 			productType = "com.apple.product-type.tool";
 		};
-		3199800F0B4D8B4600D4FE4E /* verifyarchive */ = {
+		3199800F0B4D8B4600D4FE4E /* mpqdump */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 319980170B4D8B4600D4FE4E /* Build configuration list for PBXNativeTarget "verifyarchive" */;
+			buildConfigurationList = 319980170B4D8B4600D4FE4E /* Build configuration list for PBXNativeTarget "mpqdump" */;
 			buildPhases = (
 				319980120B4D8B4600D4FE4E /* Sources */,
 				319980150B4D8B4600D4FE4E /* Frameworks */,
@@ -540,9 +544,9 @@
 			dependencies = (
 				319980100B4D8B4600D4FE4E /* PBXTargetDependency */,
 			);
-			name = verifyarchive;
+			name = mpqdump;
 			productName = signaturecheck;
-			productReference = 3199801A0B4D8B4600D4FE4E /* verifyarchive */;
+			productReference = 3199801A0B4D8B4600D4FE4E /* mpqdump */;
 			productType = "com.apple.product-type.tool";
 		};
 		31A8A4FA0BC14502001F583D /* mpqfsd */ = {
@@ -562,31 +566,13 @@
 			productReference = 31A8A4FB0BC14502001F583D /* mpqfsd */;
 			productType = "com.apple.product-type.tool";
 		};
-		31B953F00C125E5000CFD540 /* Test */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 31B953F30C125E5100CFD540 /* Build configuration list for PBXNativeTarget "Test" */;
-			buildPhases = (
-				31B953EC0C125E5000CFD540 /* Resources */,
-				31B953ED0C125E5000CFD540 /* Sources */,
-				31B953EE0C125E5000CFD540 /* Frameworks */,
-				31B953EF0C125E5000CFD540 /* ShellScript */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				31B953F70C125E5A00CFD540 /* PBXTargetDependency */,
-			);
-			name = Test;
-			productName = Test;
-			productReference = 31B953F10C125E5000CFD540 /* Test.octest */;
-			productType = "com.apple.product-type.bundle";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 31EB3F00085CCCD800290137 /* Build configuration list for PBXProject "MPQKit" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BZMPQ Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -594,9 +580,8 @@
 			projectRoot = "";
 			targets = (
 				3123119E0549EE5D00833907 /* MPQKit */,
-				31B953F00C125E5000CFD540 /* Test */,
-				3150DBAD0AF45FA900CF2965 /* signaturecheck */,
-				3199800F0B4D8B4600D4FE4E /* verifyarchive */,
+				3199800F0B4D8B4600D4FE4E /* mpqdump */,
+				314C60F90C18B273005BBE02 /* mpqdumpsectors */,
 				31A8A4FA0BC14502001F583D /* mpqfsd */,
 				310D91830BBECE5100FEA3C5 /* mpqfs */,
 			);
@@ -620,16 +605,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31149A2C05CD52D800419143 /* attributes.plist in Resources */,
 				3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */,
 				3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		31B953EC0C125E5000CFD540 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -662,20 +639,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env python";
-			shellScript = "#-*- encoding: utf-8 -*-\n# Xcode auto-versioning script for Subversion\n# by Axel Andersson, modified by Daniel Jalkut to use\n# svnversion instead of svn info, so that the current version\n# the highest local revision  number is always used.\n# Python version by Jean-Francois Roy\n        \nimport os, re\n\nif os.getenv(\"BUILT_PRODUCTS_DIR\") is None:\n    print \"Must be run from Xcode\"\n    sys.exit(1)\n\n# Add a few common directories to PATH\npathEntries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in pathEntries: pathEntries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in pathEntries: pathEntries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in pathEntries: pathEntries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(pathEntries)\n\n# Get the current subversion revision number and use it to set the CFBundleVersion value\np = os.popen2(['svnversion', '-n'])[1]\nREV = p.read()\np.close()\nINFO = \"%s/%s\" % (os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\n\nmatchObject = re.compile(\"([\\d]+:)?(\\d+[M|S]*).*\").match(REV)\nif not matchObject:\n    print \"No Subversion revision found\"\n    sys.exit(1)\nversion = matchObject.groups()[1]\n\nFH = open(INFO, 'a+')\nFH.seek(0)\n\ninfo = FH.read()\ninfo_re = re.compile(\"([\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(</string>)\", re.S | re.M)\ninfo = info_re.sub(r'\\g<1>%s\\g<2>' % version, info)\n\nFH.truncate(0)\nFH.write(info)\nFH.close()\n";
-		};
-		31B953EF0C125E5000CFD540 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+			shellScript = "#-*- encoding: utf-8 -*-\n# Xcode auto-versioning script for Subversion\n# by Axel Andersson, modified by Daniel Jalkut to use\n# svnversion instead of svn info, so that the current version\n# the highest local revision  number is always used.\n# Python version by Jean-Francois Roy\nimport os, re, sys\n\nif os.getenv(\"BUILT_PRODUCTS_DIR\") is None:\n    print \"Must be run from Xcode\"\n    sys.exit(1)\n\n# Add a few common directories to PATH\npathEntries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in pathEntries: pathEntries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in pathEntries: pathEntries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in pathEntries: pathEntries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(pathEntries)\n\n# Get the current subversion revision number and use it to set the CFBundleVersion value\np = os.popen2(['svnversion', '-n'])[1]\nREV = p.read()\np.close()\n\nINFO = \"%s/%s\" % (os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\n\nmatchObject = re.compile(\"([\\d]+:)?(\\d+[M|S]*).*\").match(REV)\nif matchObject:\n    version = matchObject.groups()[1]\nelse:\n    print \"No Subversion revision found\"\n    version = \"1.0b3\"\n\nFH = open(INFO, 'a+')\nFH.seek(0)\n\ninfo = FH.read()\ninfo_re = re.compile(\"([\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(</string>)\", re.S | re.M)\ninfo = info_re.sub(r'\\g<1>%s\\g<2>' % version, info)\n\nFH.truncate(0)\nFH.write(info)\nFH.close()\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -698,7 +662,6 @@
 				312311CE0549F0F100833907 /* explode.c in Sources */,
 				312311D10549F0F100833907 /* implode.c in Sources */,
 				312311D30549F0F100833907 /* SCompression.cpp in Sources */,
-				312311D50549F0F100833907 /* wave.c in Sources */,
 				312311E20549F18A00833907 /* MPQCryptography.c in Sources */,
 				3123128E0549F21A00833907 /* MPQFileInfoEnumerator.m in Sources */,
 				3123128F0549F21A00833907 /* MPQArchive.m in Sources */,
@@ -708,15 +671,16 @@
 				312444220B475387004DB138 /* MPQErrors.m in Sources */,
 				31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */,
 				31767CCC0C13A4FA0015A006 /* huff.cpp in Sources */,
+				315FB6D40C374F9A00475D07 /* wave.c in Sources */,
+				3112FEEA0C38A0B100992F8F /* MPQArchivePriorityProxy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3150DBAB0AF45FA900CF2965 /* Sources */ = {
+		314C60FC0C18B273005BBE02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3150DBB70AF4730900CF2965 /* signaturecheck.m in Sources */,
-				3150DBBD0AF4814300CF2965 /* NSDataCryptoAdditions.m in Sources */,
+				314C610C0C18B43E005BBE02 /* mpqdumpsectors.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,7 +689,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */,
-				3199802C0B4D8C3000D4FE4E /* verifyarchive.m in Sources */,
+				3199802C0B4D8C3000D4FE4E /* mpqdump.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -738,21 +702,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		31B953ED0C125E5000CFD540 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				31B954150C1278C100CFD540 /* compression.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3150DBBF0AF4814900CF2965 /* PBXTargetDependency */ = {
+		314C60FA0C18B273005BBE02 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3123119E0549EE5D00833907 /* MPQKit */;
-			targetProxy = 3150DBBE0AF4814900CF2965 /* PBXContainerItemProxy */;
+			targetProxy = 314C60FB0C18B273005BBE02 /* PBXContainerItemProxy */;
 		};
 		319980100B4D8B4600D4FE4E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -773,11 +729,6 @@
 			isa = PBXTargetDependency;
 			target = 31A8A4FA0BC14502001F583D /* mpqfsd */;
 			targetProxy = 31A8A5030BC14511001F583D /* PBXContainerItemProxy */;
-		};
-		31B953F70C125E5A00CFD540 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3123119E0549EE5D00833907 /* MPQKit */;
-			targetProxy = 31B953F60C125E5A00CFD540 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -847,12 +798,11 @@
 			};
 			name = Release;
 		};
-		3150DBB30AF45FC800CF2965 /* Debug */ = {
+		314C61020C18B273005BBE02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(HOME)/bin";
@@ -861,18 +811,15 @@
 					Foundation,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = signaturecheck;
+				PRODUCT_NAME = mpqdumpsectors;
 				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
-		3150DBB40AF45FC800CF2965 /* Release */ = {
+		314C61030C18B273005BBE02 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_LDFLAGS = (
@@ -880,10 +827,8 @@
 					Foundation,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = signaturecheck;
+				PRODUCT_NAME = mpqdumpsectors;
 				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -892,7 +837,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(HOME)/bin";
@@ -901,10 +845,8 @@
 					Foundation,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = verifyarchive;
+				PRODUCT_NAME = mpqdump;
 				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
@@ -912,7 +854,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_LDFLAGS = (
@@ -920,10 +861,8 @@
 					Foundation,
 					"-lcrypto",
 				);
-				PREBINDING = NO;
-				PRODUCT_NAME = verifyarchive;
+				PRODUCT_NAME = mpqdump;
 				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -985,151 +924,44 @@
 			};
 			name = Release;
 		};
-		31B953F40C125E5100CFD540 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "Test-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					SenTestingKit,
-					"-framework",
-					MPQKit,
-				);
-				PRODUCT_NAME = Test;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Debug;
-		};
-		31B953F50C125E5100CFD540 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
-				INFOPLIST_FILE = "Test-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					SenTestingKit,
-					"-framework",
-					MPQKit,
-				);
-				PRODUCT_NAME = Test;
-				WRAPPER_EXTENSION = octest;
-			};
-			name = Release;
-		};
 		31EB3EFB085CCCD800290137 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 2;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GENERATE_PROFILING_CODE = YES;
-				HEADER_SEARCH_PATHS = stormlib2;
-				INFOPLIST_FILE = "MPQ-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lbz2",
-					"-lcrypto",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = MPQKit;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wfloat-equal",
-				);
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
 		31EB3EFC085CCCD800290137 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_POSTPROCESSING = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 2;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
-				HEADER_SEARCH_PATHS = stormlib2;
-				INFOPLIST_FILE = "MPQ-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				MACH_O_TYPE = mh_dylib;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lbz2",
-					"-lcrypto",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = MPQKit;
-				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wfloat-equal",
-				);
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
 		31EB3F01085CCCD800290137 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};
 		31EB3F02085CCCD800290137 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
+				ARCHS = (
+					ppc,
+					i386,
+					ppc64,
+					x86_64,
+				);
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
 		};
@@ -1145,16 +977,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		3150DBB20AF45FC800CF2965 /* Build configuration list for PBXNativeTarget "signaturecheck" */ = {
+		314C61010C18B273005BBE02 /* Build configuration list for PBXNativeTarget "mpqdumpsectors" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3150DBB30AF45FC800CF2965 /* Debug */,
-				3150DBB40AF45FC800CF2965 /* Release */,
+				314C61020C18B273005BBE02 /* Debug */,
+				314C61030C18B273005BBE02 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		319980170B4D8B4600D4FE4E /* Build configuration list for PBXNativeTarget "verifyarchive" */ = {
+		319980170B4D8B4600D4FE4E /* Build configuration list for PBXNativeTarget "mpqdump" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				319980180B4D8B4600D4FE4E /* Debug */,
@@ -1168,15 +1000,6 @@
 			buildConfigurations = (
 				31A8A5090BC14526001F583D /* Debug */,
 				31A8A50A0BC14526001F583D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		31B953F30C125E5100CFD540 /* Build configuration list for PBXNativeTarget "Test" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				31B953F40C125E5100CFD540 /* Debug */,
-				31B953F50C125E5100CFD540 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

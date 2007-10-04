@@ -38,6 +38,8 @@
     uint32_t hash_position;
     mpq_hash_table_entry_t hash_entry;
     mpq_block_table_entry_t block_entry;
+    
+    BOOL _checkSectorAdlers;
 }
 
 /*! 
@@ -71,37 +73,29 @@
     @method seekToFileOffset:
     @abstract Seeks to the specified file offset.
     @discussion Note that this method simply calls seekToFileOffset:withMode: with the MPQFileBegin mode.
-    @param offset The number of bytes to move from the beginning of the file as an unsigned integer.
+    @param offset The number of bytes to move from the beginning of the file.
     @result The new file position, or -1 on error.
     
 */
-- (uint32_t)seekToFileOffset:(uint32_t)offset;
-- (uint32_t)seekToFileOffset:(uint32_t)offset error:(NSError **)error;
+- (uint32_t)seekToFileOffset:(off_t)offset;
+- (uint32_t)seekToFileOffset:(off_t)offset error:(NSError **)error;
 
 /*! 
     @method seekToFileOffset:mode:
     @abstract Seeks the number of specified bytes from the specified starting point.
     @discussion The valid displacement modes are: 
     
-        * MPQFileStart: Seeking is done with respect to the beginning of the file 
-        and toward the end of file. In effect, this makes nDistanceToMove an absolute 
-        file offset to seek to.
+        * MPQFileStart: the file position is set to offset bytes.
         
-        * MPQFileCurrent: Seeking is done with respect to the current file pointer 
-        and toward the end of file. If nDistanceToMove will move the file pointer 
-        beyond the end of file, the file pointer is moved to the end of file.
+        * MPQFileCurrent: the file position is set to its current location plus offset bytes.
         
-        * MPQFileEnd: Seeking is done with respect to the end of file and toward 
-        the beginning of the file. If nDistanceToMove will move the file pointer 
-        to a negative position, the file pointer is moved to the beginning of the 
-        file.
-    @param offset The number of bytes to move from the beginning of the file as an unsigned integer.
-    @param mode The displacement method. Must be a valid MPQFileDisplacementMode constant. 
-        Will affect the interpretation of distanceToMove.
+        * MPQFileEnd: the file position is set to the size of the file plus offset bytes.
+    @param offset The number of bytes to move.
+    @param mode The seeks method. Must be a valid MPQFileDisplacementMode constant.
     @result The new file position, or -1 on error.
 */
-- (uint32_t)seekToFileOffset:(uint32_t)offset mode:(MPQFileDisplacementMode)mode;
-- (uint32_t)seekToFileOffset:(uint32_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error;
+- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode;
+- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error;
 
 /*! 
     @method offsetInFile
@@ -119,6 +113,10 @@
     @result YES if the file pointer is at the end of file, NO otherwise.
 */
 - (BOOL)eof;
+
+
+- (BOOL)liveSectorChecksumValidatation;
+- (void)setLiveSectorChecksumValidation:(BOOL)flag;
 
 /*! 
     @method copyDataOfLength:

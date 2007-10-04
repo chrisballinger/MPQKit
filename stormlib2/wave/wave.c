@@ -66,94 +66,85 @@ static int32_t Table1503F1A0[] =
 // CompressWave
 
 // 1500EF70
-int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffer, int dwInLength, int nChannels, int nCmpLevel)
-//               ECX                          EDX
+uint32_t CompressWave(uint8_t *outBuffer, uint32_t outBufferLength, int16_t *inBuffer, uint32_t inBufferLength, uint8_t channels, uint8_t compressionLevel)
 {
-    TWordAndByteArray Wcmp;
-    TByteAndWordPtr out;                    // Pointer to the output buffer
-    long SInt32Array1[2];
-    long SInt32Array2[2];
-    long SInt32Array3[2];
-    long nBytesRemains = dwOutLength;       // Number of bytes remaining
-    long nWordsRemains;                     // Number of words remaining
-//  unsigned char * pbSaveOutBuffer;        // Copy of output buffer (actually not used)
-    unsigned long dwBitBuff;
-    unsigned long dwStopBit;
-    unsigned long dwBit;
-    unsigned long ebx;
-    unsigned long esi;
-    long nTableValue;
-    long nOneWord;
-    long var_1C;
-    long var_2C;
-    int nLength;
-    int nIndex;
-    int nValue;
-
+    TByteAndWordPtr out;                                // Pointer to the output buffer
+    int32_t SInt32Array1[2];
+    int32_t SInt32Array2[2];
+    int32_t SInt32Array3[2];
+    uint32_t nBytesRemains = outBufferLength;			// Number of bytes remaining
+    uint32_t nWordsRemains;                             // Number of words remaining
+    uint32_t dwBitBuff;
+    uint32_t dwStopBit;
+    uint32_t dwBit;
+    uint32_t ebx;
+    uint32_t esi;
+    int32_t nTableValue;
+    int16_t nOneWord;
+    int32_t var_1C;
+    int32_t var_2C;
+    int32_t nLength;
+    uint32_t nIndex;
+    int32_t nValue;
+    
+    assert((inBufferLength % sizeof(int16_t)) == 0);
+    assert(channels == 1 || channels == 2);
+    
     // If less than 2 bytes remain, don't decompress anything
-//  pbSaveOutBuffer = pbOutBuffer;
-    out.pb = pbOutBuffer;
+    out.pb = outBuffer;
     if(nBytesRemains < 2)
         return 2;
 
-    Wcmp.b[1] = (unsigned char)(nCmpLevel - 1);
-    Wcmp.b[0] = (unsigned char)0;
-
-    *out.pw++ = (short)CFSwapInt16LittleToHost(Wcmp.w);
-    if((out.pb - pbOutBuffer + (nChannels * 2)) > nBytesRemains)
-        return (int)(out.pb - pbOutBuffer + (nChannels * 2));
+    *out.pb++ = 0;
+    *out.pb++ = compressionLevel - 1;
+	
+	if((out.pb - outBuffer + (channels * sizeof(int16_t))) > nBytesRemains)
+        return (uint32_t)(out.pb - outBuffer + (channels * sizeof(int16_t)));
 
     SInt32Array1[0] = SInt32Array1[1] = 0x2C;
 
-    for(int i = 0; i < nChannels; i++)
+    for(uint8_t i = 0; i < channels; i++)
     {
-        nOneWord = (short)CFSwapInt16LittleToHost(*pwInBuffer++);
-        *out.pw++ = (short)CFSwapInt16LittleToHost((short)nOneWord);
+        nOneWord = (int16_t)CFSwapInt16LittleToHost(*inBuffer++);
+        *out.pw++ = (int16_t)CFSwapInt16LittleToHost(nOneWord);
         SInt32Array2[i] = nOneWord;
     }
 
     // Weird. But it's there
-    nLength = dwInLength;
-    if(nLength < 0)                     // mov eax, dwInLength; cdq; sub eax, edx;
+    nLength = inBufferLength;
+    if(nLength < 0)
         nLength++;
 
-    nLength = (nLength / 2) - (int)(out.pb - pbOutBuffer);
+    nLength = (nLength / 2) - (uint32_t)(out.pb - outBuffer);
     nLength = (nLength < 0) ? 0 : nLength;
     
-    nIndex  = nChannels - 1;            // edi
-    nWordsRemains = dwInLength / 2;     // eax
+    nIndex  = channels - 1;
+	// Explicit cast is OK here, function can't process more than uint32_t
+    nWordsRemains = inBufferLength / (uint32_t)sizeof(int16_t);
     
-    // ebx - nChannels
-    // ecx - pwOutPos
-    for(int chnl = nChannels; chnl < nWordsRemains; chnl++)
+    for(uint32_t chnl = channels; chnl < nWordsRemains; chnl++)
     {
         // 1500F030
-        if((out.pb - pbOutBuffer + 2) > nBytesRemains)
-            return (int)(out.pb - pbOutBuffer + 2);
+        if((out.pb - outBuffer + sizeof(int16_t)) > nBytesRemains)
+            return (uint32_t)(out.pb - outBuffer + sizeof(int16_t));
 
         // Switch index
-        if(nChannels == 2)
+        if(channels == 2)
             nIndex = (nIndex == 0) ? 1 : 0;
 
         // Load one word from the input stream
-        nOneWord = (short)CFSwapInt16LittleToHost(*pwInBuffer++);   // ecx - nOneWord
+        nOneWord = (int16_t)CFSwapInt16LittleToHost(*inBuffer++);
         SInt32Array3[nIndex] = nOneWord;
-
-        // esi - SInt32Array2[nIndex]
-        // eax - nValue
+        
         nValue = nOneWord - SInt32Array2[nIndex];
-        nValue = (nValue < 0) ? ((nValue ^ 0xFFFFFFFF) + 1) : nValue;
+        nValue = (nValue < 0) ? ((int32_t)((uint32_t)nValue ^ 0xFFFFFFFF) + 1) : nValue;
 
         ebx = (nOneWord >= SInt32Array2[nIndex]) ? 0 : 0x40;
 
-        // esi - SInt32Array2[nIndex]
-        // edx - Table1503F1A0[SInt32Array2[nIndex]]
-        // edi - (Table1503F1A0[SInt32Array1[nIndex]] >> nCmpLevel)
         nTableValue = Table1503F1A0[SInt32Array1[nIndex]];
-        dwStopBit = (unsigned long)nCmpLevel;
+        dwStopBit = compressionLevel;
 
-        // edi - nIndex;
-        if(nValue < (nTableValue >> nCmpLevel))
+        if(nValue < (nTableValue >> compressionLevel))
         {
             if(SInt32Array1[nIndex] != 0)
                 SInt32Array1[nIndex]--;
@@ -175,7 +166,7 @@ int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffe
                 nLength--;
             }
 
-            var_2C = nTableValue >> Wcmp.b[1];
+            var_2C = nTableValue >> (compressionLevel - 1);
             dwBitBuff = 0;
 
             esi = (1 << (dwStopBit - 2));
@@ -210,7 +201,7 @@ int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffe
             }
 
             SInt32Array2[nIndex]  = nValue;
-            *out.pb++ = (unsigned char)(dwBitBuff | ebx);
+            *out.pb++ = (uint8_t)(dwBitBuff | ebx);
             nTableValue = Table1503F120[dwBitBuff & 0x1F];
             SInt32Array1[nIndex]  = SInt32Array1[nIndex] + nTableValue; 
             if(SInt32Array1[nIndex] < 0)
@@ -220,41 +211,43 @@ int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffe
         }
     }
 
-    return (int)(out.pb - pbOutBuffer);
+    return (uint32_t)(out.pb - outBuffer);
 }
 
 //----------------------------------------------------------------------------
 // DecompressWave
 
 // 1500F230
-uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint8_t *inputBuffer, uint32_t inputBufferLength, uint8_t channels)
+uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *inBuffer, uint32_t inBufferLength, uint8_t channels)
 {
     TByteAndWordPtr out;                // Output buffer
     TByteAndWordPtr in;
-    uint8_t *pbInBufferEnd = (inputBuffer + inputBufferLength);
+    uint8_t *pbInBufferEnd = (inBuffer + inBufferLength);
     int32_t SInt32Array1[2];
     int32_t SInt32Array2[2];
-    int32_t nOneWord;
-    uint32_t dwOutLengthCopy = outputBufferLength;
-    int32_t nIndex;
+    int16_t nOneWord;
+    uint32_t dwOutLengthCopy = outBufferLength;
+    uint32_t nIndex;
     
-    assert((outputBufferLength % sizeof(int16_t)) == 0);
+    assert((outBufferLength % sizeof(int16_t)) == 0);
+    assert(channels == 1 || channels == 2);
     
     SInt32Array1[0] = SInt32Array1[1] = 0x2C;
-    out.pb = outputBuffer;
-    in.pb = inputBuffer;
+    out.pw = outBuffer;
+    in.pb = inBuffer;
     in.pw++;
 
     // Fill the Uint32Array2 array by channel values.
     for(uint8_t i = 0; i < channels; i++)
     {
-        nOneWord = (int16_t)CFSwapInt16LittleToHost(*in.pw++);
+        nOneWord = (int16_t)CFSwapInt16LittleToHost(*in.pw);
         SInt32Array2[i] = nOneWord;
         if(dwOutLengthCopy < 2)
-            return (uint32_t)(out.pb - outputBuffer);
+            return (uint32_t)(out.pb - (uint8_t *)outBuffer);
 
-        *out.pw++ = (int16_t)CFSwapInt16LittleToHost(nOneWord);
-        dwOutLengthCopy -= sizeof(int16_t);
+        *out.pw++ = *in.pw++;
+		// Explicit cast is OK here
+        dwOutLengthCopy -= (uint32_t)sizeof(int16_t);
     }
 
     // Get the initial index
@@ -279,10 +272,11 @@ uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint
                         SInt32Array1[nIndex]--;
 
                     if(dwOutLengthCopy < 2)
-                        return (uint32_t)(out.pb - outputBuffer);
+                        return (uint32_t)(out.pb - (uint8_t *)outBuffer);
 
-                    *out.pw++ = (int16_t)CFSwapInt16LittleToHost(SInt32Array2[nIndex]);
-                    outputBufferLength -= sizeof(int16_t);
+                    *out.pw++ = (int16_t)CFSwapInt16HostToLittle(SInt32Array2[nIndex]);
+					// Explicit cast is OK here
+                    outBufferLength -= (uint32_t)sizeof(int16_t);
                     break;
 
                 case 1:     // 1500F2E8
@@ -311,7 +305,7 @@ uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint
         {
             // 1500F349
             int32_t temp1 = Table1503F1A0[SInt32Array1[nIndex]];    // EDI
-            int32_t temp2 = temp1 >> inputBuffer[1];                // ESI
+            int32_t temp2 = temp1 >> inBuffer[1];                // ESI
             int32_t temp3 = SInt32Array2[nIndex];                   // ECX
 
             if(nOneByte & 0x01)          // EBX = nOneByte
@@ -346,12 +340,13 @@ uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint
             }
 
             SInt32Array2[nIndex] = temp3;
-            if(outputBufferLength < 2)
+            if(outBufferLength < 2)
                 break;
 
             // Store the output 16-bit value
-            *out.pw++ = (int16_t)CFSwapInt16LittleToHost(SInt32Array2[nIndex]);
-            outputBufferLength -= sizeof(int16_t);
+            *out.pw++ = (int16_t)CFSwapInt16HostToLittle(SInt32Array2[nIndex]);
+			// Explicit cast is OK here
+            outBufferLength -= (uint32_t)sizeof(int16_t);
 
             SInt32Array1[nIndex] += Table1503F120[nOneByte & 0x1F];
 
@@ -361,5 +356,5 @@ uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint
                 SInt32Array1[nIndex] = 0x58;
         }
     }
-    return (uint32_t)(out.pb - outputBuffer);
+    return (uint32_t)(out.pb - (uint8_t *)outBuffer);
 }

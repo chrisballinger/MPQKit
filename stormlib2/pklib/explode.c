@@ -220,7 +220,8 @@ static int32_t WasteBits(TDcmpStruct * pWork, uint32_t nBits)
     pWork->bit_buff >>= pWork->extra_bits;
     if(pWork->in_pos == pWork->in_bytes)
     {
-        pWork->in_pos = sizeof(pWork->in_buff);
+        // As long as in_pos is used as an offset, the explicit 32-bit cast is OK (since sizeof of a pointer should not require more than 32 bits to store...)
+		pWork->in_pos = (uint32_t)sizeof(pWork->in_buff);
         if((pWork->in_bytes = pWork->read_buf(pWork->in_buff, &pWork->in_pos, pWork->param)) == 0)
             return 1;
         pWork->in_pos = 0;
@@ -408,7 +409,7 @@ static uint32_t Expand(TDcmpStruct * pWork)
 //-----------------------------------------------------------------------------
 // Main exploding function.
 
-uint32_t pk_explode(
+int pk_explode(
    uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
    void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
    uint8_t      *work_buf,
@@ -423,7 +424,8 @@ uint32_t pk_explode(
     pWork->read_buf   = read_buf;
     pWork->write_buf  = write_buf;
     pWork->param      = param;
-    pWork->in_pos     = sizeof(pWork->in_buff);
+    // As long as in_pos is used as an offset, the explicit 32-bit cast is OK (since sizeof of a pointer should not require more than 32 bits to store...)
+	pWork->in_pos     = (uint32_t)sizeof(pWork->in_buff);
     pWork->in_bytes   = pWork->read_buf(pWork->in_buff, &pWork->in_pos, pWork->param);
     if(pWork->in_bytes <= 4)
         return CMP_BAD_DATA;

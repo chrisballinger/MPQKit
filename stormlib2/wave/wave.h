@@ -20,8 +20,8 @@ extern "C" {
 //-----------------------------------------------------------------------------
 // Functions
 
-int CompressWave(unsigned char * pbOutBuffer, int dwOutLength, short * pwInBuffer, int dwInLength, int nChannels, int nCmpLevel);
-uint32_t DecompressWave(uint8_t *outputBuffer, uint32_t outputBufferLength, uint8_t *inputBuffer, uint32_t inputBufferLength, uint8_t channels);
+uint32_t CompressWave(uint8_t *outBuffer, uint32_t outBufferLength, int16_t *inBuffer, uint32_t inBufferLength, uint8_t channels, uint8_t compressionLevel);
+uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *inBuffer, uint32_t inBufferLength, uint8_t channels);
 
 #ifdef __cplusplus
 }

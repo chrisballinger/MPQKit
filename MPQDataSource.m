@@ -53,9 +53,11 @@
         case NSDataBackingStore:
             [_dataBackingStore release];
             _dataBackingStore = nil;
+            break;
         case FileDescriptorBackingStore:
             if (_fileAlias != NULL) DisposeHandle((Handle)_fileAlias);
             _fileAlias = NULL;
+            break;
         default:
             abort();
     }
@@ -119,9 +121,11 @@
         case NSDataBackingStore:
             [_dataBackingStore release];
             _dataBackingStore = nil;
+            break;
         case FileDescriptorBackingStore:
             if (_fileDescriptorBackingStore != -1) close(_fileDescriptorBackingStore);
             _fileDescriptorBackingStore = -1;
+            break;
         default:
             abort();
     }
@@ -143,20 +147,21 @@
 }
 
 - (ssize_t)pread:(void *)buffer size:(size_t)size offset:(off_t)offset error:(NSError **)error {
-    ssize_t read_bytes = 0;
+    ssize_t bytes_read = 0;
     off_t length = [self length:error];
     if (length == -1) return -1;
-    if (offset + size > length) size = length - offset;
+    if (offset + size > (size_t)length) size = (size_t)(length - offset);
     if (size == 0) ReturnValueWithNoError(0, error)
     
     switch(_backingStoreType) {
         case NSDataBackingStore:
-            [_dataBackingStore getBytes:buffer range:NSMakeRange(offset, size)];
+			// unsigned long will do the right thing on Mac OS X, since the 64-bit ABIs are using the LP64 model
+            [_dataBackingStore getBytes:buffer range:NSMakeRange((unsigned long)offset, size)];
             ReturnValueWithNoError((ssize_t)size, error)
         case FileDescriptorBackingStore:
-            read_bytes = pread(_fileDescriptorBackingStore, buffer, size, offset);
-            if (read_bytes < size) ReturnValueWithPOSIXError(read_bytes, nil, error)
-            ReturnValueWithNoError(read_bytes, error)
+            bytes_read = pread(_fileDescriptorBackingStore, buffer, size, offset);
+            if (bytes_read == -1) ReturnValueWithPOSIXError(-1, nil, error)
+            ReturnValueWithNoError(bytes_read, error)
         default:
             abort();
     }

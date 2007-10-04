@@ -213,7 +213,6 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     arguments_ = arguments;
     
     overwriteVolname = NO;
-    mountIcon = nil;
     
     isMounted_ = NO;
     
@@ -233,9 +232,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     [mountPoint_ release];
     [archiveTree_ release];
     
-    fuse_opt_free_args(arguments_);
-    
-    [mountIcon release];    
+    fuse_opt_free_args(arguments_);  
     [super dealloc];
 }
 
@@ -391,7 +388,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
     if (isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, EISDIR, nil, error)
     
-    MPQFile *file = [[archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:nil] retain];
+    MPQFile *file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:nil];
     if (!file) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
     ReturnValueWithNoError(file, error)
 }
@@ -719,15 +716,6 @@ static struct fuse_operations fusefm_operations = {
 #pragma mark Mount
 
 - (void)startFuse {
-    if (mountIcon) {
-        [archive_ addFileWithPath:mountIcon filename:@".VolumeIcon.icns" parameters:nil error:nil];
-        NSNumber *position = [[archive_ fileInfoForFile:@".VolumeIcon.icns" locale:MPQNeutral] objectForKey:MPQFileHashPosition];
-        [[archiveTree_ subtreeForName:@".VolumeIcon.icns" create:YES] setValue:position forKeyPath:@"attributes.position"];
-        
-        NSData *volumeHeader = [self resourceHeaderWithFlags:kHasCustomIcon];
-        [volumeHeader writeToFile:[self resourcePathForPath:mountPoint_] options:0 error:nil];
-    }
-    
     struct fuse_args args;
     mpqfs_dupargs(&args, arguments_);
     
@@ -737,12 +725,6 @@ static struct fuse_operations fusefm_operations = {
     manager = self;
     fuse_main(args.argc, args.argv, &fusefm_operations, NULL);
     manager = nil;
-    
-    if (mountIcon) {
-        [[NSFileManager defaultManager] removeFileAtPath:[self resourcePathForPath:mountPoint_] handler:nil];
-        [archiveTree_ deleteSubtreeWithName:@".VolumeIcon.icns"];
-        [archive_ undoLastOperation:nil];
-    }
     
     fuse_opt_free_args(arguments_);
 }

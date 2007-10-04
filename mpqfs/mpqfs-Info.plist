@@ -18,7 +18,7 @@
 				<string>application/mpq</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>MoPaQ Archive</string>
+			<string>MoPaQ archive</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>W!pq</string>
@@ -60,7 +60,7 @@
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>MoPaQ Archive</string>
+			<string>MoPaQ archive</string>
 			<key>UTTypeIdentifier</key>
 			<string>com.blizzard.mpq</string>
 			<key>UTTypeTagSpecification</key>

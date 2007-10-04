@@ -1,0 +1,23 @@
+//
+//  mpqdumpsectors.m
+//  MPQKit
+//
+//  Created by Jean-François Roy on 01/06/2007.
+//  Copyright 2007 MacStorm. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <MPQKit/MPQKit.h>
+#import <MPQKit/MPQFilePrivate.h>
+
+CFStringEncoding CFStringFileSystemEncoding(void);
+
+int main(int argc, char *argv[]) {
+    NSAutoreleasePool *p = [NSAutoreleasePool new];
+    NSError *error = nil;
+    
+    
+    
+    [p release];
+    return 0;
+}

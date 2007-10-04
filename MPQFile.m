@@ -8,6 +8,7 @@
 
 #import <fcntl.h>
 #import <unistd.h>
+#import <zlib.h>
 #import <sys/aio.h>
 
 #import "MPQErrors.h"
@@ -20,6 +21,8 @@
 
 #import "SCompression.h"
 #import "NSDateNTFSAdditions.h"
+
+#define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
 
 #if defined(MPQKIT_USE_AIO)
 #define MPQFILE_AIO
@@ -95,7 +98,9 @@
     NSAssert(parent, @"Invalid parent archive reference");
     
     hash_entry = *(mpq_hash_table_entry_t *)[[descriptor objectForKey:@"HashTableEntry"] pointerValue];
-    block_entry = *(mpq_block_table_entry_t *)[[descriptor objectForKey:@"FileTableEntry"] pointerValue];
+    block_entry = *(mpq_block_table_entry_t *)[[descriptor objectForKey:@"BlockTableEntry"] pointerValue];
+    
+    _checkSectorAdlers = NO;
     
     [parent increaseOpenFileCount_:hash_position];
     ReturnValueWithNoError(self, error)
@@ -124,36 +129,40 @@
     return [parent fileInfoForPosition:hash_position error:error];
 }
 
-- (uint32_t)seekToFileOffset:(uint32_t)offset {
+- (uint32_t)seekToFileOffset:(off_t)offset {
     return [self seekToFileOffset:offset mode:MPQFileStart error:nil];
 }
 
-- (uint32_t)seekToFileOffset:(uint32_t)offset error:(NSError **)error {
+- (uint32_t)seekToFileOffset:(off_t)offset error:(NSError **)error {
     return [self seekToFileOffset:offset mode:MPQFileStart error:error];
 }
 
-- (uint32_t)seekToFileOffset:(uint32_t)offset mode:(MPQFileDisplacementMode)mode {
+- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode {
     return [self seekToFileOffset:offset mode:mode error:nil];
 }
 
-- (uint32_t)seekToFileOffset:(uint32_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error { 
+- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error { 
+    off_t new_offset;
+    
     switch (mode) {
         case MPQFileStart:
-            if (offset > [self length]) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
-            file_pointer = offset;
+            new_offset = offset;
             break;
         case MPQFileCurrent:
-            if (file_pointer + offset > [self length]) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
-            file_pointer = file_pointer + offset;
+            new_offset = file_pointer + offset;
             break;
         case MPQFileEnd:
-            if ([self length] < offset) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
-            file_pointer = [self length] - offset;
+            new_offset = [self length] - offset;
             break;
         default:
             ReturnValueWithError(-1, MPQErrorDomain, errInvalidDisplacementMode, nil, error)
     }
+
+    if (new_offset > [self length]) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
+    if (new_offset < 0) ReturnValueWithError(-1, MPQErrorDomain, errInvalidOffset, nil, error)
     
+    // Explicit cast is OK here, MPQ file sizes are 32-bit
+    file_pointer = (uint32_t)new_offset;
     ReturnValueWithNoError(file_pointer, error)
 }
 
@@ -163,6 +172,14 @@
 
 - (BOOL)eof {
     return (file_pointer >= [self length]);
+}
+
+- (BOOL)liveSectorChecksumValidatation {
+    return _checkSectorAdlers;
+}
+
+- (void)setLiveSectorChecksumValidation:(BOOL)flag {
+    _checkSectorAdlers = flag;
 }
 
 - (NSData *)copyDataOfLength:(uint32_t)length {
@@ -255,8 +272,10 @@
 - (uint32_t)length {
     off_t length = [dataSource length:NULL];
     if (length == -1) return 0;
+    
+    // This may not be necessary (if this is what the typecast will do)
     if (length > UINT32_MAX) return UINT32_MAX;
-    return length;
+    return (uint32_t)length;
 }
 
 - (ssize_t)read:(void *)buf size:(size_t)size error:(NSError **)error {
@@ -267,8 +286,13 @@
     
     ssize_t read_bytes = [dataSource pread:buf size:size offset:file_pointer error:error];
     if (read_bytes == -1) return -1;
-    file_pointer += read_bytes;
+    // Explicit cast is OK here, MPQ file sizes are 32-bit
+    file_pointer += (uint32_t)read_bytes;
     ReturnValueWithNoError(read_bytes, error)
+}
+
+- (NSData *)_copyRawSector:(uint32_t)index error:(NSError **)error {
+    ReturnValueWithError(nil, MPQErrorDomain, errInvalidOperation, nil, error);
 }
 
 @end
@@ -284,8 +308,9 @@
     uint32_t sector_size_shift;
     uint32_t full_sector_size;
     
-    uint32_t sectors_count;
-    uint32_t *sectors;
+    uint32_t sector_table_length;
+    uint32_t *sector_table;
+    uint32_t *_sector_adlers;
     
     void *buffer_;
     void *read_buffer;
@@ -309,18 +334,20 @@
     file_archive_offset = [[descriptor objectForKey:@"FileArchiveOffset"] longLongValue];
     encryption_key = [[descriptor objectForKey:@"EncryptionKey"] unsignedIntValue];
     
-    sectors_count = [[descriptor objectForKey:@"SectorTableLength"] unsignedIntValue];
-    sectors = [[descriptor objectForKey:@"SectorTable"] pointerValue];
+    sector_table_length = [[descriptor objectForKey:@"SectorTableLength"] unsignedIntValue];
+    sector_table = [[descriptor objectForKey:@"SectorTable"] pointerValue];
     if (block_entry.flags & (MPQFileCompressed | MPQFileDiabloCompressed)) {
-        NSAssert(sectors_count > 0, @"Invalid number of block table entries");
-        NSAssert(sectors, @"Invalid sectors table");
-    } else {
+        NSAssert(sector_table_length > 0, @"Invalid sector table length");
+        NSAssert(sector_table, @"Invalid sector table");
+    } else if (sector_table_length > 1) {
         // Synthesize a sector table to have a unified read method
-        sectors = malloc(sizeof(uint32_t) * (sectors_count + 1));
-        uint32_t sector_index = 0;
-        for(; sector_index < sectors_count; sector_index++) sectors[sector_index] = sector_index * full_sector_size;
-        sectors[sectors_count] = block_entry.size;
-    }
+        sector_table = malloc(sizeof(uint32_t) * sector_table_length);
+        for (uint32_t sector_index = 0; sector_index < sector_table_length - 1; sector_index++) sector_table[sector_index] = sector_index * full_sector_size;
+        sector_table[sector_table_length - 1] = block_entry.size;
+        assert(sector_table[sector_table_length - 1] - sector_table[sector_table_length - 2] <= full_sector_size);
+    } else sector_table = NULL;
+    
+    _sector_adlers = NULL;
     
     // Memory for compression/decompression operations
 #if defined(MPQFILE_AIO)
@@ -331,44 +358,58 @@
     if (!buffer_) ReturnFromInitWithError(MPQErrorDomain, errOutOfMemory, nil, error)
     
     read_buffer = buffer_;
-    data_buffer = buffer_ + (full_sector_size << 4);
+    data_buffer = BUFFER_OFFSET(buffer_, full_sector_size << 4);
     
     ReturnValueWithNoError(self, error)
 }
 
 - (void)dealloc {
     if (buffer_) free(buffer_);
-    if (!(block_entry.flags & (MPQFileCompressed | MPQFileDiabloCompressed))) free(sectors);
+    if (!(block_entry.flags & (MPQFileCompressed | MPQFileDiabloCompressed)) && sector_table) free(sector_table);
+    if (_sector_adlers) free(_sector_adlers);
     [super dealloc];
 }
 
-- (ssize_t)readSectors:(void *)buf range:(NSRange)which keeping:(NSRange)bytesToKeep error:(NSError **)error {
+- (ssize_t)_readSectors:(void *)buf range:(NSRange)which keeping:(NSRange)bytesToKeep error:(NSError **)error {
     int perr = 0;
     int stage = 0;
     
-    // Make sure the lower sector index is valid. Remember, sectors_count - 2 is the the last sector
-    NSParameterAssert(which.location < sectors_count - 1);
+    // Make sure the first sector is within bounds. Remember, sector_table_length - 2 is the index of the last sector.
+    if (which.location > sector_table_length - 2) ReturnValueWithError(-1, MPQErrorDomain, errOutOfBounds, nil, error);
     
-    // Make sure the higher sector index is valid
-    // which.location + which.length - 1 is the index of the last sector
-    // Since we would do -1 on both size, we can ommit the -1 on both side
-    NSParameterAssert(which.location + which.length < sectors_count);
+    // Make sure the last sector is within bounds.
+    // which.location + which.length - 1 is the index of the last sector to be read.
+    if (which.location + which.length > sector_table_length - 1) ReturnValueWithError(-1, MPQErrorDomain, errOutOfBounds, nil, error);
     
     // Current offset into buf
-    uint32_t data_offset = 0;
+    size_t data_offset = 0;
     
     // Read state
-    uint32_t last_sector = sectors_count - 2;
+    uint32_t last_sector = sector_table_length - 2;
     uint32_t decompressed_sector_size = full_sector_size;
-    uint32_t bytes_left = bytesToKeep.length;
+    // Explicit cast is OK here, MPQ file sizes are 32-bit
+    size_t bytes_left = bytesToKeep.length;
     uint32_t read_size = full_sector_size << 4;
     if (read_size > block_entry.archived_size) read_size = full_sector_size;
+    ssize_t bytes_read;
     
     BOOL encrypted = (block_entry.flags & MPQFileEncrypted) ? YES : NO;
     
+    // If live sector checksum validation is enabled, read the sector adlers (if we have them)
+    if (_checkSectorAdlers && (block_entry.flags & MPQFileHasSectorAdlers) && !_sector_adlers) {
+        // Quick sanity check
+        size_t sector_adlers_size = (sector_table_length - 1) * sizeof(uint32_t);
+        if ((sector_table[sector_table_length] - sector_table[sector_table_length - 1]) != sector_adlers_size) ReturnValueWithError(-1, MPQErrorDomain, errInvalidSectorChecksumData, nil, error)
+        _sector_adlers = malloc(sector_adlers_size);
+        if (!_sector_adlers) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
+        bytes_read = pread(archive_fd, _sector_adlers, sector_adlers_size, file_archive_offset + sector_table[sector_table_length - 1]);
+        if (bytes_read == -1) ReturnValueWithPOSIXError(-1, nil, error)
+        if ((size_t)bytes_read < sector_adlers_size) ReturnValueWithError(-1, MPQErrorDomain, errEndOfFile, nil, error)
+    }
+    
 #if defined(MPQFILE_AIO)
     // We have to keep track of aiocb offsets manually, since the OS may change the value in the aiocbs under us
-    off_t iocb_offsets[2] = {file_archive_offset + sectors[which.location], file_archive_offset + sectors[which.location] + (full_sector_size << 1)};
+    off_t iocb_offsets[2] = {file_archive_offset + sector_table[which.location], file_archive_offset + sector_table[which.location] + (full_sector_size << 1)};
     
     // io_buffers
     void *io_buffers[2] = {read_buffer + full_sector_size, read_buffer + (full_sector_size << 2)};
@@ -404,7 +445,7 @@
         perr = aio_read(iocbs[0]);
         perr = aio_read(iocbs[1]);
         if (perr == -1 && errno != EAGAIN) {
-            if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+            if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
             goto ErrorExit;
         }
     } while (perr == -1 && errno == EAGAIN);
@@ -414,10 +455,11 @@
     uint8_t current_iocb = 0;
     
     // Keep track of left-overs
-    uint32_t bytes_available[2] = {0, 0};
+    size_t bytes_available[2] = {0, 0};
     
-    uint32_t current_sector = which.location;
-    uint32_t last_needed_sector_plus_one = which.location + which.length;
+    // Explicit cast is OK here, there cannot be more sectors than the 32-bit integer range
+    uint32_t current_sector = (uint32_t)which.location;
+    uint32_t last_needed_sector_plus_one = (uint32_t)(which.location + which.length);
     while (current_sector < last_needed_sector_plus_one) {
 #if defined(MPQFILE_AIO)
         // Suspend until current_iocb is done
@@ -428,12 +470,12 @@
         stage = 1;
         if (perr == EINPROGRESS) continue;
         if (perr) {
-            if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
+            if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
             goto ErrorExit;
         }
         
         // This completes the aio command
-        ssize_t bytes_read = aio_return(iocbs[current_iocb]);
+        bytes_read = aio_return(iocbs[current_iocb]);
         
         uint8_t next_iocb = 1;
         if (current_iocb == 1) next_iocb = 0;
@@ -443,13 +485,13 @@
         uint32_t sector_buffer_offset = 0;
         bytes_available[current_iocb] = bytes_read + bytes_available[next_iocb];
 #else
-        ssize_t bytes_read = pread(archive_fd, read_buffer, read_size, file_archive_offset + sectors[current_sector]);
+        bytes_read = pread(archive_fd, read_buffer, read_size, file_archive_offset + sector_table[current_sector]);
         if (bytes_read == -1) {
             perr = -1;
-            if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+            if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
             goto ErrorExit;
         } else if (bytes_read == 0) {
-            if (error) *error = [NSError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
+            if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
             goto ErrorExit;
         }
         
@@ -459,16 +501,16 @@
 #endif
         
         // Compute sector_size for the first iteration
-        uint32_t sector_size = sectors[current_sector + 1] - sectors[current_sector];
+        uint32_t sector_size = sector_table[current_sector + 1] - sector_table[current_sector];
         
         // Process as many sectors as possible with the current aio buffer
         stage = 2;
-        while(bytes_available[current_iocb] >= sector_size) {
+        while (bytes_available[current_iocb] >= sector_size) {
 #if defined(MPQFILE_PREAD_CHECK)
             NSLog(@"Doing pread check...");
-            perr = pread(archive_fd, memcmp_buffer, sector_size, file_archive_offset + sectors[current_sector]);
+            perr = pread(archive_fd, memcmp_buffer, sector_size, file_archive_offset + sector_table[current_sector]);
             if (perr == -1) {
-                if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+                if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
                 goto ErrorExit;
             }
             
@@ -476,19 +518,38 @@
             if (perr) {
                 NSLog(@"memcmp failed!");
                 perr = 0;
-                if (error) *error = [NSError errorWithDomain:MPQErrorDomain code:0xBABE userInfo:nil];
+                if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:0xBABE userInfo:nil];
                 goto ErrorExit;
             }
             
             sector_buffer = memcmp_buffer;
             sector_buffer_offset = 0;
 #endif
+            // If we have sector adlers and live sector checksum validation is on, checksum the sector and verify
+            if (_checkSectorAdlers && (block_entry.flags & MPQFileHasSectorAdlers)) {
+                // Explicit cast is OK here, adler32 is 32-bit
+                uint32_t adler = (uint32_t)adler32(0L, Z_NULL, 0);
+                adler = (uint32_t)adler32(adler, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
+                if (adler != _sector_adlers[current_sector]) {
+                    if (error) {
+                        NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
+                            [self fileInfo], MPQErrorFileInfo, 
+                            [NSNumber numberWithUnsignedInt:current_sector], MPQErrorSectorIndex, 
+                            [NSNumber numberWithUnsignedInt:adler], MPQErrorComputedSectorChecksum, 
+                            [NSNumber numberWithUnsignedInt:_sector_adlers[current_sector]], MPQErrorExpectedSectorChecksum, 
+                            nil];
+                        *error = [MPQError errorWithDomain:MPQErrorDomain code:errInvalidSectorChecksum userInfo:userInfo];
+                        [userInfo release];
+                    }
+                    goto ErrorExit;
+                }
+            }
             
             // If the file is encrypted, decrypt the sector
-            if (encrypted) mpq_decrypt(sector_buffer + sector_buffer_offset, sector_size, encryption_key + current_sector, NO);
+            if (encrypted) mpq_decrypt(BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size, encryption_key + current_sector, NO);
             
             // Destination buffer for the decompression function
-            void *decompression_destination_buffer = buf + data_offset;
+            void *decompression_destination_buffer = BUFFER_OFFSET(buf, data_offset);
             
             // Figure out how big the sector should be when decompressed
             if (current_sector == last_sector) {
@@ -498,38 +559,33 @@
             
             // Use the proper decompression method
             if (block_entry.flags & MPQFileCompressed) {
-                // Regular compression is simple. What you get in the compression buffer (when you're compressing the data) is what you write to the MPQ. 
-                perr = SCompDecompress(decompression_destination_buffer, (int *)&decompressed_sector_size, sector_buffer + sector_buffer_offset, sector_size);
+                perr = SCompDecompress(decompression_destination_buffer, &decompressed_sector_size, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
                 if (perr == 0) {
-                    if (error) *error = [NSError errorWithDomain:MPQErrorDomain code:errDecompressionFailed userInfo:nil];
+                    if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:errDecompressionFailed userInfo:nil];
                     goto ErrorExit;
                 }
             } else if ((block_entry.flags & MPQFileDiabloCompressed) && (sector_size < decompressed_sector_size)) {
-                // Diablo compression is a bit tricky. SCompCompress has different types of compression it can use (combinations are allowed). When a file is compressed, 
-                // the first byte in the output compression buffer tells the decompressor which type(s) of compression was used on the data. This is not so with 
-                // Diablo compression. Diablo compression always uses PKWARE compression. Because it ALWAYS does this, it can (and does) ommit the first byte that tells 
-                // what compression methods were used on the block.
-                Decompress_pklib(decompression_destination_buffer, (int *)&decompressed_sector_size, sector_buffer + sector_buffer_offset, sector_size);
+                Decompress_pklib(decompression_destination_buffer, &decompressed_sector_size, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
             } else {
-                // No compression was used. "Decompress" the sector using a straight memory copy
                 decompressed_sector_size = sector_size;
-                memcpy(decompression_destination_buffer, sector_buffer + sector_buffer_offset, sector_size);
+                memcpy(decompression_destination_buffer, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
             }
             
-            // Need to handle the first and last sectors a bit differently
+            // Need to handle the first and last sector a bit differently
             if (current_sector == which.location) {
                 assert(data_offset == 0);
-                uint32_t read_size = bytesToKeep.location % full_sector_size;
+                // Explicit cast is OK here, sector sizes are 32-bit
+                uint32_t read_size = (uint32_t)bytesToKeep.location % full_sector_size;
                 if (current_sector != last_sector) {
-                    memmove(buf, buf + read_size, decompressed_sector_size - read_size);
+                    memmove(buf, BUFFER_OFFSET(buf, read_size), decompressed_sector_size - read_size);
                     data_offset += decompressed_sector_size - read_size;
                 } else {
                     size_t bytes_to_copy = MIN(bytes_left, decompressed_sector_size - read_size);
-                    memcpy(buf, decompression_destination_buffer + read_size, bytes_to_copy);
+                    memcpy(buf, BUFFER_OFFSET(decompression_destination_buffer, read_size), bytes_to_copy);
                     data_offset += bytes_to_copy;
                 }
             } else if (current_sector == last_sector) {
-                memcpy(buf + data_offset, decompression_destination_buffer, bytes_left);
+                memcpy(BUFFER_OFFSET(buf, data_offset), decompression_destination_buffer, bytes_left);
                 data_offset += bytes_left;
             } else data_offset += decompressed_sector_size;
             
@@ -543,7 +599,7 @@
             // Update the number of bytes available from the current aio buffer and update sector_size for the next sector
             bytes_available[current_iocb] -= sector_size;
             sector_buffer_offset += sector_size;
-            sector_size = sectors[current_sector + 1] - sectors[current_sector];
+            sector_size = sector_table[current_sector + 1] - sector_table[current_sector];
         }
         
         // Immediatly exit if we're done
@@ -565,7 +621,7 @@
         perr = aio_read(iocbs[current_iocb]);
         stage = 3;
         if (perr) {
-            if (error) *error = [NSError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
+            if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
             goto ErrorExit;
         }
         
@@ -634,9 +690,19 @@ ErrorExit:
     NSRange sectors_range = NSMakeRange(location, ((file_pointer + size + full_sector_size - 1) / full_sector_size) - location);
     NSRange data_range = NSMakeRange(file_pointer, size);
         
-    ssize_t bytes_read = [self readSectors:buf range:sectors_range keeping:data_range error:error];
-    if (bytes_read != -1) file_pointer += bytes_read;
-    ReturnValueWithNoError(bytes_read, error)
+    ssize_t bytes_read = [self _readSectors:buf range:sectors_range keeping:data_range error:error];
+    // Explicit cast is OK here, MPQ file sizes are 32-bit
+    if (bytes_read != -1) file_pointer += (uint32_t)bytes_read;
+    return bytes_read;
+}
+
+- (NSData *)_copyRawSector:(uint32_t)index error:(NSError **)error {
+    if (index > sector_table_length - 2) ReturnValueWithError(nil, MPQErrorDomain, errOutOfBounds, nil, error)
+    size_t sector_size = sector_table[index + 1] - sector_table[index];
+    ssize_t bytes_read = pread(archive_fd, read_buffer, sector_size, file_archive_offset + sector_table[index]);
+    if (bytes_read == -1) ReturnValueWithPOSIXError(nil, nil, error)
+    if ((size_t)bytes_read < sector_size) ReturnValueWithError(nil, MPQErrorDomain, errIO, nil, error)
+    ReturnValueWithNoError([[NSData alloc] initWithBytes:read_buffer length:sector_size], error)
 }
 
 @end
@@ -664,8 +730,6 @@ ErrorExit:
     file_archive_offset = [[descriptor objectForKey:@"FileArchiveOffset"] longLongValue];
     encryption_key = [[descriptor objectForKey:@"EncryptionKey"] unsignedIntValue];
     
-    NSAssert(!(block_entry.flags & MPQFileDiabloCompressed), @"No support for one sector files with Diablo compression");
-    
     ReturnValueWithNoError(self, error)
 }
 
@@ -690,9 +754,14 @@ ErrorExit:
         if (!read_buffer) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
                     
         // Read the data
-        if (pread(archive_fd, read_buffer, block_entry.archived_size, file_archive_offset) < block_entry.archived_size) {
+        ssize_t bytes_read = pread(archive_fd, read_buffer, block_entry.archived_size, file_archive_offset);
+        if (bytes_read == -1) {
             free(read_buffer);
-            ReturnValueWithError(-1, NSPOSIXErrorDomain, errno, nil, error)
+            ReturnValueWithPOSIXError(-1, nil, error)
+        }
+        if ((uint32_t)bytes_read < block_entry.archived_size) {
+            free(read_buffer);
+            ReturnValueWithError(-1, MPQErrorDomain, errIO, nil, error)
         }
         
         // If the file is encrypted, decrypt it
@@ -701,10 +770,12 @@ ErrorExit:
         // Decompress the file or do a straight memory copy
         uint32_t decompressed_size = block_entry.size;
         if (block_entry.flags & MPQFileCompressed) {
-            if (!SCompDecompress(data_cache_, (int *)&decompressed_size, read_buffer, block_entry.archived_size)) {
+            if (SCompDecompress(data_cache_, &decompressed_size, read_buffer, block_entry.archived_size) == 0) {
                 free(read_buffer);
                 ReturnValueWithError(-1, MPQErrorDomain, errDecompressionFailed, nil, error)
             }
+        } else if ((block_entry.flags & MPQFileDiabloCompressed) && (block_entry.archived_size < decompressed_size)) {
+            Decompress_pklib(data_cache_, &decompressed_size, read_buffer, block_entry.archived_size);
         } else {
             memcpy(data_cache_, read_buffer, block_entry.archived_size);
             decompressed_size = block_entry.archived_size;
@@ -718,10 +789,27 @@ ErrorExit:
         free(read_buffer);
     }
     
-    memcpy(buf, data_cache_ + file_pointer, size);
-    file_pointer += size;
+    memcpy(buf, BUFFER_OFFSET(data_cache_, file_pointer), size);
+    // Explicit cast is OK here, MPQ file sizes are 32-bit
+    file_pointer += (uint32_t)size;
     
     ReturnValueWithNoError(size, error)
+}
+
+- (NSData *)_copyRawSector:(uint32_t)index error:(NSError **)error {
+    if (index > 0) ReturnValueWithError(nil, MPQErrorDomain, errOutOfBounds, nil, error)
+    void *read_buffer = malloc(block_entry.archived_size);
+    if (!read_buffer) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
+    ssize_t bytes_read = pread(archive_fd, read_buffer, block_entry.archived_size, file_archive_offset);
+    if (bytes_read == -1) {
+        free(read_buffer);
+        ReturnValueWithPOSIXError(nil, nil, error)
+    }
+    if ((uint32_t)bytes_read < block_entry.archived_size) {
+        free(read_buffer);
+        ReturnValueWithError(nil, MPQErrorDomain, errIO, nil, error)
+    }
+    ReturnValueWithNoError([[NSData alloc] initWithBytesNoCopy:read_buffer length:block_entry.archived_size freeWhenDone:YES], error)
 }
 
 @end

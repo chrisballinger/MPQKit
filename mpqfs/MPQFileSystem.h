@@ -21,7 +21,6 @@
     
     struct fuse_args *arguments_;
     BOOL overwriteVolname;
-    NSString *mountIcon;
     
     BOOL isMounted_;
 }

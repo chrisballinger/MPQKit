@@ -11,15 +11,19 @@
 #define __SCOMPRESSION_H__
 
 #include <stdint.h>
+#include <MPQKit/MPQSharedConstants.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-int Decompress_pklib(void *outputBuffer, uint32_t *outputBufferLength, void *inputBuffer, uint32_t inputBufferLength);
+int Decompress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength);
 
-int SCompDecompress(uint8_t *outputBuffer, uint32_t *ouputBufferLength, uint8_t *inputBuffer, uint32_t inputBufferLength);
-int SCompCompress(char* pbCompressed, int* pdwOutLength, char* pbUncompressed, int dwInLength, int uCompressions, int nCmpType, int nCmpLevel);
+int Decompress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength);
+int Compress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel);
+
+int SCompDecompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength);
+int SCompCompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, MPQCompressorFlag compressors, int32_t compressionType, int32_t compressionLevel);
 
 #ifdef __cplusplus
 }

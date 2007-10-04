@@ -20,11 +20,9 @@ static NSMutableArray *listfiles = nil;
 static NSString *mount_point = nil;
 
 static BOOL has_volname = NO;
-static NSString *mount_icon = nil;
 
 enum {
     KEY_LISTFILE,
-    KEY_VOLICON,
     KEY_HELP,
     KEY_VERSION,
 };
@@ -33,8 +31,6 @@ enum {
 static struct fuse_opt mpqfs_opts[] = {
     FUSE_OPT_KEY("-l ",         KEY_LISTFILE),
     FUSE_OPT_KEY("--listfile=", KEY_LISTFILE),
-    FUSE_OPT_KEY("-i ",         KEY_VOLICON),
-    FUSE_OPT_KEY("--icon=",     KEY_VOLICON),
     FUSE_OPT_KEY("--version",   KEY_VERSION),
     FUSE_OPT_KEY("-h",          KEY_HELP),
     FUSE_OPT_KEY("--help",      KEY_HELP),
@@ -52,7 +48,6 @@ static void usage(const char *program) {
 "\n"
 "MPQFS options:\n"
 "    -l   --listfile        supply an external listfile to MPQFS\n"
-"    -i   --icon            specify a volume icon file for the Finder\n"
 "\n", program);
 }
 
@@ -82,12 +77,6 @@ static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args
             if (strstr(arg, "-l") == arg) listfile = [[NSString stringWithCString:arg + 2 encoding:NSUTF8StringEncoding] stringByStandardizingPath];
             if (strstr(arg, "--listfile=") == arg) listfile = [[NSString stringWithCString:arg + 11 encoding:NSUTF8StringEncoding] stringByStandardizingPath];
             [listfiles addObject:listfile];
-            return 0;
-        
-        case KEY_VOLICON:
-            [mount_icon release]; mount_icon = nil;
-            if (strstr(arg, "-i") == arg) mount_icon = [[[NSString stringWithCString:arg + 2 encoding:NSUTF8StringEncoding] stringByStandardizingPath] retain];
-            if (strstr(arg, "--icon=") == arg) mount_icon = [[[NSString stringWithCString:arg + 7 encoding:NSUTF8StringEncoding] stringByStandardizingPath] retain];
             return 0;
         
         case KEY_HELP:
@@ -157,8 +146,6 @@ int main(int argc, char *argv[]) {
     
     // Set options
     [fs setValue:[NSNumber numberWithBool:(has_volname) ? NO : YES] forKey:@"overwriteVolname"];
-    if (mount_icon) [fs setValue:mount_icon forKey:@"mountIcon"];
-    [mount_icon release];
     
     // Start fuse (does not return until unmount)
     [fs startFuse];

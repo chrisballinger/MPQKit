@@ -5,6 +5,10 @@
 //  Created by Jean-Francois Roy on Mon Sep 30 2002.
 //  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
+
+#if !defined(MPQSharedConstants_h)
+#define MPQSharedConstants_h
+
 #include <stdint.h>
 
 /*!
@@ -43,7 +47,7 @@
   @defined MPQArchiveLength
   @discussion Key for the archive size inside archive information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQArchiveSize                  @"MPQArchiveSize"
 
@@ -51,15 +55,15 @@
   @defined MPQSectorSizeShift
   @discussion Key for the archive sector size binary shift inside archive information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQSectorSizeShift              @"MPQSectorSizeShift"
 
 /*!
   @defined MPQNumberOfFiles
-  @discussion Key for the number of normal and delete files inside archive information dictionaries.
+  @discussion Key for the number of valid and deleted files inside archive information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQNumberOfFiles                @"MPQNumberOfFiles"
 
@@ -68,7 +72,7 @@
   @discussion Key for the maximum number of files inside archive information dictionaries.
     Also used in initWithAttributes:error: to indicate the capacity of a new archive.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQMaximumNumberOfFiles         @"MPQMaximumNumberOfFiles"
 
@@ -76,7 +80,7 @@
   @defined MPQNumberOfValidFiles
   @discussion Key for the number of valid files inside archive information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQNumberOfValidFiles           @"MPQNumberOfValidFiles"
 
@@ -85,7 +89,7 @@
   @discussion Key for the archive offset inside archive information dictionaries.
     Also used in initWithAttributes:error: to indicate the starting offset of a new archive.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQArchiveOffset                @"MPQArchiveOffset"
 
@@ -113,7 +117,7 @@
   @defined MPQFileSize
   @discussion Key for the file length inside file information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQFileSize                     @"MPQFileSize"
 
@@ -121,9 +125,18 @@
   @defined MPQFileArchiveSize
   @discussion Key for the length occupied by the file in the archive inside file information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQFileArchiveSize              @"MPQFileArchiveSize"
+
+/*!
+  @defined MPQFileArchiveOffset
+  @discussion Key for the file archive offset in file information dictionaries. You must add the archive offset to this number 
+    to obtain the absolute offset of the file in the archive file.
+    
+    The value of this key will be a NSNumber object.
+*/
+#define MPQFileArchiveOffset            @"MPQFileArchiveOffset"
 
 /*!
   @defined MPQFileFlags
@@ -147,7 +160,7 @@
   @defined MPQFileHashA
   @discussion Key for the file hash A inside file information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQFileHashA                    @"MPQFileHashA"
 
@@ -155,7 +168,7 @@
   @defined MPQFileHashB
   @discussion Key for the file hash B inside file information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQFileHashB                    @"MPQFileHashB"
 
@@ -163,7 +176,7 @@
   @defined MPQFileHashPosition
   @discussion Key for the file hash position inside file information dictionaries.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object.
 */
 #define MPQFileHashPosition             @"MPQFileHashPosition"
 
@@ -177,12 +190,30 @@
 
 /*!
   @defined MPQFileCanOpenWithoutFilename
-  @discussion Boolean key which can be checked to know if a file can be opened without knowing its filename. 
-    A file may not be opened if it is encrypted and its name is not known.
+  @discussion Key which can be checked to determine if a file can be opened without knowing its 
+    filename inside file information dictionaries. A file may not be opened if it is 
+    encrypted, its filename is not known and the encryption key cannot be brute forced.
     
-    The value of this key will be an NSNumber object.
+    The value of this key will be a NSNumber object wrapping a BOOL scalar.
 */
 #define MPQFileCanOpenWithoutFilename   @"MPQFileCanOpenWithoutFilename"
+
+/*!
+  @defined MPQFileNumberOfSectors
+  @discussion Key for the number of sectors used by the file inside file information dictionaries.
+    
+    The value of this key will be a NSNumber object.
+*/
+#define MPQFileNumberOfSectors   @"MPQFileNumberOfSectors"
+
+/*!
+  @defined MPQFileEncryptionKey
+  @discussion Key for the file's encryption key inside file information dictionaries. 
+    Will be 0 for unencrypted file. May be 0 if the file's filename is not known.
+    
+    The value of this key will be a NSNumber object.
+*/
+#define MPQFileEncryptionKey   @"MPQFileEncryptionKey"
 
 #pragma mark Keys for file addition parameters dictionaries
 
@@ -234,30 +265,22 @@ typedef uint16_t MPQVersion;
 /*!
     @typedef MPQFileFlag
     @abstract Valid MPQ file flag constants.
-    @constant MPQFileValid Marks the file as valid. Automatically added by the framework 
-        when a new file is added.
-    @constant MPQFileHasMetadata Indicates the file has associated metadata.
-    @constant MPQFileOneSector File is compressed in a single large sector.
-    @constant MPQFileOffsetAdjustedKey Indicates that this file's encryption key has been offset adjusted. 
-        As such, that file's name will be required for rename and compaction operations because if it 
-        needs to be moved inside the MPQ archive, it will have to be recompressed and/or reencrypted. 
+    @constant MPQFileValid Indicates the file is valid. Automatically set by MPQKit when adding a file.
+    @constant MPQFileHasSectorAdlers Indicates the file has sector adlers after the sectors.
+    @constant MPQFileStopSearchMarker Indicates that searching for the file in a MPQ list should stop.
+    @constant MPQFileOneSector Indicates the file is stored in a single sector.
+    @constant MPQFileOffsetAdjustedKey Indicates that the file's encryption key has been offset adjusted. 
         It is not recommended to offset adjust file keys.
-    @constant MPQFileEncrypted Indicates that the file either should be encrypted upon addition or is 
-        encrypted for existing files.
-    @constant MPQFileCompressed Indicates that the file either should be compressed upon addition or is 
-        compressed for existing files. Compression will use the default compressor and compression 
-        quality for the selected compressor unless they are overridden by addition parameters.
-    @constant MPQFileDiabloCompressed This flag indicates the file should be or is compressed using PKWARE 
-        compression. When this flag is used for addition, the PKWARE compressor will be used for 
-        the file regardless of addition parameters or the currently set default compressor. 
-        The only reason to use this flag is to produce an archive that will be 
-        compatible with Diablo.
+    @constant MPQFileEncrypted Indicates that the file is encrypted using the MPQ encryption algorithm.
+    @constant MPQFileCompressed Indicates that the file is compressed using the Storm compression scheme.
+    @constant MPQFileDiabloCompressed Indicates that the file is compressed using the PKWARE compressor. 
+        The only reason to use this flag is to produce an archive that will be compatible with Diablo.
     @constant MPQFileFlagsMask A bit mask for valid MPQ file flags.
 */
 enum {
     MPQFileValid                = 0x80000000,
-    MPQFileHasMetadata          = 0x04000000,
-    MPQFileDummy                = 0x02000000,
+    MPQFileHasSectorAdlers      = 0x04000000,
+    MPQFileStopSearchMarker     = 0x02000000,
     MPQFileOneSector            = 0x01000000,
     MPQFileOffsetAdjustedKey    = 0x00020000,
     MPQFileEncrypted            = 0x00010000,
@@ -270,26 +293,24 @@ typedef uint32_t MPQFileFlag;
 /*!
     @typedef MPQLocale
     @abstract Valid MPQ file locale constants.
-    @discussion MPQ files have a locale attribute which is used in combination with the file path to 
+    @discussion MPQ files have a locale attribute which is used in combination with the filename to 
         identify uniquely the file inside a given archive. That means you can have multiple files 
-        with the same path and name but with a different locale inside the same archive. The use of 
-        locale values seems deprecated by Blizzard.
-    @constant MPQNeutral  The default locale. Should be used for any non-localizable files, such as 
-        textures, binary tables, executables, etc.
-    @constant MPQChinese  Chinese (Taiwan) locale constant.
-    @constant MPQCzech  Czech locale constant.
-    @constant MPQGerman  German locale constant.
-    @constant MPQEnglish  English locale constant.
-    @constant MPQSpanish  Spanish locale constant.
-    @constant MPQFrench  French locale constant.
-    @constant MPQItalian  Italian locale constant.
-    @constant MPQJapanese  Japanese locale constant.
-    @constant MPQKorean  Korean locale constant.
-    @constant MPQDutch  Dutch locale constant.
-    @constant MPQPolish  Polish locale constant.
-    @constant MPQPortuguese  Portuguese locale constant.
-    @constant MPQRusssian  Russsian locale constant.
-    @constant MPQEnglishUK  English (UK) locale constant.
+        with the same filename but with different locales inside the same archive.
+    @constant MPQNeutral The default locale.
+    @constant MPQChinese Chinese (Taiwan).
+    @constant MPQCzech Czech.
+    @constant MPQGerman German.
+    @constant MPQEnglish English (US).
+    @constant MPQSpanish Spanish.
+    @constant MPQFrench French.
+    @constant MPQItalian Italian.
+    @constant MPQJapanese Japanese.
+    @constant MPQKorean Korean.
+    @constant MPQDutch Dutch.
+    @constant MPQPolish Polish.
+    @constant MPQPortuguese Portuguese.
+    @constant MPQRusssian Russsian.
+    @constant MPQEnglishUK English (UK).
 */
 enum {
     MPQNeutral      = 0,
@@ -318,29 +339,44 @@ typedef uint16_t MPQLocale;
         Note that ADPCM compression is only suitable for audio data and will destroy binary data (it is a 
         lossy compression algorithm). Files are only compressed if the MPQFileEncrypted file flag is present.
         If the MPQFileDiabloCompressed flag is present, MPQPKWARECompression is always used.
-    @constant MPQPKWARECompression The standard PKWARE compressor which appeared in Starcraft. You will 
-        need to use this compressor for new files in archives that will be used by Starcraft or 
-        Diablo II. Note that the Mac OS X version of Starcraft and Diablo II support the zlib 
+    @constant MPQHuffmanTreeCompression The standard Huffman compressor which appeared in StarCraft. There are 
+        no good reasons to use this compressor other than combining it with the ADPCM compressor to replicate 
+        Blizzard's compression settings in StarCraft and Diablo II for audio files.
+        
+        This compressor does not have a compression quality parameter.
+    @constant MPQZLIBCompression The zlib compressor was added in Warcraft 3. It is the default compressor.
+        
+        The default compression quality for this compressor is Z_DEFAULT_COMPRESSION. Please refer to the zlib 
+        documentation for more information.
+    @constant MPQPKWARECompression The standard PKWARE compressor which appeared in StarCraft. You will 
+        need to use this compressor for archives that will be used by StarCraft or 
+        Diablo II. Note that recent versions StarCraft and Diablo II support the zlib 
         compressor as well.
         
         This compressor does not have a compression quality parameter.
-    @constant MPQStereoADPCMCompression ADPCM compressor suitable for audio data. Offers a 4:1 compression ratio. 
-        Huffman coding is applied on the ADPCM data to further compress the bitstream.
+    @constant MPQBZIP2Compression The bzip2 compressor was added in World of Warcraft. Offers slightly better 
+        compression ratios than zlib.
+        
+        The compression quality corresponds to the value of the blockSize100k parameter for the BZ2_bzCompressInit 
+        function. The default compression quality for this compressor is 9. Please refer to the bzip2 documentation 
+        for more information.
+    @constant MPQMonoADPCMCompression ADPCM compressor suitable for mono 16 bits per sample PCM audio data. Offers a 
+        4:1 compression ratio. Huffman coding is historically applied on the ADPCM data to further compress the bitstream.
         
         The default compression quality for this compressor is MPQADPCMQuality4Bits (see MPQADPCMQuality for details).
-    @constant MPQBZIP2Compression The bzip2 compressor was added in World of Warcraft. Offers slightly better compression ratios than zlib.
+    @constant MPQStereoADPCMCompression ADPCM compressor suitable for stereo 16 bits per sample PCM audio data. Offers a 
+        4:1 compression ratio. Huffman coding is historically applied on the ADPCM data to further compress the bitstream.
         
-        The compression quality corresponds to the value of the blockSize100k parameter to the BZ2_bzCompressInit function. The default 
-        compression quality for this compressor is 9. Please refer to the bzip2 documentation for more information.
-    @constant MPQZLIBCompression The zlib compressor was added in Warcraft 3. It is the default compressor.
-        
-        The default compression quality for this compressor is Z_DEFAULT_COMPRESSION. Please refer to the zlib documentation for more information.
+        The default compression quality for this compressor is MPQADPCMQuality4Bits (see MPQADPCMQuality for details).
 */
 enum {
+    MPQHuffmanTreeCompression   = 0x01,
+    MPQZLIBCompression          = 0x02,
     MPQPKWARECompression        = 0x08,
-    MPQStereoADPCMCompression   = 0x81,
-    MPQBZIP2Compression         = 0x10, 
-    MPQZLIBCompression          = 0x02
+    MPQBZIP2Compression         = 0x10,
+    MPQMonoADPCMCompression     = 0x40,
+    MPQStereoADPCMCompression   = 0x80,
+    MPQCompressorMask           = 0xDB
 };
 typedef uint8_t MPQCompressorFlag;
 
@@ -349,12 +385,14 @@ typedef uint8_t MPQCompressorFlag;
     @abstract ADPCM compression quality constants.
     @discussion ADPCM compression is only suitable for audio data, and doesn't really compete with 
         more advanced codecs such as MP3, AAC and Vorbis.
-    @constant MPQADPCMQuality4Bits Uses 4 bits per sample.
-    @constant MPQADPCMQuality2Bits Uses 2 bits per sample.
+    @constant MPQADPCMQualityHigh High quality.
+    @constant MPQADPCMQualityMedium Medium quality.
+    @constant MPQADPCMQualityLow Low quality.
 */
 enum {
-    MPQADPCMQuality4Bits    = 4,
-    MPQADPCMQuality2Bits    = 2
+    MPQADPCMQualityHigh     = 6,
+    MPQADPCMQualityMedium   = 5,
+    MPQADPCMQualityLow      = 4,
 };
 typedef uint8_t MPQADPCMQuality;
 
@@ -378,3 +416,5 @@ enum {
     MPQFileEnd      = 2
 };
 typedef uint8_t MPQFileDisplacementMode;
+
+#endif

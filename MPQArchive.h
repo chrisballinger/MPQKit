@@ -173,6 +173,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     NSDictionary **file_info_cache;
     
     void *attributes_data;
+    uint32_t attributes_data_size;
     
     mpq_hash_table_entry_t *weak_signature_hash_entry;
     uint8_t *strong_signature;
@@ -324,7 +325,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         
         * MPQArchiveSize: The size of the archive on the disk in bytes as an integer.
         * MPQSectorSizeShift: The full sector size binary shift as an integer.
-        * MPQNumberOfFiles: The number of normal and deleted files in the archive as an integer.
+        * MPQNumberOfFiles: The number of valid and deleted files in the archive as an integer.
         * MPQMaximumNumberOfFiles: The maximum number of files the archive may contain as an integer.
         * MPQNumberOfValidFiles: The number of valid files in the archive as an integer.
         * MPQArchiveOffset: MPQ archives may be embedded in other files at 512 bytes boundaries.
@@ -382,20 +383,20 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 
 /*! 
     @method fileCount
-    @abstract Returns the number of normal and deleted files inside the archive.
+    @abstract Returns the number of valid and deleted files inside the archive.
     @discussion You may calculate the number of deleted files by substracting this number 
-        with the result of normalFileCount.
+        with the result of validFileCount.
     @result Returns the number of used and deleted files inside the archive as an integer.
 */
 - (uint32_t)fileCount;
 
 /*! 
-    @method normalFileCount
-    @abstract Returns the number of normal files inside the archive.
-    @discussion This includes every normal file, even if the file name is unknown.
-    @result Returns the number of normal files inside the archive as an integer.
+    @method validFileCount
+    @abstract Returns the number of valid files inside the archive.
+    @discussion This includes every valid file, even if the filename is unknown.
+    @result Returns the number of valid files inside the archive as an integer.
 */
-- (uint32_t)normalFileCount;
+- (uint32_t)validFileCount;
 
 /*! 
     @method maximumNumberOfFiles
@@ -504,6 +505,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 - (BOOL)verifyWoWSurveySignature:(NSError **)error;
 - (BOOL)verifyWoWMacPatchSignature:(NSError **)error;
 - (BOOL)verifyWarcraft3MapSignature:(NSError **)error;
+- (BOOL)verifyStarcraftMapSignature:(NSError **)error;
 
 #pragma mark options
 
@@ -901,7 +903,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         you may use the dataForFile methods.
         
         Note that this method simply calls openFile:locale: with MPQNeutral as the locale.
-    @param filename The path of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
+    @param filename The filename of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
     @result An MPQFile instance on success or nil on failure.
 */
 - (MPQFile *)openFile:(NSString *)filename;
@@ -912,7 +914,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @abstract Creates an MPQFile object for the specified file.
     @discussion MPQFile objects are useful for streaming a file's data. For one-time data reading, 
         you may use the dataForFile methods.
-    @param filename The path of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
+    @param filename The filename of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
     @param locale The old and new file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result An MPQFile instance on success or nil on failure.
 */
@@ -986,13 +988,13 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 
 /*! 
     @method fileExists:
-    @abstract Returns an array of locale codes for which the specified file exists.
-    @discussion Files can have the same path in an MPQ archive so long as their locale is different.
+    @abstract Checks if a specified file exists in the MPQ archive.
+    @discussion This method simply calls fileExists:locale: with MPQNeutral as the locale.
     @param filename The path of the MPQ file to search for. Note that the path separator MUST be \. Must not be nil.
-    @result An autoreleased NSArray instance containing the the list of locale codes for which the file exists, 
-        or nil if the file does not exists.
+    @result YES if the file exists, or NO if it does not.
 */
-- (NSArray *)fileExists:(NSString *)filename;
+- (BOOL)fileExists:(NSString *)filename;
+- (BOOL)fileExists:(NSString *)filename error:(NSError **)error;
 
 /*! 
     @method fileExists:locale:
@@ -1004,6 +1006,16 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 */
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale;
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
+
+/*! 
+    @method localesForFile:
+    @abstract Returns an array of locale codes for which the specified file exists.
+    @discussion Files can have the same path in an MPQ archive so long as their locale is different.
+    @param filename The path of the MPQ file to search for. Note that the path separator MUST be \. Must not be nil.
+    @result An autoreleased NSArray instance containing the the list of locale codes for which the file exists, 
+        or nil if the file does not exists.
+*/
+- (NSArray *)localesForFile:(NSString *)filename;
 
 #pragma mark writing
 
@@ -1050,8 +1062,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 /*!
     @method archiveShouldSave:
     @abstract This method is called immediately before saving an archive.
-    @discussion Return YES in this delegate to perform the save operation, or NO to cancel 
-        the save operation.
+    @discussion Return YES in this delegate to perform the save operation, or NO to cancel the save operation.
     @param archive The archive that is about to be saved.
     @result A response from the delegate.
 */
@@ -1085,46 +1096,43 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         delegate will be notified that the file is being compressed (if compression was 
         specified) and added to the MPQ archive file.
     @param archive The archive in which the file will be added.
-    @param file The MPQ path of the file that is about to be added.
+    @param filename The MPQ filename of the file that is about to be added.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldAddFile:(NSString *)file;
+- (BOOL)archive:(MPQArchive *)archive shouldAddFile:(NSString *)filename;
 
 /*!
     @method archive:willAddFile:
-    @abstract This method is called immediately before the framework starts compressing a file
-        into an archive.
+    @abstract This method is called immediately before the framework starts compressing a file into an archive.
     @discussion This method is called for each file pending for addition in the archive being 
         saved. This method is invoked after archiveWillSave: but prior to archiveDidSave:.
     @param archive The archive in which the file will be added.
-    @param file The MPQ path of the file that is about to be added.
+    @param filename The MPQ filename of the file that is about to be added.
 */
-- (void)archive:(MPQArchive *)archive willAddFile:(NSString *)file;
+- (void)archive:(MPQArchive *)archive willAddFile:(NSString *)filename;
 
 /*!
     @method archive:didAddFile:
-    @abstract This method is called immediately after the framework compressed a file
-        into an archive.
+    @abstract This method is called immediately after the framework compressed a file into an archive.
     @discussion This message is sent regardless if the file was compressed or not, encrypted or not.
     @param archive The archive in which the file was added.
-    @param file The MPQ path of the file that was added.
+    @param filename The MPQ filename of the file that was added.
 */
-- (void)archive:(MPQArchive *)archive didAddFile:(NSString *)file;
+- (void)archive:(MPQArchive *)archive didAddFile:(NSString *)filename;
 
 /*!
     @method archive:shouldDeleteFile:
     @abstract This method is called immediately before deleting a file from an archive.
     @discussion Return YES to permit the addition or NO to cancel it.
     @param archive The archive in which file will be deleted.
-    @param file The MPQ path of the file that is about to be deleted.
+    @param filename The MPQ filename of the file that is about to be deleted.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldDeleteFile:(NSString *)file;
+- (BOOL)archive:(MPQArchive *)archive shouldDeleteFile:(NSString *)filename;
 
 /*!
     @method archive:willDeleteFile:
-    @abstract This method is called immediately before the framework deletes a file
-        from an archive.
+    @abstract This method is called immediately before the framework deletes a file from an archive.
     @discussion This method is invoked after archive:shouldDeleteFile:. Note that unlike file
         addition and renaming, archive:willDeleteFile: and archive:didDeleteFile: are not
         invoked when the archive is saved, but rather immediately before and after the delete file 
@@ -1132,14 +1140,13 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         is performed at save time for deletion, unlike addition and renaming. Note however that 
         deletion is undoable until the archive is saved.
     @param archive The archive from which file will be deleted.
-    @param file The MPQ path of the file that is about to be deleted.
+    @param filename The MPQ filename of the file that is about to be deleted.
 */
-- (void)archive:(MPQArchive *)archive willDeleteFile:(NSString *)file;
+- (void)archive:(MPQArchive *)archive willDeleteFile:(NSString *)filename;
 
 /*!
     @method archive:didDeleteFile:
-    @abstract This method is called immediately after the framework deleted a file
-        from an archive.
+    @abstract This method is called immediately after the framework deleted a file from an archive.
     @discussion Note that unlike file 
         addition and renaming, archive:willDeleteFile: and archive:didDeleteFile: are not 
         invoked when the archive is saved, but rather immediately before and after the delete file 
@@ -1147,9 +1154,9 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         is performed at save time for deletion, unlike addition and renaming. Note however that 
         deletion is undoable until the archive is saved.
     @param archive The archive from which file was deleted.
-    @param file The MPQ path of the file that was deleted.
+    @param filename The MPQ filename of the file that was deleted.
 */
-- (void)archive:(MPQArchive *)archive didDeleteFile:(NSString *)file;
+- (void)archive:(MPQArchive *)archive didDeleteFile:(NSString *)filename;
 
 /*!
     @method archive:shouldRenameFile:as:
@@ -1160,11 +1167,11 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         rename method returns (if it was sucessfull) as the new name. The 
         delegate will be notified that the file is being re-processed at save time.
     @param archive The archive in which the file to be renamed is stored.
-    @param file The MPQ path of the file that is about to be renamed.
-    @param newFile The new MPQ path of the file that is about to be renamed.
+    @param filename The MPQ filename of the file that is about to be renamed.
+    @param newFilename The new MPQ filename of the file that is about to be renamed.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldRenameFile:(NSString *)file as:(NSString *)newFile;
+- (BOOL)archive:(MPQArchive *)archive shouldRenameFile:(NSString *)filename as:(NSString *)newFilename;
 
 /*!
     @method archive:willRenameFile:as:
@@ -1173,10 +1180,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion This method is called for each file pending for renaming in the archive being 
         saved. This method is invoked after archiveWillSave: but prior to archiveDidSave:.
     @param archive The archive in which the file to be renamed is stored.
-    @param file The MPQ path of the file that is about to be renamed.
-    @param newFile The new MPQ path of the file that is about to be renamed.
+    @param filename The MPQ filename of the file that is about to be renamed.
+    @param newFilename The new MPQ filename of the file that is about to be renamed.
 */
-- (void)archive:(MPQArchive *)archive willRenameFile:(NSString *)file as:(NSString *)newFile;
+- (void)archive:(MPQArchive *)archive willRenameFile:(NSString *)filename as:(NSString *)newFilename;
 
 /*!
     @method archive:didRenameFile:as:
@@ -1184,38 +1191,38 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         of an archive.
     @discussion It is safe to use the new name as soon as this message is sent.
     @param archive The archive in which the renamed file is stored.
-    @param file The MPQ path of the file that was renamed.
-    @param newFile The new MPQ path of the file that was renamed.
+    @param filename The MPQ filename of the file that was renamed.
+    @param newFilename The new MPQ filename of the file that was renamed.
 */
-- (void)archive:(MPQArchive *)archive didRenameFile:(NSString *)file as:(NSString *)newFile;
+- (void)archive:(MPQArchive *)archive didRenameFile:(NSString *)filename as:(NSString *)newFilename;
 
 /*!
     @method archive:shouldOpenFile:
     @abstract This method is called immediately before opening a file of the archive.
     @discussion Return YES to permit the file to be opened or NO to prevent it.
     @param archive The archive containing the file that is about to be opened.
-    @param file The MPQ path of the file that is about to be opened.
+    @param filename The MPQ filename of the file that is about to be opened.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldOpenFile:(NSString *)file;
+- (BOOL)archive:(MPQArchive *)archive shouldOpenFile:(NSString *)filename;
 
 /*!
     @method archive:willOpenFile:
     @abstract This method is called immediately before opening a file of the archive.
     @discussion This method is invoked after archive:shouldOpenFile:.
     @param archive The archive containing the file that is about to be opened.
-    @param file The MPQ path of the file that is about to be opened.
+    @param filename The MPQ filename of the file that is about to be opened.
 */
-- (void)archive:(MPQArchive *)archive willOpenFile:(NSString *)file;
+- (void)archive:(MPQArchive *)archive willOpenFile:(NSString *)filename;
 
 /*!
     @method archive:didOpenFile:
     @abstract This method is called immediately after the framework opened a file
         from an archive.
-    @discussion Will not be called if file opening is cancelled or failed.
-    @param archive The archive from which file was deleted.
-    @param file The MPQ path of the file that was deleted.
+    @discussion This method is invoked after archive:willOpenFile:.
+    @param archive The archive from which file was opened.
+    @param file The MPQFile instance for the file that was opened.
 */
-- (void)archive:(MPQArchive *)archive didOpenFile:(NSString *)file;
+- (void)archive:(MPQArchive *)archive didOpenFile:(MPQFile *)file;
 
 @end

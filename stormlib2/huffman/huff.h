@@ -15,6 +15,7 @@
 
 #include <unistd.h>
 #include <stdint.h>
+#include <stdio.h>
  
 // Input stream for Huffman decompression
 class TInputStream {
@@ -22,6 +23,8 @@ public:
     TInputStream(uint8_t *data, uint32_t data_size) {
         this->buffer = data;
         this->buffer_bit_size = ((int64_t)data_size) << 3;
+//		printf("TInputStream: %llu\n", this->buffer_bit_size);
+//		fflush(stdout);
         
         this->bit_bucket = 0;
         this->bit_count = 0;
@@ -33,6 +36,8 @@ public:
     uint32_t Peek7Bits();
     
     void ConsumeBits(uint32_t count);
+	
+	inline int64_t GetBufferBitSize() const { return buffer_bit_size; }
 
 private:
     uint8_t *buffer;
