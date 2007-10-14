@@ -9,8 +9,8 @@
 #import <fcntl.h>
 #import <unistd.h>
 #import <zlib.h>
+#import <aio.h>
 
-#import <sys/aio.h>
 #import <sys/stat.h>
 #import <sys/types.h>
 

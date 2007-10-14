@@ -9,7 +9,7 @@
 #import <fcntl.h>
 #import <unistd.h>
 #import <zlib.h>
-#import <sys/aio.h>
+#import <aio.h>
 
 #import "MPQErrors.h"
 #import "MPQCryptography.h"
