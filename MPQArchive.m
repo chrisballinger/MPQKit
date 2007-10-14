@@ -3401,7 +3401,8 @@ AbortDigest:
 	}
 	
 	// Delete the attributes file right now
-	if (![self deleteFile:kAttributesFilename locale:MPQNeutral error:error]) goto WriteFailed;
+	if (![self deleteFile:kAttributesFilename locale:MPQNeutral error:error])
+		if (![[*error domain] isEqualToString:MPQErrorDomain] || ([[*error domain] isEqualToString:MPQErrorDomain] && [*error code] != errHashTableEntryNotFound)) goto WriteFailed;
 	
 	MPQDebugLog(@"processing deferred operations...");
 	
