@@ -1,6 +1,6 @@
 /* Localized versions of Info.plist keys */
 
 CFBundleName = "mpqfs";
-CFBundleShortVersionString = "mpqfs version 0.2.1";
-CFBundleGetInfoString = "mpqfs version 0.2.1, © 2007 MacStorm.";
+CFBundleShortVersionString = "mpqfs version 0.3";
+CFBundleGetInfoString = "mpqfs version 0.3, © 2007 MacStorm.";
 NSHumanReadableCopyright = "© MacStorm, 2007";

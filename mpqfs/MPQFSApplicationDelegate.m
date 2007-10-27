@@ -44,7 +44,8 @@
 - (BOOL)mountArchive_:(NSString *)path loadingListfiles:(BOOL)loadListfiles {
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:path, [self mountPointForArchivePath_:path], nil];
     if (loadListfiles) [arguments addObjectsFromArray:[self standardListfileArguments_]];
-    
+    // FIXME: add support for volicon
+	
     [NSTask launchedTaskWithLaunchPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mpqfsd"] arguments:arguments];
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
     return YES;

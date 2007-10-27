@@ -221,8 +221,15 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
         return nil;
     }
     
-    fuse_opt_add_arg(arguments_, "-oping_diskarb,rdonly,hard_remove,noauto_cache");
-    fuse_opt_add_arg(arguments_, "-s");
+	// local to improve Finder integration, auto_xattr because MPQs do not support any xattrs, default_permissions to defer all access checks to MacFUSE, fssubtype set to Generic, 
+    fuse_opt_add_arg(arguments_, "-ordonly,local,auto_xattr,default_permissions,fssubtype=0,negative_vncache,noappledouble,noapplexattr");
+    
+	// FIXME: lift the single-threaded limitation
+	fuse_opt_add_arg(arguments_, "-s");
+	
+	// FIXME: add support for fsid option
+	// FIXME: add support for iosize option
+	// FIXME: use kill_on_unmount on 10.4
     
     ReturnValueWithNoError(self, error)
 }
@@ -242,35 +249,6 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 - (NSString *)mountPoint {
     return [[mountPoint_ copy] autorelease];
-}
-
-#pragma mark Finder icon
-
-- (NSData *)resourceHeaderWithFlags:(UInt16)flags {
-    char header[82] = {
-        0x00, 0x05, 0x16, 0x07, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x09, 0x00, 0x00,
-        0x00, 0x32, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x52, 0xFF, 0xFF,
-        0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00};
-    
-    FileInfo info;
-    memset(&info, 0, sizeof(FileInfo));
-    info.finderFlags = flags;
-    info.finderFlags = EndianU16_NtoB(info.finderFlags);
-    
-    memset(header + 0x2E, 0, sizeof(UInt32));
-    memcpy(header + 0x32, &info, sizeof(FileInfo));
-    return [NSData dataWithBytes:&header length:82];
-}
-
-- (NSString *)resourcePathForPath:(NSString *)path {
-    NSString *name = [path lastPathComponent];
-    path = [path stringByDeletingLastPathComponent];
-    name = [@"._" stringByAppendingString:name];
-    path = [path stringByAppendingPathComponent:name];
-    return path;
 }
 
 #pragma mark Initialization
@@ -464,7 +442,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 #pragma mark FUSE operations
 
 + (MPQFileSystem *)currentManager {
-    return manager; //[[[NSThread currentThread] threadDictionary] objectForKey:@"FUSE Manager"];
+    return manager;
 }
 
 static void *fusefm_init(struct fuse_conn_info *conn) {
@@ -510,7 +488,7 @@ static int fusefm_getattr(const char *path, struct stat *stbuf) {
     return res;
 }
 
-int fusefm_setattr(const char *path, const char *a, const char *b, size_t c, int d) {
+__attribute__ ((unused)) static int fusefm_setattr(const char *path, const char *a, const char *b, size_t c, int d) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
     // TODO: Body :-)
     [pool release];  
@@ -719,8 +697,10 @@ static struct fuse_operations fusefm_operations = {
     struct fuse_args args;
     mpqfs_dupargs(&args, arguments_);
     
-    const char *flub = [[NSString stringWithFormat:@"-ovolname=%@", [[archive_ path] lastPathComponent]] UTF8String];
-    if (overwriteVolname) fuse_opt_add_arg(&args, flub);
+    if (overwriteVolname) {
+		const char *flub = [[NSString stringWithFormat:@"-ovolname=%@", [[archive_ path] lastPathComponent]] UTF8String];
+		fuse_opt_add_arg(&args, flub);
+	}
     
     manager = self;
     fuse_main(args.argc, args.argv, &fusefm_operations, NULL);
