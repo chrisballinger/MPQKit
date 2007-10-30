@@ -15,6 +15,8 @@
 		310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */ = {isa = PBXBuildFile; fileRef = 310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */; };
 		3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3112FEEA0C38A0B100992F8F /* MPQArchivePriorityProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */; };
+		3116E2DC0CD78CD30090DA6B /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3116E2DB0CD78CD30090DA6B /* Sparkle.framework */; };
+		3116E2F30CD78CF30090DA6B /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3116E2DB0CD78CD30090DA6B /* Sparkle.framework */; };
 		312311C70549F0D300833907 /* NSStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3133BFC304C8EB0800A80102 /* NSStringAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312311C80549F0D300833907 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3133BFC404C8EB0800A80102 /* NSStringAdditions.m */; };
 		312311CC0549F0F100833907 /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 31CFD34E04A1592C00A80102 /* crc32.c */; };
@@ -117,6 +119,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */,
+				3116E2F30CD78CF30090DA6B /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +146,7 @@
 		310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Fuse.icns; path = mpqfs/Fuse.icns; sourceTree = "<group>"; };
 		3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchivePriorityProxy.h; sourceTree = "<group>"; };
 		3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchivePriorityProxy.m; sourceTree = "<group>"; };
+		3116E2DB0CD78CD30090DA6B /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = mpqfs/Sparkle.framework; sourceTree = "<group>"; };
 		3123119F0549EE5D00833907 /* MPQKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPQKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		312311A60549EF9B00833907 /* MPQ-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist; path = "MPQ-Info.plist"; sourceTree = "<group>"; };
 		312443EA0B474D98004DB138 /* MPQErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQErrors.h; sourceTree = "<group>"; };
@@ -215,6 +219,7 @@
 			files = (
 				310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */,
 				310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */,
+				3116E2DC0CD78CD30090DA6B /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,12 +303,13 @@
 			children = (
 				31D009FE0C34B69900F72368 /* AudioToolbox.framework */,
 				31D009FF0C34B69900F72368 /* AudioUnit.framework */,
-				31D00A000C34B69900F72368 /* CoreAudio.framework */,
 				310D91590BBECCC800FEA3C5 /* Cocoa.framework */,
-				3191CA7D0BB859180004E8AA /* libfuse.dylib */,
+				31D00A000C34B69900F72368 /* CoreAudio.framework */,
 				31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */,
-				31DD6C990AEAF41B002CDD2C /* Security.framework */,
 				31A6B005068C07F80089D443 /* Foundation.framework */,
+				3191CA7D0BB859180004E8AA /* libfuse.dylib */,
+				31DD6C990AEAF41B002CDD2C /* Security.framework */,
+				3116E2DB0CD78CD30090DA6B /* Sparkle.framework */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -756,6 +762,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mpqfs\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -782,6 +793,11 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mpqfs\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
