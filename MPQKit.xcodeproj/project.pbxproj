@@ -10,7 +10,6 @@
 		310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
 		310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
-		310D91BA0BBED0BC00FEA3C5 /* mpqfs.nib in Resources */ = {isa = PBXBuildFile; fileRef = 310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */; };
 		310D91F50BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */; };
 		310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */ = {isa = PBXBuildFile; fileRef = 310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */; };
 		3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -140,7 +139,6 @@
 		310D91590BBECCC800FEA3C5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "mpqfs-Info.plist"; path = "mpqfs/mpqfs-Info.plist"; sourceTree = "<group>"; };
-		310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = mpqfs.nib; path = mpqfs/mpqfs.nib; sourceTree = "<group>"; };
 		310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFSApplicationDelegate.h; path = mpqfs/MPQFSApplicationDelegate.h; sourceTree = "<group>"; };
 		310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFSApplicationDelegate.m; path = mpqfs/MPQFSApplicationDelegate.m; sourceTree = "<group>"; };
 		310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Fuse.icns; path = mpqfs/Fuse.icns; sourceTree = "<group>"; };
@@ -399,7 +397,6 @@
 				31B808940BB85067001F9B73 /* MPQFileSystem.m */,
 				310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */,
 				31A8A50D0BC1455A001F583D /* mpqfs.m */,
-				310D91B90BBED0BC00FEA3C5 /* mpqfs.nib */,
 				310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */,
 				310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */,
 				31B8088D0BB84E7E001F9B73 /* mpqfsd.m */,
@@ -599,7 +596,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				310D91BA0BBED0BC00FEA3C5 /* mpqfs.nib in Resources */,
 				310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */,
 				31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */,
 				31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */,
