@@ -221,8 +221,9 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
         return nil;
     }
     
-	// local to improve Finder integration, auto_xattr because MPQs do not support any xattrs, default_permissions to defer all access checks to MacFUSE, fssubtype set to Generic, 
-    fuse_opt_add_arg(arguments_, "-ordonly,local,auto_xattr,default_permissions,fssubtype=0,negative_vncache,noappledouble,noapplexattr");
+	// local to improve Finder integration, auto_xattr because MPQs do not support any xattrs, default_permissions to defer all access checks to MacFUSE, fssubtype set to Generic,
+	// negative_vncache because we're RO right now, noappledouble because MPQs don't use AppleDouble.
+    fuse_opt_add_arg(arguments_, "-ordonly,local,auto_xattr,default_permissions,fssubtype=0,negative_vncache,noappledouble");
     
 	// FIXME: lift the single-threaded limitation
 	fuse_opt_add_arg(arguments_, "-s");
@@ -658,7 +659,6 @@ static struct fuse_operations fusefm_operations = {
     // File information
     .statfs = fusefm_statfs,
     .getattr = fusefm_getattr,
-    //.setattr = fusefm_setattr,
     .fgetattr = fusefm_fgetattr,
     
     // Directory operations
@@ -671,6 +671,7 @@ static struct fuse_operations fusefm_operations = {
     .rmdir = fusefm_rmdir,
     
     // Permissions
+	//.access = fusefm_access,
     .chown = fusefm_chown,
     .chmod = fusefm_chmod,
     
@@ -683,12 +684,6 @@ static struct fuse_operations fusefm_operations = {
     
     // Links
     .readlink = fusefm_readlink,
-    
-    // Extended attributes
-    //.setxattr = fusefm_setxattr,
-    //.getxattr = fusefm_getxattr,
-    //.listxattr = fusefm_listxattr,
-    //.removexattr = fusefm_removexattr,
 };
 
 #pragma mark Mount
