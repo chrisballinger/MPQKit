@@ -24,6 +24,9 @@
 #define _FILE_OFFSET_BITS 64
 #import <fuse.h>
 
+static const char* kMPQFileSystemExtendedAttributeNameC = "org.macstorm.mpqkit";
+static NSString* kMPQFileSystemExtendedAttributeName = @"org.macstorm.mpqkit";
+
 static MPQFileSystem *manager;
 
 static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
@@ -221,9 +224,9 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
         return nil;
     }
     
-	// local to improve Finder integration, auto_xattr because MPQs do not support any xattrs, default_permissions to defer all access checks to MacFUSE, fssubtype set to Generic,
+	// local to improve Finder integration, default_permissions to defer all access checks to MacFUSE, fssubtype set to Generic,
 	// negative_vncache because we're RO right now, noappledouble because MPQs don't use AppleDouble.
-    fuse_opt_add_arg(arguments_, "-ordonly,local,auto_xattr,default_permissions,fssubtype=0,negative_vncache,noappledouble");
+    fuse_opt_add_arg(arguments_, "-ordonly,local,default_permissions,fssubtype=0,negative_vncache,noappledouble");
     
 	// FIXME: lift the single-threaded limitation
 	fuse_opt_add_arg(arguments_, "-s");
@@ -262,7 +265,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     isMounted_ = NO;
 }
 
-#pragma mark Information
+#pragma mark Stat
 
 - (int)fillStatvfsBuffer:(struct statvfs *)stbuf forPath:(NSString *)path {
     // TODO: Should we have memset the statbuf to zero, or does fuse pre-fill values?
@@ -354,6 +357,31 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     if (!isDirectory) fileInfo = [archive_ fileInfoForPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue]];
     
     return [self fillStatBuffer:stbuf withFileInfo:fileInfo isDirectory:isDirectory];
+}
+
+#pragma mark Extended attributes
+
+- (int)listExtendedAttributes:(NSString*)path inBuffer:(char *)buffer size:(size_t)size {
+    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    if (!node) return -ENOENT;
+	BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
+	
+	if (isDirectory) return 0;
+	if (buffer) strlcpy(buffer, kMPQFileSystemExtendedAttributeNameC, size);
+	return strlen(kMPQFileSystemExtendedAttributeNameC) + 1;
+}
+
+- (int)getExtendedAttribute:(NSString*)path attribute:(NSString*)name buffer:(char*)buffer size:(size_t)size {
+    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    if (!node) return -ENOENT;
+	BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
+	
+	if (isDirectory || ![name isEqualToString:kMPQFileSystemExtendedAttributeName]) return -ENOTSUP;
+	
+	NSDictionary* fileInfo = [archive_ fileInfoForPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue]];
+	NSData *fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListXMLFormat_v1_0 errorDescription:NULL];
+	if (buffer) [fileInfoXML getBytes:buffer];
+	return (int)[fileInfoXML length];
 }
 
 #pragma mark Open/Close
@@ -487,13 +515,6 @@ static int fusefm_getattr(const char *path, struct stat *stbuf) {
     
     [pool release];
     return res;
-}
-
-__attribute__ ((unused)) static int fusefm_setattr(const char *path, const char *a, const char *b, size_t c, int d) {
-    NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    // TODO: Body :-)
-    [pool release];  
-    return 0;
 }
 
 static int fusefm_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi) {
@@ -645,6 +666,28 @@ static int fusefm_ftruncate(const char* path, off_t offset, struct fuse_file_inf
     return fusefm_truncate(path, offset);
 }
 
+static int fusefm_setxattr(const char* path, const char* attribute, const char* value, size_t size, int flags) {
+	return -EROFS;
+}
+
+static int fusefm_getxattr(const char* path, const char* attribute, char* value, size_t size) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
+    int length = [[MPQFileSystem currentManager] getExtendedAttribute:[NSString stringWithUTF8String:path] attribute:[NSString stringWithUTF8String:attribute] buffer:value size:size];
+    [pool release];
+    return length;
+}
+
+static int fusefm_listxattr(const char* path, char* list, size_t size) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
+    int length = [[MPQFileSystem currentManager] listExtendedAttributes:[NSString stringWithUTF8String:path] inBuffer:list size:size];
+    [pool release];
+    return length;
+}
+
+static int fusefm_removexattr(const char* path, const char* attribute) {
+	return -EROFS;
+}
+
 static int fusefm_readlink(const char *path, char *buf, size_t size) {
     return -ENOSYS;
 }
@@ -681,6 +724,12 @@ static struct fuse_operations fusefm_operations = {
     .read = fusefm_read,
     .write = fusefm_write,
     .ftruncate = fusefm_ftruncate,
+	
+	// Extended attributes
+	.setxattr = fusefm_setxattr,
+	.getxattr = fusefm_getxattr,
+	.listxattr = fusefm_listxattr,
+	.removexattr = fusefm_removexattr,
     
     // Links
     .readlink = fusefm_readlink,
