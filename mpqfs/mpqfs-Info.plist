@@ -79,7 +79,7 @@ WJdHtcSp4cEw3VRI8Tg=
 -----END PUBLIC KEY-----
     </string>
 	<key>SUShowReleaseNotes</key>
-	<false/>
+	<true/>
     <key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
