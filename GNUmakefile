@@ -52,9 +52,7 @@ MPQKit_C_FILES = \
 	stormlib2/pklib/crc32.c \
 	stormlib2/pklib/explode.c \
 	stormlib2/pklib/implode.c \
-	stormlib2/wave/wave.c
-	
-MPQKit_CPP_FILES = \
+	stormlib2/wave/wave.c \
 	stormlib2/SCompression.cpp \
 	stormlib2/huffman/huff.cpp \
 
