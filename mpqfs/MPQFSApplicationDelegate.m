@@ -46,7 +46,11 @@
     if (loadListfiles) [arguments addObjectsFromArray:[self standardListfileArguments_]];
     // FIXME: add support for volicon
 	
+#if defined(__APPLE__)
     [NSTask launchedTaskWithLaunchPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mpqfsd"] arguments:arguments];
+#else
+    [NSTask launchedTaskWithLaunchPath:@"mpqfsd" arguments:arguments];
+#endif
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:path]];
     return YES;
 }
@@ -62,9 +66,14 @@
     [openPanel setAllowsMultipleSelection:NO];
     [openPanel setAccessoryView:loadStdListfilesView];
 	
+#if defined(__APPLE__)
     int returnCode = [openPanel runModalForTypes:
         [NSArray arrayWithObjects:@"mpq", NSFileTypeForHFSTypeCode('D2pq'), NSFileTypeForHFSTypeCode('W!pq'), NSFileTypeForHFSTypeCode('MPQA'), NSFileTypeForHFSTypeCode('Smpq'), nil]];
-    if(returnCode == NSOKButton) [self mountArchive_:[openPanel filename] loadingListfiles:([loadStdListfilesButton state] == NSOnState) ? YES : NO];
+#else
+    int returnCode = [openPanel runModalForTypes:
+        [NSArray arrayWithObjects:@"mpq", @"MPQ", nil]];
+#endif
+    if (returnCode == NSOKButton) [self mountArchive_:[openPanel filename] loadingListfiles:([loadStdListfilesButton state] == NSOnState) ? YES : NO];
 }
 
 @end

@@ -19,6 +19,7 @@
 
 #import <sys/param.h>
 #import <sys/mount.h>
+#import <sys/types.h>
 
 #define FUSE_USE_VERSION 26
 #define _FILE_OFFSET_BITS 64
@@ -171,9 +172,10 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     if (![archive_ loadInternalListfile:error]) {
         if ((error && [*error code] != errHashTableEntryNotFound) || !error) return NO;
     }
-    
     NSAutoreleasePool *p = [NSAutoreleasePool new];
+#if !defined(GNUSTEP)
     NSLocale *locale = [NSLocale currentLocale];
+#endif
     
     NSEnumerator *fileInfoEnumerator = [archive_ fileInfoEnumerator];
     NSDictionary *fileInfo;
@@ -182,6 +184,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
         if (!filename) continue;
         if (![[fileInfo objectForKey:MPQFileCanOpenWithoutFilename] boolValue]) continue;
         
+#if !defined(GNUSTEP)
         NSLocale *file_locale = [MPQArchive localeForMPQLocale:[[fileInfo objectForKey:MPQFileLocale] unsignedShortValue]];
         if (file_locale) {
             NSString *file_locale_id = [locale displayNameForKey:NSLocaleIdentifier value:[file_locale objectForKey:NSLocaleIdentifier]];
@@ -190,6 +193,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
             filename = [NSString stringWithFormat:@"%@ - %@%@%@", 
                 [filename stringByDeletingPathExtension], file_locale_id, ([extension length] == 0) ? @"" : @".", extension];
         }
+#endif
         
         MPQFSTree *current_tree = archiveTree_;
         NSArray *components = [filename componentsSeparatedByString:@"\\"];
@@ -224,9 +228,13 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
         return nil;
     }
     
+#if defined(__APPLE__)
 	// local to improve Finder integration, default_permissions to defer all access checks to MacFUSE, fssubtype set to Generic,
 	// negative_vncache because we're RO right now, noappledouble because MPQs don't use AppleDouble.
-    fuse_opt_add_arg(arguments_, "-ordonly,local,default_permissions,fssubtype=0,negative_vncache,noappledouble");
+    fuse_opt_add_arg(arguments_, "-ordonly,default_permissions,fssubtype=0,negative_vncache,noappledouble");
+#else
+	fuse_opt_add_arg(arguments_, "-oro,noauto_cache");
+#endif
     
 	// FIXME: lift the single-threaded limitation
 	fuse_opt_add_arg(arguments_, "-s");
@@ -324,7 +332,11 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     // ctime  TODO: ctime is not "creation time" rather it's the last time the 
     // inode was changed.  mtime would probably be a closer approximation.
     if (cdate) {
+#if defined(__APPLE__)
         stbuf->st_ctimespec.tv_sec = [cdate timeIntervalSince1970];
+#else
+        stbuf->st_ctimensec = [cdate timeIntervalSince1970];
+#endif
     }
     
     // Size for regular files.
@@ -376,11 +388,17 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     if (!node) return -ENOENT;
 	BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
 	
-	if (isDirectory || ![name isEqualToString:kMPQFileSystemExtendedAttributeName]) return -ENOTSUP;
+	memset(buffer, 0, size);
+	if (isDirectory || ![name isEqualToString:kMPQFileSystemExtendedAttributeName]) return -ENOATTR;
 	
 	NSDictionary* fileInfo = [archive_ fileInfoForPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue]];
-	NSData *fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListXMLFormat_v1_0 errorDescription:NULL];
-	if (buffer) [fileInfoXML getBytes:buffer];
+	if (![NSPropertyListSerialization propertyList:fileInfo isValidForFormat:NSPropertyListBinaryFormat_v1_0]) return -EIO;
+	
+	NSString* error = nil;
+	NSData *fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListBinaryFormat_v1_0 errorDescription:&error];
+	if (!fileInfoXML) return -EIO;
+	
+	if (buffer) {if (size < [fileInfoXML length]) return -ERANGE; else [fileInfoXML getBytes:buffer];}
 	return (int)[fileInfoXML length];
 }
 
@@ -395,7 +413,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
     if (isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, EISDIR, nil, error)
     
-    MPQFile *file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:nil];
+    MPQFile *file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:(NSError**)NULL];
     if (!file) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
     ReturnValueWithNoError(file, error)
 }
@@ -425,7 +443,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 - (int)readFileAtPath:(NSString *)path handle:(MPQFile *)handle buffer:(char *)buffer size:(size_t)size offset:(off_t)offset {
     [handle seekToFileOffset:offset];
-    ssize_t bytes_read = [handle read:buffer size:size error:nil];
+    ssize_t bytes_read = [handle read:buffer size:size error:(NSError**)NULL];
     if (bytes_read == -1) return -EIO;
     return bytes_read;
 }
@@ -672,8 +690,8 @@ static int fusefm_setxattr(const char* path, const char* attribute, const char* 
 
 static int fusefm_getxattr(const char* path, const char* attribute, char* value, size_t size) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    int length = [[MPQFileSystem currentManager] getExtendedAttribute:[NSString stringWithUTF8String:path] attribute:[NSString stringWithUTF8String:attribute] buffer:value size:size];
-    [pool release];
+	int length = [[MPQFileSystem currentManager] getExtendedAttribute:[NSString stringWithUTF8String:path] attribute:[NSString stringWithUTF8String:attribute] buffer:value size:size];
+	[pool release];
     return length;
 }
 
@@ -741,10 +759,12 @@ static struct fuse_operations fusefm_operations = {
     struct fuse_args args;
     mpqfs_dupargs(&args, arguments_);
     
+#if defined(__APPLE__)
     if (overwriteVolname) {
 		const char *flub = [[NSString stringWithFormat:@"-ovolname=%@", [[archive_ path] lastPathComponent]] UTF8String];
 		fuse_opt_add_arg(&args, flub);
 	}
+#endif
     
     manager = self;
     fuse_main(args.argc, args.argv, &fusefm_operations, NULL);

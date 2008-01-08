@@ -6,8 +6,7 @@
 //  Copyright 2007 MacStorm. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-
+#import <AppKit/AppKit.h>
 
 @interface MPQFSApplicationDelegate : NSObject {
     IBOutlet NSView *loadStdListfilesView;

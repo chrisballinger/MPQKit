@@ -10,7 +10,9 @@
 #import <MPQKit/MPQKit.h>
 #import <MPQKit/MPQFilePrivate.h>
 
+#if defined(__APPLE__)
 CFStringEncoding CFStringFileSystemEncoding(void);
+#endif
 
 int main(int argc, char *argv[]) {
     NSAutoreleasePool *p = [NSAutoreleasePool new];

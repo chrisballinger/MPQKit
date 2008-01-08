@@ -6,6 +6,11 @@
 //	Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
 
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 600
+#define _FILE_OFFSET_BITS  64
+#endif
+ 
 #import <fcntl.h>
 #import <unistd.h>
 #import <zlib.h>
@@ -26,6 +31,12 @@
 
 #import "mpqdebug.h"
 #import "PHSErrorMacros.h"
+
+#if defined(GNUSTEP)
+@interface NSError(GSCategories)
++ (NSError*)_last;
+@end
+#endif
 
 #define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
 
@@ -106,6 +117,7 @@ static int _MPQMakeTempFileInDirectory(NSString *directory, NSString **tempFileP
 }
 
 static inline BOOL _MPQFSCopy(NSString *destination, NSString *source, NSError **error) {
+#if defined(__APPLE__)
 	OSStatus err = FSPathCopyObjectSync([source UTF8String], 
 										[[destination stringByDeletingLastPathComponent] UTF8String], 
 										(CFStringRef)[destination lastPathComponent], 
@@ -113,9 +125,17 @@ static inline BOOL _MPQFSCopy(NSString *destination, NSString *source, NSError *
 										kFSFileOperationOverwrite);
 	if (err != noErr) ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
 	ReturnValueWithNoError(YES, error)
+#elif defined(GNUSTEP)
+	BOOL err = [[NSFileManager defaultManager] copyPath:source toPath:destination handler:nil];
+	if (err && error) *error = [NSError _last];
+	return err;
+#else
+#  error Not implemented
+#endif
 }
 
 static inline BOOL _MPQFSMove(NSString *destination, NSString *source, NSError **error) {
+#if defined(__APPLE__)
 	OSStatus err = FSPathMoveObjectSync([source UTF8String], 
 										[[destination stringByDeletingLastPathComponent] UTF8String], 
 										(CFStringRef)[destination lastPathComponent], 
@@ -123,6 +143,13 @@ static inline BOOL _MPQFSMove(NSString *destination, NSString *source, NSError *
 										kFSFileOperationOverwrite);
 	if (err != noErr) ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
 	ReturnValueWithNoError(YES, error)
+#elif defined(GNUSTEP)
+	BOOL err = [[NSFileManager defaultManager] movePath:source toPath:destination handler:nil];
+	if (err && error) *error = [NSError _last];
+	return err;
+#else
+#  error Not implemented
+#endif
 }
 
 char *_MPQCreateASCIIFilename(NSString *filename, NSError **error) {
@@ -179,8 +206,8 @@ FreeData:
 		
 		mpq_init_cryptography();
 		
+#if !defined(GNUSTEP)
 		NSBundle *kitBundle = [NSBundle bundleForClass:self];
-		
 		NSString *keyPath = [kitBundle pathForResource:@"Blizzard Strong" ofType:@"pem" inDirectory:@"Public RSA Keys"];
 		blizzard_strong_public_rsa = [self RSAWithContentsOfPublicKeyPEMFile:keyPath];
 		
@@ -198,6 +225,7 @@ FreeData:
 		
 		keyPath = [kitBundle pathForResource:@"Blizzard Weak" ofType:@"pem" inDirectory:@"Public RSA Keys"];
 		blizzard_weak_public_rsa = [self RSAWithContentsOfPublicKeyPEMFile:keyPath];
+#endif
 	}
 }
 
@@ -222,6 +250,7 @@ FreeData:
 	return nil;
 }
 
+#if defined(__APPLE__)
 + (NSLocale *)localeForMPQLocale:(MPQLocale)locale {
 	switch(locale) {
 		case MPQNeutral: return nil;
@@ -242,6 +271,7 @@ FreeData:
 	}
 	return nil;
 }
+#endif
 
 #pragma mark byte order methods
 
@@ -249,7 +279,7 @@ FreeData:
 #if defined(__BIG_ENDIAN__)
 	uint32_t i = 0;
 	while (i < length) {
-		array[i] = CFSwapInt32(array[i]);
+		array[i] = MPQSwapInt32(array[i]);
 		i++;
 	}
 #endif
@@ -257,33 +287,33 @@ FreeData:
 
 + (void)swap_mpq_header:(mpq_header_t *)header {
 #if defined(__BIG_ENDIAN__)
-	header->header_size = CFSwapInt32(header->header_size);
-	header->archive_size = CFSwapInt32(header->archive_size);
-	header->version = CFSwapInt16(header->version);
-	header->sector_size_shift = CFSwapInt16(header->sector_size_shift);
-	header->hash_table_offset = CFSwapInt32(header->hash_table_offset);
-	header->block_table_offset = CFSwapInt32(header->block_table_offset);
-	header->hash_table_length = CFSwapInt32(header->hash_table_length);
-	header->block_table_length = CFSwapInt32(header->block_table_length);
+	header->header_size = MPQSwapInt32(header->header_size);
+	header->archive_size = MPQSwapInt32(header->archive_size);
+	header->version = MPQSwapInt16(header->version);
+	header->sector_size_shift = MPQSwapInt16(header->sector_size_shift);
+	header->hash_table_offset = MPQSwapInt32(header->hash_table_offset);
+	header->block_table_offset = MPQSwapInt32(header->block_table_offset);
+	header->hash_table_length = MPQSwapInt32(header->hash_table_length);
+	header->block_table_length = MPQSwapInt32(header->block_table_length);
 #else
-	header->mpq_magic = CFSwapInt32(header->mpq_magic);
+	header->mpq_magic = MPQSwapInt32(header->mpq_magic);
 #endif
 }
 
 + (void)swap_mpq_shunt:(mpq_shunt_t *)shunt {
 #if defined(__BIG_ENDIAN__)
-	shunt->unknown04 = CFSwapInt32(shunt->unknown04);
-	shunt->mpq_header_offset = CFSwapInt32(shunt->mpq_header_offset);
+	shunt->unknown04 = MPQSwapInt32(shunt->unknown04);
+	shunt->mpq_header_offset = MPQSwapInt32(shunt->mpq_header_offset);
 #else
-	shunt->shunt_magic = CFSwapInt32(shunt->shunt_magic);
+	shunt->shunt_magic = MPQSwapInt32(shunt->shunt_magic);
 #endif
 }
 
 + (void)swap_mpq_extended_header:(mpq_extended_header_t *)header {
 #if defined(__BIG_ENDIAN__)
-	header->extended_block_offset_table_offset = CFSwapInt64(header->extended_block_offset_table_offset);
-	header->hash_table_offset_high = CFSwapInt16(header->hash_table_offset_high);
-	header->block_table_offset_high = CFSwapInt16(header->block_table_offset_high);
+	header->extended_block_offset_table_offset = MPQSwapInt64(header->extended_block_offset_table_offset);
+	header->hash_table_offset_high = MPQSwapInt16(header->hash_table_offset_high);
+	header->block_table_offset_high = MPQSwapInt16(header->block_table_offset_high);
 #endif
 }
 
@@ -291,11 +321,11 @@ FreeData:
 #if defined(__BIG_ENDIAN__)
 	uint32_t i = 0;
 	while (i < header.hash_table_length) {
-		(hash_table + i)->hash_a = CFSwapInt32((hash_table + i)->hash_a);
-		(hash_table + i)->hash_b = CFSwapInt32((hash_table + i)->hash_b);
-		(hash_table + i)->locale = CFSwapInt16((hash_table + i)->locale);
-		(hash_table + i)->platform = CFSwapInt16((hash_table + i)->platform);
-		(hash_table + i)->block_table_index = CFSwapInt32((hash_table + i)->block_table_index);
+		(hash_table + i)->hash_a = MPQSwapInt32((hash_table + i)->hash_a);
+		(hash_table + i)->hash_b = MPQSwapInt32((hash_table + i)->hash_b);
+		(hash_table + i)->locale = MPQSwapInt16((hash_table + i)->locale);
+		(hash_table + i)->platform = MPQSwapInt16((hash_table + i)->platform);
+		(hash_table + i)->block_table_index = MPQSwapInt32((hash_table + i)->block_table_index);
 		i++;
 	}
 #endif
@@ -305,7 +335,7 @@ FreeData:
 #if defined(__BIG_ENDIAN__)
 	uint32_t i = 0;
 	while (i < length) {
-		(table + i)->offset_high = CFSwapInt16((table + i)->offset_high);
+		(table + i)->offset_high = MPQSwapInt16((table + i)->offset_high);
 		i++;
 	}
 #endif
@@ -370,8 +400,8 @@ FreeData:
 		if (pread(archive_fd, sector_table, 8, archive_offset + block_offset_table[hash_entry->block_table_index]) < 8) return 0;
 		
 		// Byte order
-		sector_table[0] = CFSwapInt32LittleToHost(sector_table[0]);
-		sector_table[1] = CFSwapInt32LittleToHost(sector_table[1]);
+		sector_table[0] = MPQSwapInt32LittleToHost(sector_table[0]);
+		sector_table[1] = MPQSwapInt32LittleToHost(sector_table[1]);
 		
 		// Next we do some preliminary computations...
 		uint32_t temp = sector_table[0] ^ sector_table_size;	// temp = seed1 + seed2
@@ -662,7 +692,7 @@ FreeData:
 		if (hash_entry->block_table_index != HASH_TABLE_EMPTY && hash_entry->block_table_index != HASH_TABLE_DELETED) {
 			// Do we have the encryption key?
 			uint32_t encryptionKey = [self getFileEncryptionKey:hash_position];
-			if (encryptionKey) [self _cacheSectorTableForFile:hash_position key:encryptionKey error:nil];
+			if (encryptionKey) [self _cacheSectorTableForFile:hash_position key:encryptionKey error:(NSError **)NULL];
 		}
 		
 		hash_position++;
@@ -959,7 +989,7 @@ AllocateFailure:
 	archive_fd = -1;
 	
 	// Fill up a (partially) valid header
-	header.mpq_magic = CFSwapInt32BigToHost(MPQ_MAGIC);
+	header.mpq_magic = MPQSwapInt32BigToHost(MPQ_MAGIC);
 	// Explicit cast is OK here, header_size is 32-bit
 	header.header_size = (version == MPQOriginalVersion) ? (uint32_t)sizeof(mpq_header_t) : (uint32_t)(sizeof(mpq_header_t) + sizeof(mpq_extended_header_t));
 	header.archive_size = 0;
@@ -1046,10 +1076,12 @@ AllocateFailure:
 	// Open the archive file
 	archive_fd = open([archive_path fileSystemRepresentation], file_mode, 0644);
 	if (archive_fd == -1) ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
-		
+
+#if defined(__APPLE__)		
 	// Turn off caching
 	fcntl(archive_fd, F_NOCACHE, 1);
-	
+#endif
+
 	ssize_t bytes_read = 0;
 	uint32_t i = 0;
 	
@@ -1214,7 +1246,7 @@ AllocateFailure:
 		free(strong_signature);
 		strong_signature = NULL;
 	} else {
-		if (*(uint32_t *)strong_signature != CFSwapInt32BigToHost(STRONG_SIGNATURE_MAGIC)) {
+		if (*(uint32_t *)strong_signature != MPQSwapInt32BigToHost(STRONG_SIGNATURE_MAGIC)) {
 			free(strong_signature);
 			strong_signature = NULL;
 		}
@@ -1238,7 +1270,7 @@ AllocateFailure:
 #pragma mark init
 
 + (id)archiveWithFileLimit:(uint32_t)limit {
-	return [self archiveWithFileLimit:limit error:nil];
+	return [self archiveWithFileLimit:limit error:(NSError **)NULL];
 }
 
 + (id)archiveWithFileLimit:(uint32_t)limit error:(NSError **)error {
@@ -1246,7 +1278,7 @@ AllocateFailure:
 }
 
 + (id)archiveWithPath:(NSString *)path {
-	return [self archiveWithPath:path error:nil];
+	return [self archiveWithPath:path error:(NSError **)NULL];
 }
 
 + (id)archiveWithPath:(NSString *)path error:(NSError **)error {
@@ -1334,7 +1366,7 @@ AllocateFailure:
 }
 
 - (id)initWithFileLimit:(uint32_t)limit {
-	return [self initWithFileLimit:limit error:nil];
+	return [self initWithFileLimit:limit error:(NSError **)NULL];
 }
 
 - (id)initWithFileLimit:(uint32_t)limit error:(NSError **)error {
@@ -1342,7 +1374,7 @@ AllocateFailure:
 }
 
 - (id)initWithPath:(NSString *)path {
-	return [self initWithPath:path error:nil];
+	return [self initWithPath:path error:(NSError **)NULL];
 }
 
 - (id)initWithPath:(NSString *)path error:(NSError **)error {
@@ -2091,7 +2123,7 @@ AbortDigest:
 }
 
 - (BOOL)addArrayToFileList:(NSArray *)listfile {
-	return [self addArrayToFileList:listfile error:nil];
+	return [self addArrayToFileList:listfile error:(NSError **)NULL];
 }
 
 - (BOOL)addArrayToFileList:(NSArray *)listfile error:(NSError **)error {
@@ -2103,11 +2135,13 @@ AbortDigest:
 	NSString *listfileEntry = nil;
 	
 	while ((listfileEntry = [listfileEnumerator nextObject])) {
+	  if (![listfileEntry isEqualToString:@""]) {
 		BOOL result = [self _addListfileEntry:listfileEntry error:error];
 		if (!result) {
 			MPQTransferErrorAndDrainPool(error, p);
 			return NO;
 		}
+	  }
 	}
 	
 	[p release];
@@ -2115,15 +2149,22 @@ AbortDigest:
 }
 
 - (BOOL)addContentsOfFileToFileList:(NSString *)path {
-	return [self addContentsOfFileToFileList:path error:nil];
+	return [self addContentsOfFileToFileList:path error:(NSError **)NULL];
 }
 
 - (BOOL)addContentsOfFileToFileList:(NSString *)path error:(NSError **)error {
 	NSParameterAssert(path != nil);
 	NSAutoreleasePool *p = [NSAutoreleasePool new];
-	
+
+#if defined(__APPLE__)
 	NSData *fileData = [NSData dataWithContentsOfFile:path options:NSUncachedRead error:error];
+#elif defined(GNUSTEP)
+	NSData *fileData = [NSData dataWithContentsOfFile:path];
+#endif
 	if (!fileData) {
+#if defined(GNUSTEP)
+		if (error) *error = [NSError _last];
+#endif
 		MPQTransferErrorAndDrainPool(error, p);
 		return NO;
 	}
@@ -2168,7 +2209,7 @@ AbortDigest:
 }
 
 - (NSDictionary *)fileInfoForPosition:(uint32_t)hash_position {
-	return [self fileInfoForPosition:hash_position error:nil];
+	return [self fileInfoForPosition:hash_position error:(NSError **)NULL];
 }
 
 - (NSDictionary *)fileInfoForPosition:(uint32_t)hash_position error:(NSError **)error {
@@ -2259,7 +2300,7 @@ AbortDigest:
 }
 
 - (NSDictionary *)fileInfoForFile:(NSString *)filename locale:(MPQLocale)locale {
-	return [self fileInfoForFile:filename locale:locale error:nil];
+	return [self fileInfoForFile:filename locale:locale error:(NSError **)NULL];
 }
 
 - (NSDictionary *)fileInfoForFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -2362,7 +2403,7 @@ AbortDigest:
 }
 
 - (BOOL)deleteFile:(NSString *)filename {
-	return [self deleteFile:filename locale:MPQNeutral error:nil];
+	return [self deleteFile:filename locale:MPQNeutral error:(NSError **)NULL];
 }
 
 - (BOOL)deleteFile:(NSString *)filename error:(NSError **)error {
@@ -2370,7 +2411,7 @@ AbortDigest:
 }
 
 - (BOOL)deleteFile:(NSString *)filename locale:(MPQLocale)locale {
-	return [self deleteFile:filename locale:locale error:nil];
+	return [self deleteFile:filename locale:locale error:(NSError **)NULL];
 }
 
 - (BOOL)deleteFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -2405,7 +2446,7 @@ AbortDigest:
 #pragma mark adding
 
 - (BOOL)addFileWithPath:(NSString *)path filename:(NSString *)filename parameters:(NSDictionary *)parameters {
-	return [self addFileWithPath:path filename:filename parameters:parameters error:nil];
+	return [self addFileWithPath:path filename:filename parameters:parameters error:(NSError **)NULL];
 }
 
 - (BOOL)addFileWithPath:(NSString *)path filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error {
@@ -2420,7 +2461,7 @@ AbortDigest:
 }
 
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters {
-	return [self addFileWithData:data filename:filename parameters:parameters error:nil];
+	return [self addFileWithData:data filename:filename parameters:parameters error:(NSError **)NULL];
 }
 
 - (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error {
@@ -2522,7 +2563,7 @@ AbortDigest:
 		if (overwrite) {
 			// Make sure the name of the file we are about to delete is in the name table, otherwise, we won't be able to un-delete it!
 			// This would normally be done by the delete methods, but to save us a hashing we're going to call deleteFileAtPosition directly.
-			if (!filename_table[old_hash_position]) filename_table[old_hash_position] =_MPQCreateASCIIFilename(filename, nil);
+			if (!filename_table[old_hash_position]) filename_table[old_hash_position] =_MPQCreateASCIIFilename(filename, (NSError **)NULL);
 			
 			// Delete the existing file
 			MPQDebugLog(@"deleting existing file");
@@ -2984,7 +3025,7 @@ AbortDigest:
 }
 
 - (MPQFile *)openFile:(NSString *)filename {
-	return [self openFile:filename locale:MPQNeutral error:nil];
+	return [self openFile:filename locale:MPQNeutral error:(NSError **)NULL];
 }
 
 - (MPQFile *)openFile:(NSString *)filename error:(NSError **)error {
@@ -2992,7 +3033,7 @@ AbortDigest:
 }
 
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale {
-	return [self openFile:filename locale:locale error:nil];
+	return [self openFile:filename locale:locale error:(NSError **)NULL];
 }
 
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -3020,7 +3061,7 @@ AbortDigest:
 #pragma mark reading
 
 - (NSData *)copyDataForFile:(NSString *)filename {
-	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:nil];
+	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:(NSError **)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename error:(NSError **)error {
@@ -3028,7 +3069,7 @@ AbortDigest:
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange {
-	return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:nil];
+	return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:(NSError **)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange error:(NSError **)error {
@@ -3036,7 +3077,7 @@ AbortDigest:
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale {
-	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:nil];
+	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:(NSError **)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -3044,7 +3085,7 @@ AbortDigest:
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale {
-	return [self copyDataForFile:filename range:dataRange locale:locale error:nil];
+	return [self copyDataForFile:filename range:dataRange locale:locale error:(NSError **)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error {
@@ -3068,7 +3109,7 @@ AbortDigest:
 #pragma mark existence
 
 - (BOOL)fileExists:(NSString *)filename {
-	return [self fileExists:filename locale:MPQNeutral error:nil];
+	return [self fileExists:filename locale:MPQNeutral error:(NSError **)NULL];
 }
 
 - (BOOL)fileExists:(NSString *)filename error:(NSError **)error {
@@ -3076,7 +3117,7 @@ AbortDigest:
 }
 
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale {
-	return [self fileExists:filename locale:locale error:nil];
+	return [self fileExists:filename locale:locale error:(NSError **)NULL];
 }
 
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -3100,7 +3141,7 @@ AbortDigest:
 - (NSArray *)localesForFile:(NSString *)filename {
 	NSParameterAssert(filename != nil);
 	
-	char *filename_cstring = _MPQCreateASCIIFilename(filename, nil);
+	char *filename_cstring = _MPQCreateASCIIFilename(filename, (NSError **)NULL);
 	if (!filename_cstring) return nil;
 	
 	// Compute the starting hash table offset, as well as the verification hashes for the specified file.
@@ -3121,7 +3162,7 @@ AbortDigest:
 			hash_table[current_hash_position].block_table_index != HASH_TABLE_DELETED)
 		{
 			// Make sure we have the name in the name table
-			if (!filename_table[current_hash_position]) filename_table[current_hash_position] = _MPQCreateASCIIFilename(filename, nil);
+			if (!filename_table[current_hash_position]) filename_table[current_hash_position] = _MPQCreateASCIIFilename(filename, (NSError **)NULL);
 			[locales addObject:[NSNumber numberWithUnsignedInt:hash_table[current_hash_position].locale]];
 		}
 		
@@ -3139,7 +3180,7 @@ AbortDigest:
 #pragma mark writing
 
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically {
-	return [self writeToFile:path atomically:atomically error:nil];
+	return [self writeToFile:path atomically:atomically error:(NSError **)NULL];
 }
 
 - (BOOL)_writeStructuralTables:(NSError **)error {
@@ -3300,7 +3341,9 @@ AbortDigest:
 				ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 			}
 			
+#if defined(__APPLE__)		
 			fcntl(archive_fd, F_NOCACHE, 1);
+#endif
 			
 			// Close archive_fd, delete file at path
 			pFlags = 0x3;
@@ -3346,7 +3389,9 @@ AbortDigest:
 			goto WriteFailed;
 		}
 		
+#if defined(__APPLE__)		
 		fcntl(archive_fd, F_NOCACHE, 1);
+#endif
 		
 		// Close archive_fd
 		pFlags |= 0x1;
@@ -3373,7 +3418,9 @@ AbortDigest:
 				ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 			}
 			
+#if defined(__APPLE__)		
 			fcntl(archive_fd, F_NOCACHE, 1);
+#endif
 			
 			// If the archive is not modified, we're done
 			if (!is_modified) goto FinalizeWrite;
@@ -3541,7 +3588,9 @@ AbortDigest:
 			
 			// If we failed to re-open the original file, we're owned. Otherwise, re-apply the NOCACHE policy
 			if (archive_fd == -1) archive_path = nil;
+#if defined(__APPLE__)		
 			else fcntl(archive_fd, F_NOCACHE, 1);
+#endif
 			
 			goto WriteFailed;
 		}
@@ -3557,7 +3606,9 @@ AbortDigest:
 			goto WriteFailed;
 		}
 		
+#if defined(__APPLE__)		
 		fcntl(archive_fd, F_NOCACHE, 1);
+#endif
 	} else if (temp_fd != -1 && ![archive_path isEqualToString:path]) {
 		// Close the original file descriptor which has been backed in temp_fd
 		close(temp_fd);

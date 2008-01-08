@@ -204,7 +204,9 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @result Returns an NSString object, or nil if the locale code is invalid.
 */
 + (NSString *)localeName:(MPQLocale)locale;
+#if defined(__APPLE__)
 + (NSLocale *)localeForMPQLocale:(MPQLocale)locale;
+#endif
 
 #pragma mark initialization
 

@@ -67,6 +67,7 @@
 		31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31A8A4FB0BC14502001F583D /* mpqfsd */; };
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
+		31C1EA9A0D33D00400DAE1F4 /* MPQByteOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C1EA980D33D00400DAE1F4 /* MPQByteOrder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		31C2FF610B8FDA9C000C1DB5 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */; };
 		31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */; };
@@ -185,6 +186,7 @@
 		31B808930BB85067001F9B73 /* MPQFileSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFileSystem.h; path = mpqfs/MPQFileSystem.h; sourceTree = "<group>"; };
 		31B808940BB85067001F9B73 /* MPQFileSystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFileSystem.m; path = mpqfs/MPQFileSystem.m; sourceTree = "<group>"; };
 		31BAC6BA03D63FDA00A80102 /* MPQArchive.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchive.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		31C1EA980D33D00400DAE1F4 /* MPQByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQByteOrder.h; sourceTree = "<group>"; };
 		31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQDataSource.h; sourceTree = "<group>"; };
 		31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQDataSource.m; sourceTree = "<group>"; };
@@ -204,7 +206,7 @@
 		F525C282035CB03701000102 /* MPQKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKit.h; sourceTree = "<group>"; };
 		F53AFA24034A8CA501000102 /* MPQArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchive.h; sourceTree = "<group>"; };
 		F568E751034FC7B001000102 /* MPQCryptography.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQCryptography.h; sourceTree = "<group>"; };
-		F568E752034FC7B001000102 /* MPQCryptography.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MPQCryptography.c; sourceTree = "<group>"; };
+		F568E752034FC7B001000102 /* MPQCryptography.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = MPQCryptography.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		F56CED3F036B027201000102 /* MPQFileInfoEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQFileInfoEnumerator.h; sourceTree = "<group>"; };
 		F56CED40036B027201000102 /* MPQFileInfoEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQFileInfoEnumerator.m; sourceTree = "<group>"; };
 		F5AA7217034908BB01000102 /* MPQFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MPQFile.h; sourceTree = "<group>"; };
@@ -278,13 +280,10 @@
 			isa = PBXGroup;
 			children = (
 				31A82B280C5A87E50011E8E4 /* Configuration */,
-				312444110B47532F004DB138 /* PHSErrorMacros.h */,
-				31F591D90498F32500A80102 /* mpqdebug.h */,
 				F525C282035CB03701000102 /* MPQKit.h */,
 				31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */,
-				312443EA0B474D98004DB138 /* MPQErrors.h */,
-				312444210B475387004DB138 /* MPQErrors.m */,
 				F5AA721B034908F301000102 /* MPQSharedConstants.h */,
+				31C1EA9E0D33D01F00DAE1F4 /* Utilities */,
 				3133BFBE04C8E98700A80102 /* Additions */,
 				F5F8743F037322BA01000102 /* Compression */,
 				F568E755034FC7B901000102 /* Cryptography */,
@@ -388,6 +387,18 @@
 			path = Configuration;
 			sourceTree = "<group>";
 		};
+		31C1EA9E0D33D01F00DAE1F4 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				312443EA0B474D98004DB138 /* MPQErrors.h */,
+				312444210B475387004DB138 /* MPQErrors.m */,
+				312444110B47532F004DB138 /* PHSErrorMacros.h */,
+				31F591D90498F32500A80102 /* mpqdebug.h */,
+				31C1EA980D33D00400DAE1F4 /* MPQByteOrder.h */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
 		31F0CF000BB849B800E24273 /* MPQFS */ = {
 			isa = PBXGroup;
 			children = (
@@ -474,6 +485,7 @@
 				3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */,
 				316186EF0C3DF5830024CABB /* MPQArchivePrivate.h in Headers */,
 				31A82B9D0C5A8CFA0011E8E4 /* MPQKitPrivate.h in Headers */,
+				31C1EA9A0D33D00400DAE1F4 /* MPQByteOrder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

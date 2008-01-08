@@ -14,7 +14,9 @@
 
 #import "NSDataCryptoAdditions.h"
 
+#if defined(__APPLE__)
 CFStringEncoding CFStringFileSystemEncoding(void);
+#endif
 
 static const char *optString = "cs";
 static const struct option longOpts[] = {
@@ -187,7 +189,11 @@ int main(int argc, char *argv[]) {
         
         NSAutoreleasePool *ap = [NSAutoreleasePool new];
         
+#if defined(__APPLE__)
         NSString *archivePath = [NSString stringWithCString:argv[i] encoding:CFStringConvertEncodingToNSStringEncoding(CFStringFileSystemEncoding())];
+#else 
+        NSString *archivePath = [NSString stringWithCString:argv[i]];
+#endif
         MPQArchive *archive = [[MPQArchive alloc] initWithPath:archivePath error:&error];
         if (!archive) {
             printf("INVALID ARCHIVE\n");
@@ -250,7 +256,7 @@ int main(int argc, char *argv[]) {
         
         // files
         printf("\n-- file information --\n");
-        [archive loadInternalListfile:nil];
+        [archive loadInternalListfile:(NSError **)NULL];
         
         NSEnumerator *fileEnum = [archive fileInfoEnumerator];
         NSDictionary *fileInfo;
@@ -294,7 +300,11 @@ int main(int argc, char *argv[]) {
                     valueString = [[value description] UTF8String];
                     [stringFlags release];
                 }
+#ifdef __APPLE__
                 else if ([key isEqualToString:MPQFileLocale]) valueString = [[[MPQArchive localeForMPQLocale:[value unsignedShortValue]] localeIdentifier] UTF8String];
+#else
+                else if ([key isEqualToString:MPQFileLocale]) valueString = [[MPQArchive localeName:[value unsignedShortValue]] UTF8String];
+#endif
                 else if ([key isEqualToString:MPQFileCanOpenWithoutFilename]) valueString = ([value boolValue]) ? "YES" : "NO";
                 else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%016qx", [value unsignedLongLongValue]] UTF8String];
                 else valueString = [[value description] UTF8String];

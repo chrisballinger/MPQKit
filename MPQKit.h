@@ -17,6 +17,7 @@
 
 #import <MPQKit/MPQSharedConstants.h>
 #import <MPQKit/MPQErrors.h>
+#import <MPQKit/MPQByteOrder.h>
 
 #import <MPQKit/NSStringAdditions.h>
 #import <MPQKit/NSArrayListfileAdditions.h>

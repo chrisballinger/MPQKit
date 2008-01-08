@@ -1,0 +1,7 @@
+# Makefile for compiling MPQKit
+#
+# Author : Xavier Glattard <xavier.glattard@online.fr>
+# Created: Tue Oct 02 2007
+
+ADDITIONAL_LIB_DIRS = -L /usr/local/lib
+ADDITIONAL_OBJCFLAGS = -Wno-unknown-pragmas -std=gnu99

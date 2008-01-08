@@ -12,11 +12,8 @@
 /*****************************************************************************/
 
 #include <assert.h>
+#include "MPQByteOrder.h"
 #include "wave.h"
-
-#if defined(__APPLE__)
-#include <CoreFoundation/CFByteOrder.h>
-#endif
 
 //------------------------------------------------------------------------------
 // Structures
@@ -105,8 +102,9 @@ uint32_t CompressWave(uint8_t *outBuffer, uint32_t outBufferLength, int16_t *inB
 
     for(uint8_t i = 0; i < channels; i++)
     {
-        nOneWord = (int16_t)CFSwapInt16LittleToHost(*inBuffer++);
-        *out.pw++ = (int16_t)CFSwapInt16LittleToHost(nOneWord);
+        nOneWord = (int16_t)MPQSwapInt16LittleToHost(*inBuffer++);
+        //*out.pw++ = (int16_t)MPQSwapInt16LittleToHost(nOneWord);
+		*out.pw++ = *inBuffer++;
         SInt32Array2[i] = nOneWord;
     }
 
@@ -133,7 +131,7 @@ uint32_t CompressWave(uint8_t *outBuffer, uint32_t outBufferLength, int16_t *inB
             nIndex = (nIndex == 0) ? 1 : 0;
 
         // Load one word from the input stream
-        nOneWord = (int16_t)CFSwapInt16LittleToHost(*inBuffer++);
+        nOneWord = (int16_t)MPQSwapInt16LittleToHost(*inBuffer++);
         SInt32Array3[nIndex] = nOneWord;
         
         nValue = nOneWord - SInt32Array2[nIndex];
@@ -240,7 +238,7 @@ uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *i
     // Fill the Uint32Array2 array by channel values.
     for(uint8_t i = 0; i < channels; i++)
     {
-        nOneWord = (int16_t)CFSwapInt16LittleToHost(*in.pw);
+        nOneWord = (int16_t)MPQSwapInt16LittleToHost(*in.pw);
         SInt32Array2[i] = nOneWord;
         if(dwOutLengthCopy < 2)
             return (uint32_t)(out.pb - (uint8_t *)outBuffer);
@@ -274,7 +272,7 @@ uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *i
                     if(dwOutLengthCopy < 2)
                         return (uint32_t)(out.pb - (uint8_t *)outBuffer);
 
-                    *out.pw++ = (int16_t)CFSwapInt16HostToLittle(SInt32Array2[nIndex]);
+                    *out.pw++ = (int16_t)MPQSwapInt16HostToLittle(SInt32Array2[nIndex]);
 					// Explicit cast is OK here
                     outBufferLength -= (uint32_t)sizeof(int16_t);
                     break;
@@ -344,7 +342,7 @@ uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *i
                 break;
 
             // Store the output 16-bit value
-            *out.pw++ = (int16_t)CFSwapInt16HostToLittle(SInt32Array2[nIndex]);
+            *out.pw++ = (int16_t)MPQSwapInt16HostToLittle(SInt32Array2[nIndex]);
 			// Explicit cast is OK here
             outBufferLength -= (uint32_t)sizeof(int16_t);
 

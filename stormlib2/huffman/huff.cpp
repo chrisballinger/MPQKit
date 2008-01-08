@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /* huffman.cpp                       Copyright (c) Ladislav Zezula 1998-2003 */
 /*---------------------------------------------------------------------------*/
-/* This module contains Huffman (de)compression methods                     */
+/* This module contains Huffman (de)compression methods                      */
 /*                                                                           */
 /* Authors : Ladislav Zezula (ladik.zezula.net)                              */
 /*           ShadowFlare     (BlakFlare@hotmail.com)                         */
@@ -17,8 +17,7 @@
 
 #include <assert.h>
 #include <string.h>
-#include <CoreFoundation/CFByteOrder.h>
-
+#include "MPQByteOrder.h"
 #include "huff.h"
 
 #define PTR_NOT(ptr)                (THTreeItem *)(~(uintptr_t)(ptr))
@@ -118,7 +117,7 @@ uint32_t TInputStream::GetBit() {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 32) {
-            bit_bucket = CFSwapInt32LittleToHost(*(uint32_t *)buffer);
+            bit_bucket = MPQSwapInt32LittleToHost(*(uint32_t *)buffer);
             bit_count = 32;
             
             buffer += 4;
@@ -149,7 +148,7 @@ uint32_t TInputStream::Get8Bits() {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 16) {
-            bit_bucket |= ((uint32_t)CFSwapInt16LittleToHost(*(uint16_t *)buffer)) << bit_count;
+            bit_bucket |= ((uint32_t)MPQSwapInt16LittleToHost(*(uint16_t *)buffer)) << bit_count;
             bit_count += 16;
             
             buffer += 2;
@@ -180,7 +179,7 @@ uint32_t TInputStream::Peek7Bits() {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 16) {
-            bit_bucket |= ((uint32_t)CFSwapInt16LittleToHost(*(uint16_t *)buffer)) << bit_count;
+            bit_bucket |= ((uint32_t)MPQSwapInt16LittleToHost(*(uint16_t *)buffer)) << bit_count;
             bit_count += 16;
             
             buffer += 2;

@@ -69,9 +69,13 @@ enum {
 };
 
 static inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p) {
-    NSError *e = (error) ? *error : nil;
+    NSError *e = (error) ? *error : (NSError*)nil;
     [e retain];
+#if !defined(__APPLE__)
+    [p emptyPool];
+#else
     [p drain];
+#endif
     [e autorelease];
 }
 

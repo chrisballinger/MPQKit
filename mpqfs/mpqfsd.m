@@ -6,6 +6,11 @@
 //  Copyright MacStorm 2007. All rights reserved.
 //
 
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 600
+#define _FILE_OFFSET_BITS  64
+#endif
+
 #import <Foundation/Foundation.h>
 #import <unistd.h>
 

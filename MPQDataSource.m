@@ -6,6 +6,12 @@
 //  Copyright 2007 MacStorm. All rights reserved.
 //
 
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 600
+#define _FILE_OFFSET_BITS  64
+#endif
+
+#import <fcntl.h>
 #import <unistd.h>
 #import <sys/stat.h>
 #import <sys/types.h>
@@ -33,6 +39,7 @@
     
     _backingStoreType = FileDescriptorBackingStore;
     
+#if defined(__APPLE__)
     const char *cPath = [path fileSystemRepresentation];
     CFURLRef fileURLRef = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)cPath, strlen(cPath) + 1, false);
     if (fileURLRef == NULL) ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertPathToURL, nil, error)
@@ -44,6 +51,9 @@
     
     OSErr oerr = FSNewAliasMinimal(&pathRef, &_fileAlias);
     if (oerr != noErr) ReturnFromInitWithError(NSOSStatusErrorDomain, oerr, nil, error)
+#else
+    _path = [path copy];
+#endif
     
     ReturnValueWithNoError(self, error)
 }
@@ -55,8 +65,13 @@
             _dataBackingStore = nil;
             break;
         case FileDescriptorBackingStore:
+#if defined(__APPLE__)
             if (_fileAlias != NULL) DisposeHandle((Handle)_fileAlias);
             _fileAlias = NULL;
+#else
+            [_path release];
+			 _path = nil;
+#endif
             break;
         default:
             abort();
@@ -66,21 +81,28 @@
 }
 
 - (id)createActualDataSource:(NSError **)error {
+#if defined(__APPLE__)
     OSErr oerr;
     Boolean wasChanged;
     FSRef fileRef;
     CFURLRef urlRef;
+#endif
+    id dataSource;
     
     switch(_backingStoreType) {
         case NSDataBackingStore:
             return [[MPQDataSource alloc] initWithData:_dataBackingStore error:error];
         case FileDescriptorBackingStore:
+#if defined(__APPLE__)
             oerr = FSResolveAliasWithMountFlags(NULL, _fileAlias, &fileRef, &wasChanged, kResolveAliasFileNoUI);
             if (oerr != noErr) ReturnValueWithError(nil, NSOSStatusErrorDomain, oerr, nil, error)
             urlRef = CFURLCreateFromFSRef(NULL, &fileRef);
             if (urlRef == NULL) ReturnValueWithError(nil, MPQErrorDomain, errCouldNotConvertFSRefToURL, nil, error)
-            id dataSource = [[MPQDataSource alloc] initWithURL:(NSURL *)urlRef error:error];
+            dataSource = [[MPQDataSource alloc] initWithURL:(NSURL *)urlRef error:error];
             CFRelease(urlRef);
+#else
+            dataSource = [[MPQDataSource alloc] initWithPath:_path error:error];
+#endif
             return dataSource;
         default:
             abort();

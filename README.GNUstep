@@ -1,0 +1,16 @@
+Instructions for building MPQKit with GNUstep.
+
+make
+sudo make install
+
+Instructions for building MPQFS with GNUstep.
+
+cd mpqfs
+make
+sudo make install
+
+GNUstep port by Xavier Glattard <xavier.glattard@online.fr>
+Contributions by Jean-Francois Roy.
+
+Original patch done on 2007-10-02.
+Final patch done on 2007-01-08.

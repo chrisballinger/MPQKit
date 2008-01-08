@@ -7,7 +7,14 @@
 //  Largely inspired from FUSEObjC, but without any dependency on non-daemon safe frameworks.
 //
 
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 600
+#define _FILE_OFFSET_BITS  64
+#endif
+
+#if defined(__APPLE__)
 #import <CoreFoundation/CoreFoundation.h>
+#endif
 #import <Foundation/Foundation.h>
 #import <MPQKit/MPQKit.h>
 

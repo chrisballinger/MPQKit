@@ -6,12 +6,18 @@
 //  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
 
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 600
+#define _FILE_OFFSET_BITS  64
+#endif
+ 
 #import <fcntl.h>
 #import <unistd.h>
 #import <zlib.h>
 #import <aio.h>
 
 #import "MPQErrors.h"
+#import "MPQByteOrder.h"
 #import "MPQCryptography.h"
 #import "MPQArchive.h"
 #import "MPQFile.h"
@@ -22,12 +28,17 @@
 #import "SCompression.h"
 #import "NSDateNTFSAdditions.h"
 
+#if defined(GNUSTEP)
+@interface NSError(GSCategories)
++ (NSError*)_last;
+@end
+#endif
+
 #define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
 
 #if defined(MPQKIT_USE_AIO)
 #define MPQFILE_AIO
 #endif
-
 
 @interface MPQArchive (MPQFilePrivate)
 - (void)decreaseOpenFileCount_:(uint32_t)position;
@@ -54,11 +65,11 @@
 @implementation MPQFile (MPQFileAttributes)
 
 + (id)getCRC:(NSData *)data {
-    return [NSNumber numberWithUnsignedInt:CFSwapInt32LittleToHost(*((uint32_t *)[data bytes]))];
+    return [NSNumber numberWithUnsignedInt:MPQSwapInt32LittleToHost(*((uint32_t *)[data bytes]))];
 }
 
 + (id)getCreationDate:(NSData *)data {
-    return [NSDate dateWithNTFSFiletime:CFSwapInt64LittleToHost(*((u_int64_t *)[data bytes]))];
+    return [NSDate dateWithNTFSFiletime:MPQSwapInt64LittleToHost(*((u_int64_t *)[data bytes]))];
 }
 
 + (id)getMD5:(NSData *)data {
@@ -122,7 +133,7 @@
 }
 
 - (NSDictionary *)fileInfo {
-    return [parent fileInfoForPosition:hash_position error:nil];
+    return [parent fileInfoForPosition:hash_position error:(NSError **)NULL];
 }
 
 - (NSDictionary *)fileInfo:(NSError **)error {
@@ -130,7 +141,7 @@
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset {
-    return [self seekToFileOffset:offset mode:MPQFileStart error:nil];
+    return [self seekToFileOffset:offset mode:MPQFileStart error:(NSError **)NULL];
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset error:(NSError **)error {
@@ -138,7 +149,7 @@
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode {
-    return [self seekToFileOffset:offset mode:mode error:nil];
+    return [self seekToFileOffset:offset mode:mode error:(NSError **)NULL];
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error { 
@@ -183,7 +194,7 @@
 }
 
 - (NSData *)copyDataOfLength:(uint32_t)length {
-    return [self copyDataOfLength:length error:nil];
+    return [self copyDataOfLength:length error:(NSError **)NULL];
 }
 
 - (NSData *)copyDataOfLength:(uint32_t)length error:(NSError **)error {
@@ -199,7 +210,7 @@
 }
 
 - (NSData *)copyDataToEndOfFile {
-    return [self copyDataOfLength:[self length] error:nil];
+    return [self copyDataOfLength:[self length] error:(NSError **)NULL];
 }
 
 - (NSData *)copyDataToEndOfFile:(NSError **)error {
@@ -207,7 +218,7 @@
 }
 
 - (NSData *)getDataOfLength:(uint32_t)length {
-    return [[self copyDataOfLength:length error:nil] autorelease];
+    return [[self copyDataOfLength:length error:(NSError **)NULL] autorelease];
 }
 
 - (NSData *)getDataOfLength:(uint32_t)length error:(NSError **)error {
@@ -215,7 +226,7 @@
 }
 
 - (NSData *)getDataToEndOfFile {
-    return [[self copyDataToEndOfFile:nil] autorelease];
+    return [[self copyDataToEndOfFile:(NSError **)NULL] autorelease];
 }
 
 - (NSData *)getDataToEndOfFile:(NSError **)error {
@@ -228,7 +239,7 @@
 }
 
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically {
-    return [self writeToFile:path atomically:atomically error:nil];
+    return [self writeToFile:path atomically:atomically error:(NSError **)NULL];
 }
 
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically error:(NSError **)error {
@@ -236,7 +247,14 @@
     file_pointer = 0;
     
     NSData *fileData = [self copyDataToEndOfFile];
+#if defined(__APPLE__)
     BOOL result = [fileData writeToFile:path options:(atomically) ? NSAtomicWrite : 0 error:error];
+#else
+    BOOL result = [fileData writeToFile:path atomically:atomically];
+#if defined(GNUSTEP)
+     if (error) *error = [NSError _last];
+#endif
+#endif
     
     file_pointer = old;
     [fileData release];

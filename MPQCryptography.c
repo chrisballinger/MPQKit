@@ -11,17 +11,22 @@
 #include <string.h>
 #include <zlib.h>
 
-#include <CoreFoundation/CFByteOrder.h>
-
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
 #include <openssl/obj_mac.h>
 #include <openssl/sha.h>
 
+#include "MPQByteOrder.h"
 #include "MPQCryptography.h"
 
 #define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
+
+#if !defined(Boolean)
+#define Boolean int
+#define FALSE 0
+#define TRUE 1
+#endif
 
 static Boolean crypt_table_initialized = FALSE;
 static uint32_t crypt_table[0x500];
@@ -42,7 +47,7 @@ const uint32_t *mpq_get_cryptography_table() {
 }
 
 void mpq_init_cryptography() {
-    // Prepare crypt_table
+    // prepare crypt_table
     uint32_t seed   = 0x00100001;
     uint32_t index1 = 0;
     uint32_t index2 = 0;
@@ -66,7 +71,7 @@ void mpq_init_cryptography() {
          }
     }
     
-    // Load up OpenSSL
+    // load up OpenSSL
     OpenSSL_add_all_digests();
     OpenSSL_add_all_algorithms();
     OpenSSL_add_all_ciphers();
@@ -83,10 +88,10 @@ void mpq_encrypt(void *data, size_t length, uint32_t key, bool disable_input_swa
     uint32_t seed = 0xEEEEEEEE;
     uint32_t ch;
     
-    // Round to 4 bytes
+    // round to 4 bytes
     length = length / 4;
     
-    // We duplicate the loop to avoid costly branches
+    // we duplicate the loop to avoid costly branches
     if (disable_input_swapping) {
         while (length-- > 0) {
             seed += crypt_table[0x400 + (key & 0xFF)];
@@ -95,11 +100,11 @@ void mpq_encrypt(void *data, size_t length, uint32_t key, bool disable_input_swa
             key = ((~key << 0x15) + 0x11111111) | (key >> 0x0B);
             seed = *buffer32 + seed + (seed << 5) + 3;
             
-            *buffer32++ = CFSwapInt32HostToLittle(ch);
+			*buffer32++ = MPQSwapInt32HostToLittle(ch);
         }
     } else {
         while (length-- > 0) {
-            *buffer32 = CFSwapInt32LittleToHost(*buffer32);
+            *buffer32 = MPQSwapInt32LittleToHost(*buffer32);
             
             seed += crypt_table[0x400 + (key & 0xFF)];
             ch = *buffer32 ^ (key + seed);
@@ -107,7 +112,7 @@ void mpq_encrypt(void *data, size_t length, uint32_t key, bool disable_input_swa
             key = ((~key << 0x15) + 0x11111111) | (key >> 0x0B);
             seed = *buffer32 + seed + (seed << 5) + 3;
             
-            *buffer32++ = CFSwapInt32HostToLittle(ch);
+			*buffer32++ = MPQSwapInt32HostToLittle(ch);
         }
     }
 }
@@ -120,16 +125,12 @@ void mpq_decrypt(void *data, size_t length, uint32_t key, bool disable_output_sw
     uint32_t seed = 0xEEEEEEEE;
     uint32_t ch;
     
-    // Round to 4 bytes
+    // round to 4 bytes
     length = length / 4;
     
     if (disable_output_swapping) {
         while (length-- > 0) {
-#if defined(__BIG_ENDIAN__)
-            ch = CFSwapInt32LittleToHost(*buffer32);
-#else
-            ch = *buffer32;
-#endif
+			ch = MPQSwapInt32LittleToHost(*buffer32);
             
             seed += crypt_table[0x400 + (key & 0xFF)];
             ch = ch ^ (key + seed);
@@ -142,11 +143,7 @@ void mpq_decrypt(void *data, size_t length, uint32_t key, bool disable_output_sw
         
     } else {
         while (length-- > 0) {
-#if defined(__BIG_ENDIAN__)
-            ch = CFSwapInt32LittleToHost(*buffer32);
-#else
-            ch = *buffer32;
-#endif
+            ch = MPQSwapInt32LittleToHost(*buffer32);
             
             seed += crypt_table[0x400 + (key & 0xFF)];
             ch = ch ^ (key + seed);
@@ -154,11 +151,7 @@ void mpq_decrypt(void *data, size_t length, uint32_t key, bool disable_output_sw
             key = ((~key << 0x15) + 0x11111111) | (key >> 0x0B);
             seed = ch + seed + (seed << 5) + 3;
             
-#if defined(__BIG_ENDIAN__)
-            *buffer32++ = CFSwapInt32HostToLittle(ch);
-#else
-            *buffer32++ = ch;
-#endif
+            *buffer32++ = MPQSwapInt32HostToLittle(ch);
         }
     }
 }
@@ -216,7 +209,7 @@ void mpq_crc32(const void *buffer, size_t length, uint32_t *crc, uint32_t flags)
     
     if (flags & MPQ_CRC_UPDATE) {
         while (data_stream < data_stream_end) {
-			// Explicit cast is OK here, crc32 is 32-bit
+			// explicit cast is OK here, crc32 is 32-bit
             local_crc = ((local_crc >> 8) & 0x00FFFFFF) ^ (uint32_t)crc_table[(local_crc ^ *data_stream) & 0xFF];
             data_stream++;
         }

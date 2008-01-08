@@ -6,6 +6,10 @@
 //  Copyright 2007 MacStorm. All rights reserved.
 //
 
+#if !defined(__APPLE__)
+#define _XOPEN_SOURCE 500
+#endif
+
 #import <MPQKit/MPQKitPrivate.h>
 #import "PHSErrorMacros.h"
 #import "MPQArchivePriorityProxy.h"
@@ -112,7 +116,12 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 		_priority_count++;
 		
 		// Sort the tree
+#if defined(__APPLE__)
 		mergesort(archives, _priority_count, sizeof(struct _archive_binary_tree), _archive_binary_tree_compare);
+#else
+		qsort(archives, _priority_count, sizeof(struct _archive_binary_tree), _archive_binary_tree_compare);
+#endif
+
 	} else {
 		// Push the archive at the top
 		struct _archive_binary_tree_node *old = requested_priority_tree->top;
@@ -153,7 +162,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (MPQFile *)openFile:(NSString *)filename {
-	return [self openFile:filename locale:MPQNeutral error:nil];
+	return [self openFile:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
 - (MPQFile *)openFile:(NSString *)filename error:(NSError **)error {
@@ -161,7 +170,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale {
-	return [self openFile:filename locale:locale error:nil];
+	return [self openFile:filename locale:locale error:(NSError**)NULL];
 }
 
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -210,7 +219,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename {
-    return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:nil];
+    return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:(NSError**)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename error:(NSError **)error {
@@ -218,7 +227,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange {
-    return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:nil];
+    return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:(NSError**)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange error:(NSError **)error {
@@ -226,7 +235,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale {
-    return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:nil];
+    return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:(NSError**)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
@@ -234,7 +243,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale {
-    return [self copyDataForFile:filename range:dataRange locale:locale error:nil];
+    return [self copyDataForFile:filename range:dataRange locale:locale error:(NSError**)NULL];
 }
 
 - (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error {
@@ -256,7 +265,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (BOOL)fileExists:(NSString *)filename {
-	return [self fileExists:filename locale:MPQNeutral error:nil];
+	return [self fileExists:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
 - (BOOL)fileExists:(NSString *)filename error:(NSError **)error {
@@ -264,7 +273,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale {
-    return [self fileExists:filename locale:locale error:nil];
+    return [self fileExists:filename locale:locale error:(NSError**)NULL];
 }
 
 - (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
