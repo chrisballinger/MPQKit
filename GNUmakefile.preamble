@@ -4,5 +4,5 @@
 # Created: Tue Oct 02 2007
 
 ADDITIONAL_CFLAGS = -Wno-unknown-pragmas -std=gnu99
-ADDITIONAL_CCFLAGS = -Wno-unknown-pragmas -std=gnu99
+ADDITIONAL_CCFLAGS = -Wno-unknown-pragmas
 ADDITIONAL_OBJCFLAGS = -Wno-unknown-pragmas -std=gnu99

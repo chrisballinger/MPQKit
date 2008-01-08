@@ -53,14 +53,14 @@ MPQKit_SUBPROJECTS = \
 mpqdump_OBJC_FILES = \
 	mpqdump.m \
 
-mpqdump_LIB_DIRS = -L MPQKit.framework -L stormlib2
-mpqdump_TOOL_LIBS = -lMPQKit -lStorm2 -lstdc++ -lz -lbz2 -lcrypto
+mpqdump_LIB_DIRS = -LMPQKit.framework
+mpqdump_TOOL_LIBS = -lMPQKit -lstdc++ -lz -lbz2 -lcrypto
 
 mpqdumpsectors_OBJC_FILES = \
 	mpqdumpsectors.m \
 
-mpqdumpsectors_LIB_DIRS = -L MPQKit.framework -L stormlib2
-mpqdumpsectors_TOOL_LIBS = -lMPQKit -lStorm2 -lstdc++ -lz -lbz2 -lcrypto
+mpqdumpsectors_LIB_DIRS = -LMPQKit.framework
+mpqdumpsectors_TOOL_LIBS = -lMPQKit -lstdc++ -lz -lbz2 -lcrypto
 
 dumpkeys_C_FILES = \
 	dumpkeys.c \

@@ -1,3 +1,13 @@
+Dependencies for building MPQKit with GNUstep.
+
+In order to build MPQKit on Linux with GNUstep, you will need to have the following software or packages:
+
+- GCC 4 with C, C++ and Objective-C support (headers, libraries, runtimes)
+- GNUstep libraries, headers and makefiles
+- BZip2 library and headers
+- Zlib library and headers
+- OpenSSL library and headers
+
 Instructions for building MPQKit with GNUstep.
 
 make
