@@ -26,7 +26,7 @@
 
 #import "SCompression.h"
 
-#import <MPQKit/MPQKitPrivate.h>
+#import "MPQKitPrivate.h"
 #import "MPQFileInfoEnumerator.h"
 
 #import "mpqdebug.h"
