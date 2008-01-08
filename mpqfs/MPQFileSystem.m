@@ -306,8 +306,8 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     assert(fileInfo);
     
     // Permissions (mode)
-    if (isDirectory) stbuf->st_mode = S_IRUSR | S_IRGRP | S_IROTH | S_IXUSR | S_IXGRP | S_IXOTH | S_IFDIR;
-    else stbuf->st_mode = S_IRUSR | S_IRGRP | S_IROTH | S_IFREG;
+    if (isDirectory) stbuf->st_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH | S_IXUSR | S_IXGRP | S_IXOTH | S_IFDIR;
+    else stbuf->st_mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH | S_IFREG;
     
     // nlink
     stbuf->st_nlink = (isDirectory) ? 2 : 1;
