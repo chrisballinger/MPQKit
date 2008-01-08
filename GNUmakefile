@@ -14,26 +14,15 @@ MPQKit_INCLUDE_DIRS = -I ./stormlib2 -I ..
 MPQKit_HEADER_FILES = \
 	MPQArchive.h \
 	MPQArchivePriorityProxy.h \
-	MPQArchivePrivate.h \
 	MPQByteOrder.h \
 	MPQCryptography.h \
-	MPQDataSource.h \
 	MPQErrors.h \
 	MPQFile.h \
-	MPQFileInfoEnumerator.h \
-	MPQFilePrivate.h \
 	MPQKit.h \
-	MPQKitPrivate.h \
 	MPQSharedConstants.h \
 	NSArrayListfileAdditions.h \
-	NSDataCryptoAdditions.h \
 	NSDateNTFSAdditions.h \
 	NSStringAdditions.h \
-	PHSErrorMacros.h \
-	stormlib2/SCompression.h \
-	stormlib2/huffman/huff.h \
-	stormlib2/pklib/pklib.h \
-	stormlib2/wave/wave.h
 
 MPQKit_OBJC_FILES = \
 	MPQArchive.m \
