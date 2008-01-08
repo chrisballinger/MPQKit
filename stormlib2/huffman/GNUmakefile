@@ -7,7 +7,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECT_NAME = huffman
 
-huffman_CPP_FILES = \
+huffman_CC_FILES = \
 	huff.cpp \
 
 -include Makefile.preamble

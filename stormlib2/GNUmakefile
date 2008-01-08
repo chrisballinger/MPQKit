@@ -7,7 +7,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECT_NAME = stormlib2
 
-stormlib2_CPP_FILES = \
+stormlib2_CC_FILES = \
 	SCompression.cpp \
 
 stormlib2_SUBPROJECTS = \
