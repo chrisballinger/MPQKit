@@ -14,6 +14,6 @@ pklib_C_FILES = \
 	explode.c \
 	implode.c \
 
--include Makefile.preamble
+-include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/subproject.make
--include Makefile.postamble
+-include GNUmakefile.postamble

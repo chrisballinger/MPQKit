@@ -12,6 +12,6 @@ wave_INCLUDE_DIRS = -I. -I.. -I../..
 wave_C_FILES = \
 	wave.c \
 
--include Makefile.preamble
+-include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/subproject.make
--include Makefile.postamble
+-include GNUmakefile.postamble
