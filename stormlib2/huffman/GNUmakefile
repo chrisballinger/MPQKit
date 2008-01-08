@@ -7,6 +7,8 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 SUBPROJECT_NAME = huffman
 
+huffman_INCLUDE_DIRS = -I. -I.. -I../..
+
 huffman_CC_FILES = \
 	huff.cpp \
 

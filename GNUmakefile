@@ -17,7 +17,7 @@ FRAMEWORK_NAME = MPQKit
 TOOL_NAME = mpqdump mpqdumpsectors
 CTOOL_NAME = dumpkeys
 
-MPQKit_INCLUDE_DIRS = -I ./stormlib2 -I ..
+MPQKit_INCLUDE_DIRS = -Istormlib2 -I.
 
 MPQKit_HEADER_FILES = \
 	MPQArchive.h \
