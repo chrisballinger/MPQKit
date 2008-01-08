@@ -3,6 +3,14 @@
 # Author : Xavier Glattard <xavier.glattard@online.fr>
 # Created: Tue Oct 02 2007
 
+ifeq ($(GNUSTEP_MAKEFILES),)
+ GNUSTEP_MAKEFILES := $(shell gnustep-config --variable=GNUSTEP_MAKEFILES 2>/dev/null)
+endif
+
+ifeq ($(GNUSTEP_MAKEFILES),)
+  $(error You need to set GNUSTEP_MAKEFILES before compiling!)
+endif
+
 include $(GNUSTEP_MAKEFILES)/common.make
 
 FRAMEWORK_NAME = MPQKit
@@ -38,12 +46,9 @@ MPQKit_OBJC_FILES = \
 
 MPQKit_C_FILES = \
 	MPQCryptography.c \
-	stormlib2/pklib/crc32.c \
-	stormlib2/pklib/explode.c \
-	stormlib2/pklib/implode.c \
-	stormlib2/wave/wave.c \
-	stormlib2/SCompression.cpp \
-	stormlib2/huffman/huff.cpp \
+
+MPQKit_SUBPROJECTS = \
+	stormlib2 \
 
 mpqdump_OBJC_FILES = \
 	mpqdump.m \
