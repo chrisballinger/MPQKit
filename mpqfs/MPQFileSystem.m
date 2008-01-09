@@ -28,8 +28,6 @@
 static const char* kMPQFileSystemExtendedAttributeNameC = "org.macstorm.mpqkit";
 static NSString* kMPQFileSystemExtendedAttributeName = @"org.macstorm.mpqkit";
 
-static MPQFileSystem *manager;
-
 static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     assert(dest);
     assert(src);
@@ -43,6 +41,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 
+#pragma mark MPQFSTree
 @interface MPQFSTree : NSObject {
     MPQFSTree *parent_;
     NSString *name_;
@@ -163,6 +162,21 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 @end
 
 
+#pragma mark MPQFileSystemPrivate
+@interface MPQFileSystem (MPQFileSystemPrivate)
++ (MPQFileSystem*)currentFS;
+@end
+
+@implementation MPQFileSystem (MPQFileSystemPrivate)
++ (MPQFileSystem*)currentFS {
+  struct fuse_context* context = fuse_get_context();
+  assert(context);
+  return (MPQFileSystem*)context->private_data;
+}
+@end
+
+
+#pragma mark MPQFileSystem
 @implementation MPQFileSystem
 
 - (BOOL)buildTree_:(NSError **)error {
@@ -488,26 +502,22 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 #pragma mark FUSE operations
 
-+ (MPQFileSystem *)currentManager {
-    return manager;
-}
-
 static void *fusefm_init(struct fuse_conn_info *conn) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
     
-    MPQFileSystem *manager = [MPQFileSystem currentManager];
-    NSCAssert1(manager, @"No manager set for fuse thread %@!", [NSThread currentThread]);
-    
+    MPQFileSystem *manager = [MPQFileSystem currentFS];
+	[manager retain];
     [manager fuseInit];
     
     [pool release];
     return manager;
 }
 
-
 static void fusefm_destroy(void *private_data) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    [[MPQFileSystem currentManager] fuseDestroy];
+	MPQFileSystem *manager = [MPQFileSystem currentFS];
+    [manager fuseDestroy];
+	[manager release];
     [pool release];
 }
 
@@ -517,7 +527,7 @@ static int fusefm_statfs(const char* path, struct statvfs* stbuf) {
     int res = 0;
     memset(stbuf, 0, sizeof(struct statvfs));
     
-    res = [[MPQFileSystem currentManager] fillStatvfsBuffer:stbuf forPath:[NSString stringWithUTF8String:path]];
+    res = [[MPQFileSystem currentFS] fillStatvfsBuffer:stbuf forPath:[NSString stringWithUTF8String:path]];
     
     [pool release];
     return res;
@@ -529,7 +539,7 @@ static int fusefm_getattr(const char *path, struct stat *stbuf) {
     int res = 0;
     memset(stbuf, 0, sizeof(struct stat));
     
-    res = [[MPQFileSystem currentManager] fillStatBuffer:stbuf forPath:[NSString stringWithUTF8String:path]];
+    res = [[MPQFileSystem currentFS] fillStatBuffer:stbuf forPath:[NSString stringWithUTF8String:path]];
     
     [pool release];
     return res;
@@ -537,11 +547,12 @@ static int fusefm_getattr(const char *path, struct stat *stbuf) {
 
 static int fusefm_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    int res = 0;
+    
+	int res = 0;
     memset(stbuf, 0, sizeof(struct stat));
     
     MPQFile *file = (MPQFile *)(unsigned long)(fi->fh);
-    res = [[MPQFileSystem currentManager] fillStatBuffer:stbuf withFileInfo:[file fileInfo] isDirectory:NO];
+    res = [[MPQFileSystem currentFS] fillStatBuffer:stbuf withFileInfo:[file fileInfo] isDirectory:NO];
     
     [pool release];
     return res;
@@ -551,8 +562,7 @@ static int fusefm_readdir(const char *path, void *buf, fuse_fill_dir_t filler, o
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
     
     NSError *error = nil;
-    
-    NSArray *contents = [[MPQFileSystem currentManager] fullDirectoryContentsAtPath:[NSString stringWithUTF8String:path] error:&error];
+    NSArray *contents = [[MPQFileSystem currentFS] fullDirectoryContentsAtPath:[NSString stringWithUTF8String:path] error:&error];
     if (!contents) {
         [pool release];
         return -[error code];
@@ -568,18 +578,14 @@ static int fusefm_readdir(const char *path, void *buf, fuse_fill_dir_t filler, o
 
 static int fusefm_create(const char* path, mode_t mode, struct fuse_file_info* fi) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    
-    int res = [[MPQFileSystem currentManager] createFileAtPath:[NSString stringWithUTF8String:path] attributes:nil];
-    
+    int res = [[MPQFileSystem currentFS] createFileAtPath:[NSString stringWithUTF8String:path] attributes:nil];
     [pool release];
     return res;
 }
 
 static int fusefm_unlink(const char* path) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    int ret = [[MPQFileSystem currentManager] removeFileAtPath:[NSString stringWithUTF8String:path] handler:nil];
-    
+    int ret = [[MPQFileSystem currentFS] removeFileAtPath:[NSString stringWithUTF8String:path] handler:nil];
     [pool release];
     return ret;
 }
@@ -589,7 +595,7 @@ static int fusefm_rename(const char* path, const char* toPath) {
     
     NSString* source = [NSString stringWithUTF8String:path];
     NSString* destination = [NSString stringWithUTF8String:toPath];
-    int ret = [[MPQFileSystem currentManager] movePath:source toPath:destination handler:nil];
+    int ret = [[MPQFileSystem currentFS] movePath:source toPath:destination handler:nil];
     
     [pool release];
     return ret;
@@ -598,27 +604,21 @@ static int fusefm_rename(const char* path, const char* toPath) {
 
 static int fusefm_truncate(const char* path, off_t offset) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    
-    int res = [[MPQFileSystem currentManager] truncateFileAtPath:[NSString stringWithUTF8String:path] offset:offset];
-    
+    int res = [[MPQFileSystem currentFS] truncateFileAtPath:[NSString stringWithUTF8String:path] offset:offset];
     [pool release];
     return res;
 }
 
 static int fusefm_mkdir(const char* path, mode_t mode) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    int ret = [[MPQFileSystem currentManager] createDirectoryAtPath:[NSString stringWithUTF8String:path] attributes:nil];
-    
+    int ret = [[MPQFileSystem currentFS] createDirectoryAtPath:[NSString stringWithUTF8String:path] attributes:nil];
     [pool release];
     return ret;
 }
 
 static int fusefm_rmdir(const char* path) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    int ret = [[MPQFileSystem currentManager] removeFileAtPath:[NSString stringWithUTF8String:path] handler:nil];
-    
+    int ret = [[MPQFileSystem currentFS] removeFileAtPath:[NSString stringWithUTF8String:path] handler:nil];
     [pool release];
     return ret;
 }
@@ -635,7 +635,7 @@ static int fusefm_open(const char *path, struct fuse_file_info *fi) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
     NSError *error = nil;
     
-    id object = [[MPQFileSystem currentManager] openFileAtPath:[NSString stringWithUTF8String:path] mode:fi->flags error:&error];
+    id object = [[MPQFileSystem currentFS] openFileAtPath:[NSString stringWithUTF8String:path] mode:fi->flags error:&error];
     if (object == nil) {
         [pool release];
         return -[error code];
@@ -648,34 +648,21 @@ static int fusefm_open(const char *path, struct fuse_file_info *fi) {
 
 static int fusefm_release(const char *path, struct fuse_file_info *fi) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    [[MPQFileSystem currentManager] releaseFileAtPath:[NSString stringWithUTF8String:path] handle:(MPQFile *)(unsigned long)fi->fh];
-    
+    [[MPQFileSystem currentFS] releaseFileAtPath:[NSString stringWithUTF8String:path] handle:(MPQFile *)(unsigned long)fi->fh];
     [pool release];
     return 0;
 }
 
 static int fusefm_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    
-    int length = [[MPQFileSystem currentManager] readFileAtPath:[NSString stringWithUTF8String:path]
-                                                         handle:(MPQFile *)(unsigned long)fi->fh
-                                                         buffer:buf
-                                                           size:size
-                                                         offset:offset];
-    [pool release];
+    int length = [[MPQFileSystem currentFS] readFileAtPath:[NSString stringWithUTF8String:path] handle:(MPQFile *)(unsigned long)fi->fh buffer:buf size:size offset:offset];
+	[pool release];
     return length;
 }
 
 static int fusefm_write(const char* path, const char* buf, size_t size, off_t offset, struct fuse_file_info* fi) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    
-    int length = [[MPQFileSystem currentManager] writeFileAtPath:[NSString stringWithUTF8String:path]
-                                                          handle:(id)(unsigned long)fi->fh
-                                                          buffer:buf
-                                                            size:size
-                                                          offset:offset];
-    
+    int length = [[MPQFileSystem currentFS] writeFileAtPath:[NSString stringWithUTF8String:path] handle:(id)(unsigned long)fi->fh buffer:buf size:size offset:offset];
     [pool release];
     return length;
 }
@@ -690,14 +677,14 @@ static int fusefm_setxattr(const char* path, const char* attribute, const char* 
 
 static int fusefm_getxattr(const char* path, const char* attribute, char* value, size_t size) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-	int length = [[MPQFileSystem currentManager] getExtendedAttribute:[NSString stringWithUTF8String:path] attribute:[NSString stringWithUTF8String:attribute] buffer:value size:size];
+	int length = [[MPQFileSystem currentFS] getExtendedAttribute:[NSString stringWithUTF8String:path] attribute:[NSString stringWithUTF8String:attribute] buffer:value size:size];
 	[pool release];
     return length;
 }
 
 static int fusefm_listxattr(const char* path, char* list, size_t size) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-    int length = [[MPQFileSystem currentManager] listExtendedAttributes:[NSString stringWithUTF8String:path] inBuffer:list size:size];
+    int length = [[MPQFileSystem currentFS] listExtendedAttributes:[NSString stringWithUTF8String:path] inBuffer:list size:size];
     [pool release];
     return length;
 }
@@ -766,10 +753,7 @@ static struct fuse_operations fusefm_operations = {
 	}
 #endif
     
-    manager = self;
-    fuse_main(args.argc, args.argv, &fusefm_operations, NULL);
-    manager = nil;
-    
+    fuse_main(args.argc, args.argv, &fusefm_operations, self);
     fuse_opt_free_args(arguments_);
 }
 
