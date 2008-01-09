@@ -1062,7 +1062,7 @@ AllocateFailure:
 	ReturnWithNoError(error)
 }
 
-- (BOOL)_loadWithPath:(NSString *)path error:(NSError **)error {
+- (BOOL)_loadWithPath:(NSString *)path ignoreHeaderSizeField:(BOOL)ignoreHeaderSizeField error:(NSError **)error {
 	// Copy the path argument
 	archive_path = [path copy];
 
@@ -1082,11 +1082,10 @@ AllocateFailure:
 	fcntl(archive_fd, F_NOCACHE, 1);
 #endif
 
+	// This function assumes that archive_offset has been initialized
+
 	ssize_t bytes_read = 0;
 	uint32_t i = 0;
-	
-	// Start at the beginning of the file
-	archive_offset = 0;
 	
 	// Get the archive's size
 	struct stat sb;
@@ -1102,6 +1101,7 @@ AllocateFailure:
 	do {
 		bytes_read = pread(archive_fd, &header, sizeof(mpq_header_t), archive_offset);
 		if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
+		if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
 		if ((size_t)bytes_read < sizeof(mpq_header_t)) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 				
 		// Byte swap the header
@@ -1109,8 +1109,9 @@ AllocateFailure:
 		
 		// Check the header
 		if (header.mpq_magic == MPQ_MAGIC) {
-			if (header.version == 0 && header.header_size == sizeof(mpq_header_t)) break;
-			if (header.version == 1 && header.header_size == (sizeof(mpq_header_t) + sizeof(mpq_extended_header_t))) break;
+			if (header.version == 0 && (header.header_size == sizeof(mpq_header_t) || ignoreHeaderSizeField)) break;
+			if (header.version == 1 && (header.header_size == sizeof(mpq_header_t) + sizeof(mpq_extended_header_t) || ignoreHeaderSizeField)) break;
+			ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
 		}
 		
 		// We may have read an MPQ shunt structure instead
@@ -1121,8 +1122,12 @@ AllocateFailure:
 		union _mpq_header_shunt_union hsu;
 		hsu.header = &header;
 		mpq_shunt_t shunt = *hsu.shunt;
+		
+		// byte swap the shunt
 		[[self class] swap_mpq_shunt:&shunt];
-		if(shunt.shunt_magic == MPQ_SHUNT_MAGIC) {
+		
+		// check the shunt
+		if (shunt.shunt_magic == MPQ_SHUNT_MAGIC) {
 			// Set the offset for the next iteration
 			archive_offset = archive_offset + (off_t)(shunt.mpq_header_offset);
 			continue;
@@ -1136,6 +1141,7 @@ AllocateFailure:
 	if (header.version == 1) {
 		bytes_read = pread(archive_fd, &extended_header, sizeof(mpq_extended_header_t), archive_offset + sizeof(mpq_header_t));
 		if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
+		if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
 		if ((size_t)bytes_read < sizeof(mpq_extended_header_t)) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 		
 		[[self class] swap_mpq_extended_header:&extended_header];
@@ -1167,6 +1173,7 @@ AllocateFailure:
 	// Read the hash table
 	bytes_read = pread(archive_fd, hash_table, hash_table_size, archive_offset + hash_table_offset);
 	if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
+	if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
 	if ((size_t)bytes_read < hash_table_size) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 	
 	// Decrypt the hash table
@@ -1176,6 +1183,7 @@ AllocateFailure:
 	// Read the block table
 	bytes_read = pread(archive_fd, block_table, block_table_size, archive_offset + block_table_offset);
 	if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
+	if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
 	if ((size_t)bytes_read < block_table_size) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 	
 	// Decrypt the block table. Since it's really a uint32_t array, disable output swapping
@@ -1320,6 +1328,8 @@ AllocateFailure:
 - (id)initWithAttributes:(NSDictionary *)attributes error:(NSError **)error {
 	NSParameterAssert(attributes != nil);
 	
+	NSNumber* temp;
+	
 	self = [super init];
 	if (!self) return nil;
 	
@@ -1328,24 +1338,42 @@ AllocateFailure:
 	
 	NSString *path = [attributes objectForKey:MPQArchivePath];
 	if (path) {
-		if (![self _loadWithPath:path error:error]) {
+		// MPQArchiveOffset
+		archive_offset = 0;
+		temp = [attributes objectForKey:MPQArchiveOffset];
+		if (temp) archive_offset = [temp longLongValue];
+		if (archive_offset < 0 || archive_offset % 512 != 0) {
+			[p release];
+			ReturnFromInitWithError(MPQErrorDomain, errInvalidArchiveOffset, nil, error)
+		}
+		
+		// MPQIgnoreHeaderSizeField
+		BOOL ignoreHeaderSizeField = NO;
+		temp = [attributes objectForKey:MPQIgnoreHeaderSizeField];
+		if (temp) ignoreHeaderSizeField = [temp boolValue];
+		
+		// load the archive from the provided path
+		if (![self _loadWithPath:path ignoreHeaderSizeField:ignoreHeaderSizeField error:error]) {
 			MPQTransferErrorAndDrainPool(error, p);
 			[self release];
 			return nil;
 		}
 	} else {
+		// MPQArchiveVersion
 		MPQVersion version = MPQOriginalVersion;
-		NSNumber *temp = [attributes objectForKey:MPQArchiveVersion];
+		temp = [attributes objectForKey:MPQArchiveVersion];
 		if (temp) version = [temp unsignedShortValue];
 		if (version != MPQOriginalVersion && version != MPQExtendedVersion) {
 			[p release];
 			ReturnFromInitWithError(MPQErrorDomain, errInvalidArchiveVersion, nil, error)
 		}
 		
+		// MPQMaximumNumberOfFiles
 		uint32_t limit = 1024;
 		temp = [attributes objectForKey:MPQMaximumNumberOfFiles];
 		if (temp) limit = [temp unsignedIntValue];
 		
+		// MPQArchiveOffset
 		off_t offset = 0;
 		temp = [attributes objectForKey:MPQArchiveOffset];
 		if (temp) offset = [temp longLongValue];
@@ -1354,6 +1382,7 @@ AllocateFailure:
 			ReturnFromInitWithError(MPQErrorDomain, errInvalidArchiveOffset, nil, error)
 		}
 		
+		// create a new archive with the provided file limit, version and offset
 		if (![self _createNewArchive:limit version:version offset:offset error:error]) {
 			MPQTransferErrorAndDrainPool(error, p);
 			[self release];

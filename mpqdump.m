@@ -18,10 +18,11 @@
 CFStringEncoding CFStringFileSystemEncoding(void);
 #endif
 
-static const char *optString = "cs";
+static const char *optString = "csi";
 static const struct option longOpts[] = {
     { "compute-checksums", no_argument, NULL, 'c' },
     { "sector-analysis", no_argument, NULL, 's' },
+	{ "ignore-header-size-field", no_argument, NULL, 'i' },
     { "listfile", required_argument, NULL, 0 },
     { NULL, no_argument, NULL, 0 }
 };
@@ -158,6 +159,7 @@ int main(int argc, char *argv[]) {
     
     BOOL computeChecksums = NO;
     BOOL sectorAnalysis = NO;
+	BOOL ignoreHeaderSizeField = NO;
     NSMutableArray *listfiles = [NSMutableArray arrayWithCapacity:0x10];
     
     // Parse options
@@ -172,6 +174,10 @@ int main(int argc, char *argv[]) {
             case 's':
                 sectorAnalysis = YES;
                 break;
+				
+			case 'i':
+				ignoreHeaderSizeField = YES;
+				break;
                 
             case 0:
                 if( strcmp( "listfile", longOpts[longIndex].name ) == 0 ) {
@@ -194,7 +200,7 @@ int main(int argc, char *argv[]) {
 #else 
         NSString *archivePath = [NSString stringWithCString:argv[i]];
 #endif
-        MPQArchive *archive = [[MPQArchive alloc] initWithPath:archivePath error:&error];
+        MPQArchive *archive = [[MPQArchive alloc] initWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:archivePath, MPQArchivePath, [NSNumber numberWithBool:ignoreHeaderSizeField], MPQIgnoreHeaderSizeField, nil] error:&error];
         if (!archive) {
             printf("INVALID ARCHIVE\n");
             printf("    %s\n", [[error description] UTF8String]);

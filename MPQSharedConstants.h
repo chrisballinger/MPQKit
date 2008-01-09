@@ -87,9 +87,10 @@
 /*!
   @defined MPQArchiveOffset
   @discussion Key for the archive offset inside archive information dictionaries.
-    Also used in initWithAttributes:error: to indicate the starting offset of a new archive.
+    Also used in initWithAttributes:error: to indicate the starting offset of a new archive 
+    or the offset at which to start searching an MPQ header in an existing file.
     
-    The value of this key will be a NSNumber object.
+    NSNumber objects are expected as the value of this key.
 */
 #define MPQArchiveOffset                @"MPQArchiveOffset"
 
@@ -204,7 +205,7 @@
     
     The value of this key will be a NSNumber object.
 */
-#define MPQFileNumberOfSectors   @"MPQFileNumberOfSectors"
+#define MPQFileNumberOfSectors          @"MPQFileNumberOfSectors"
 
 /*!
   @defined MPQFileEncryptionKey
@@ -213,7 +214,7 @@
     
     The value of this key will be a NSNumber object.
 */
-#define MPQFileEncryptionKey   @"MPQFileEncryptionKey"
+#define MPQFileEncryptionKey            @"MPQFileEncryptionKey"
 
 #pragma mark Keys for file addition parameters dictionaries
 
@@ -245,6 +246,16 @@
 #define MPQOverwrite                    @"MPQOverwrite"
 
 #pragma mark Keys for archive initialization parameters dictionaries
+
+/*!
+    @defined MPQIgnoreHeaderSizeField
+    @discussion Some archives have an intentionally corrupted header size field in their archive header 
+        as a copy protection means. Specifying a YES value for this key will disable the header size 
+        validation MPQKit normally does.
+    
+    NSNumber objects wrapping a BOOL scalar are expected as the value of this key.
+*/
+#define MPQIgnoreHeaderSizeField        @"MPQIgnoreHeaderSizeField"
 
 
 
