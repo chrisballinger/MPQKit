@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
             printf("\n%08x \"%s\"\n", hash_position, utf8_filename);
             
             uint32_t flags = [[fileInfo objectForKey:MPQFileFlags] unsignedIntValue];
-            
+			
             // file info
             printf("    file info: {\n");
             NSEnumerator *keys = [fileInfo keyEnumerator];

@@ -406,10 +406,10 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 	if (isDirectory || ![name isEqualToString:kMPQFileSystemExtendedAttributeName]) return -ENOATTR;
 	
 	NSDictionary* fileInfo = [archive_ fileInfoForPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue]];
-	if (![NSPropertyListSerialization propertyList:fileInfo isValidForFormat:NSPropertyListBinaryFormat_v1_0]) return -EIO;
+	if (![NSPropertyListSerialization propertyList:fileInfo isValidForFormat:NSPropertyListXMLFormat_v1_0]) return -EIO;
 	
 	NSString* error = nil;
-	NSData *fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListBinaryFormat_v1_0 errorDescription:&error];
+	NSData *fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListXMLFormat_v1_0 errorDescription:&error];
 	if (!fileInfoXML) return -EIO;
 	
 	if (buffer) {if (size < [fileInfoXML length]) return -ERANGE; else [fileInfoXML getBytes:buffer];}
