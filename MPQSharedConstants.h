@@ -241,7 +241,7 @@
     @defined MPQOverwrite
     @discussion Key to indicate if an exiting file should be deleted inside file addition parameters dictionaries.
     
-    NSNumber objects are expected as the value of this key.
+    NSNumber objects wrapping a BOOL scalar are expected as the value of this key.
 */
 #define MPQOverwrite                    @"MPQOverwrite"
 
