@@ -40,7 +40,7 @@
 
 #define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
 
-// Attribute magic numbers
+// magic numbers in big endian
 #define MPQ_MAGIC 0x4D50511A
 #define MPQ_SHUNT_MAGIC 0x4D50511B
 #define ATTRIBUTES_MAGIC 0x64
@@ -989,7 +989,7 @@ AllocateFailure:
 	archive_fd = -1;
 	
 	// Fill up a (partially) valid header
-	header.mpq_magic = MPQSwapInt32BigToHost(MPQ_MAGIC);
+	header.mpq_magic = MPQ_MAGIC;
 	// Explicit cast is OK here, header_size is 32-bit
 	header.header_size = (version == MPQOriginalVersion) ? (uint32_t)sizeof(mpq_header_t) : (uint32_t)(sizeof(mpq_header_t) + sizeof(mpq_extended_header_t));
 	header.archive_size = 0;
@@ -3314,6 +3314,27 @@ AbortDigest:
 	ReturnValueWithNoError(YES, error)
 }
 
+- (BOOL)_processOperations:(NSError**)error {
+	mpq_deferred_operation_t *operation = last_operation;
+	while (operation) {
+		// Make sure this is the current operation for hash table entry
+		if (operation_hash_table[operation->primary_file_context.hash_position] != operation) {
+			operation = operation->previous;
+			continue;
+		}
+		
+		if (operation->type == MPQDOAdd) {
+			if ([delegate respondsToSelector:@selector(archive:willAddFile:)]) [delegate archive:self willAddFile:operation->primary_file_context.filename];
+			if (![self _performFileAddOperation:operation error:error]) return NO;
+			if ([delegate respondsToSelector:@selector(archive:didAddFile:)]) [delegate archive:self didAddFile:operation->primary_file_context.filename];
+		}
+		
+		operation = operation->previous;
+	}
+	
+	ReturnValueWithNoError(YES, error)
+}
+
 - (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically error:(NSError **)error {
 	NSParameterAssert(path != nil);
 	MPQDebugLog(@"writing archive to disk");
@@ -3481,23 +3502,7 @@ AbortDigest:
 		if (![[*error domain] isEqualToString:MPQErrorDomain] || ([[*error domain] isEqualToString:MPQErrorDomain] && [*error code] != errHashTableEntryNotFound)) goto WriteFailed;
 	
 	MPQDebugLog(@"processing deferred operations...");
-	
-	mpq_deferred_operation_t *operation = last_operation;
-	while (operation) {
-		// Make sure this is the current operation for hash table entry
-		if (operation_hash_table[operation->primary_file_context.hash_position] != operation) {
-			operation = operation->previous;
-			continue;
-		}
-		
-		if (operation->type == MPQDOAdd) {
-			if ([delegate respondsToSelector:@selector(archive:willAddFile:)]) [delegate archive:self willAddFile:operation->primary_file_context.filename];
-			if (![self _performFileAddOperation:operation error:error]) goto WriteFailed;
-			if ([delegate respondsToSelector:@selector(archive:didAddFile:)]) [delegate archive:self didAddFile:operation->primary_file_context.filename];
-		}
-		
-		operation = operation->previous;
-	}
+	if (![self _processOperations:error]) goto WriteFailed;
 	
 	// Optimize the block table by removing any empty entries
 	uint32_t block_entry_index = 0;
@@ -3539,8 +3544,9 @@ AbortDigest:
 			}
 			
 			free_block_entry_index++;
-		} else if ((block_table_entry->size == 0 && block_table_entry->archived_size == 0 && block_table_entry->flags == 0) && free_block_entry_index == 0xFFFFFFFF)
+		} else if ((block_table_entry->size == 0 && block_table_entry->archived_size == 0 && block_table_entry->flags == 0) && free_block_entry_index == 0xFFFFFFFF) {
 			free_block_entry_index = block_entry_index;
+		}
 		
 		block_entry_index++;
 	}
@@ -3556,22 +3562,7 @@ AbortDigest:
 		if (![self addFileWithData:attributes_data_object filename:kAttributesFilename parameters:params error:error]) goto WriteFailed;
 		
 		// Run the operations loop again, should only have one entry anyways
-		operation = last_operation;
-		while (operation) {
-			// Make sure this is the current operation for hash table entry
-			if (operation_hash_table[operation->primary_file_context.hash_position] != operation) {
-				operation = operation->previous;
-				continue;
-			}
-			
-			if (operation->type == MPQDOAdd) {
-				if ([delegate respondsToSelector:@selector(archive:willAddFile:)]) [delegate archive:self willAddFile:operation->primary_file_context.filename];
-				if (![self _performFileAddOperation:operation error:error]) goto WriteFailed;
-				if ([delegate respondsToSelector:@selector(archive:didAddFile:)]) [delegate archive:self didAddFile:operation->primary_file_context.filename];
-			}
-			
-			operation = operation->previous;
-		}
+		if (![self _processOperations:error]) goto WriteFailed;
 	}
 	
 	// We can cut the block table at free_block_entry_index

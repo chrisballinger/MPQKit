@@ -15,7 +15,7 @@
 	<key>CFBundleSignature</key>
 	<string>MPQK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0b4</string>
+	<string>1.0b5</string>
 	<key>CFBundleVersion</key>
 	<string>$(REVISION)</string>
 	<key>NSPrincipalClass</key>
