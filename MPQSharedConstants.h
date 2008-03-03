@@ -24,22 +24,28 @@
 #define MPQ_MAX_PATH 260
 
 /*!
-    @defined MIN_HASH_TABLE_LENGTH
+    @defined MPQ_MIN_HASH_TABLE_LENGTH
     @discussion Minimum size for an archive's hash table. Thus, the minimum number of files an archive MPQ archive can store.
 */
-#define MIN_HASH_TABLE_LENGTH 0x10
+#define MPQ_MIN_HASH_TABLE_LENGTH 0x10
 
 /*!
-    @defined MAX_HASH_TABLE_LENGTH
+    @defined MPQ_MAX_HASH_TABLE_LENGTH
     @discussion Maximum size for a version 0 archive's hash table. Thus, the maximum number of files a version 0 MPQ archive can store.
 */
-#define MAX_HASH_TABLE_LENGTH 0x10000
+#define MPQ_MAX_HASH_TABLE_LENGTH 0x10000
 
 /*!
-    @defined MAX_EXTENDED_HASH_TABLE_LENGTH
+    @defined MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH
     @discussion Maximum size for a version 1 archive's hash table. Thus, the maximum number of files a version 1 MPQ archive can store.
 */
-#define MAX_EXTENDED_HASH_TABLE_LENGTH 0x100000
+#define MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH 0x100000
+
+/*!
+    @defined MPQ_BASE_SECTOR_SIZE
+    @discussion Base sector size that needs to be shifted by MPQSectorSizeShift to compure the full sector size of an archive.
+*/
+#define MPQ_BASE_SECTOR_SIZE 512
 
 #pragma mark Keys for archive information dictionaries
 

@@ -217,7 +217,7 @@ int main(int argc, char *argv[]) {
         printf("-- archive information --\n\n");
         printf("%s\n\n", [[[archive archiveInfo] description] UTF8String]);
         
-        uint32_t full_sector_size = 512 << [[[archive archiveInfo] objectForKey:MPQSectorSizeShift] unsignedIntValue];
+        uint32_t full_sector_size = MPQ_BASE_SECTOR_SIZE << [[[archive archiveInfo] objectForKey:MPQSectorSizeShift] unsignedIntValue];
         
         // signatures
         BOOL isSigned;

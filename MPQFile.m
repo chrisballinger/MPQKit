@@ -346,7 +346,7 @@
 	NSAssert(archive_fd >= 0, @"Invalid archive file descriptor");
 	
 	sector_size_shift = [[descriptor objectForKey:@"SectorSizeShift"] unsignedIntValue];
-	full_sector_size = 512 << sector_size_shift;
+	full_sector_size = MPQ_BASE_SECTOR_SIZE << sector_size_shift;
 	NSAssert(sector_size_shift > 0, @"Invalid sector size shift");
 	
 	file_archive_offset = [[descriptor objectForKey:@"FileArchiveOffset"] longLongValue];

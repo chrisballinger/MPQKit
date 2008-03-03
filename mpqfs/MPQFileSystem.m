@@ -294,7 +294,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     NSDictionary *archive_info = [archive_ archiveInfo];
     
     // Block size
-    stbuf->f_bsize = stbuf->f_frsize = 512 << [[archive_info objectForKey:MPQSectorSizeShift] unsignedIntValue];
+    stbuf->f_bsize = stbuf->f_frsize = MPQ_BASE_SECTOR_SIZE << [[archive_info objectForKey:MPQSectorSizeShift] unsignedIntValue];
     
     // Size in blocks
     struct stat sb;
@@ -358,11 +358,8 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
         stbuf->st_size = [[fileInfo objectForKey:MPQFileSize] unsignedIntValue];
     }
     
-    // Set the number of blocks used so that Finder will display size on disk 
-    // properly.
-    // TODO: The stat man page says that st_blocks is "actual number of blocks 
-    // allocated for the file in 512-byte units".  Investigate whether this is a
-    // man mis-print, since I suspect it should be the statvfs f_frsize? 
+    // Set the number of blocks used so that Finder will display size on disk properly.
+    // TODO: The stat man page says that st_blocks is "actual number of blocks allocated for the file in 512-byte units".  Investigate whether this is a man mis-print, since I suspect it should be the statvfs f_frsize? 
     if (stbuf->st_size > 0) {
         stbuf->st_blocks = stbuf->st_size / 512;
         if (stbuf->st_size % 512) {

@@ -965,14 +965,14 @@ AllocateFailure:
 	// If this parameter is 0, we set it to 1024 (default value)
 	if (hash_table_length == 0) hash_table_length = 1024;
 		
-	// No hash table should be smaller than MIN_HASH_TABLE_LENGTH
-	uint32_t final_hash_table_length = MIN_HASH_TABLE_LENGTH;
+	// No hash table should be smaller than MPQ_MIN_HASH_TABLE_LENGTH
+	uint32_t final_hash_table_length = MPQ_MIN_HASH_TABLE_LENGTH;
 	
-	// Hash tables cannot be larger than MAX_HASH_TABLE_LENGTH or MAX_EXTENDED_HASH_TABLE_LENGTH entries
+	// Hash tables cannot be larger than MPQ_MAX_HASH_TABLE_LENGTH or MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH entries
 	if (version == MPQOriginalVersion) {
-		if (hash_table_length > MAX_HASH_TABLE_LENGTH) hash_table_length = MAX_HASH_TABLE_LENGTH;
+		if (hash_table_length > MPQ_MAX_HASH_TABLE_LENGTH) hash_table_length = MPQ_MAX_HASH_TABLE_LENGTH;
 	} else if (version == MPQExtendedVersion) {
-		if (hash_table_length > MAX_EXTENDED_HASH_TABLE_LENGTH) hash_table_length = MAX_EXTENDED_HASH_TABLE_LENGTH;
+		if (hash_table_length > MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH) hash_table_length = MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH;
 	}
 	
 	// The number of entries in a hash table must be a power of 2. Find the first power of 2 that is >= the specified hash table size.
@@ -1008,7 +1008,7 @@ AllocateFailure:
 	extended_header.extended_block_offset_table_offset = 0;
 	
 	// Default sector configuration
-	full_sector_size = 512 << header.sector_size_shift;
+	full_sector_size = MPQ_BASE_SECTOR_SIZE << header.sector_size_shift;
 	
 	// No hash table or block table has been written yet
 	hash_table_offset = 0;
@@ -1153,7 +1153,7 @@ AllocateFailure:
 	}
 	
 	// Pre-compute and cache the full sector size
-	full_sector_size = 512 << header.sector_size_shift;
+	full_sector_size = MPQ_BASE_SECTOR_SIZE << header.sector_size_shift;
 	
 	// We've got all the information we need to allocate our memory
 	if (![self allocateMemory]) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
