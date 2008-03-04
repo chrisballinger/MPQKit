@@ -906,7 +906,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         
         Note that this method simply calls openFile:locale: with MPQNeutral as the locale.
     @param filename The filename of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
-    @result An MPQFile instance on success or nil on failure.
+    @result An MPQFile instance on success or nil on failure. The sender is responsible for releasing the instance.
 */
 - (MPQFile *)openFile:(NSString *)filename;
 - (MPQFile *)openFile:(NSString *)filename error:(NSError **)error;
@@ -918,7 +918,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         you may use the dataForFile methods.
     @param filename The filename of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
     @param locale The old and new file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
-    @result An MPQFile instance on success or nil on failure.
+    @result An MPQFile instance on success or nil on failure. The sender is responsible for releasing the instance.
 */
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale;
 - (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
@@ -1015,7 +1015,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion Files can have the same path in an MPQ archive so long as their locale is different.
     @param filename The path of the MPQ file to search for. Note that the path separator MUST be \. Must not be nil.
     @result An autoreleased NSArray instance containing the the list of locale codes for which the file exists, 
-        or nil if the file does not exists.
+        or nil if the file does not exists for any of the known locales.
 */
 - (NSArray *)localesForFile:(NSString *)filename;
 

@@ -2264,15 +2264,29 @@ AbortDigest:
 	[tempDict setObject:[NSNumber numberWithUnsignedShort:hash_entry->locale] forKey:MPQFileLocale];
 	[tempDict setObject:[NSNumber numberWithUnsignedLong:hash_entry->platform] forKey:@"MPQFilePlatform"];
 	
+	// Encryption key
+	uint32_t encryption_key = 0;
+	if (block_entry->flags & MPQFileEncrypted) encryption_key = [self getFileEncryptionKey:hash_position];
+	[tempDict setObject:[NSNumber numberWithUnsignedInt:encryption_key] forKey:MPQFileEncryptionKey];
+	
 	// Filename
 	const char *filename = filename_table[hash_position];
 	if (filename) {
 		[tempDict setObject:[NSNumber numberWithBool:YES] forKey:MPQFileCanOpenWithoutFilename];
 		[tempDict setObject:[NSString stringWithCString:filename] forKey:MPQFilename];
+		[tempDict setObject:[NSNumber numberWithBool:NO] forKey:MPQSyntheticFilename];
 	} else {
-		// No name, we'll make one up
-		[tempDict setObject:[NSNumber numberWithBool:(block_entry->flags & MPQFileEncrypted) ? NO : YES] forKey:MPQFileCanOpenWithoutFilename];
+		// synthesize a unique name and determine if we can open the file without the filename anyways
+		NSString* synthName = [NSString stringWithFormat:@"unknown %x", hash_position];
+		uint32_t counter = 0;
+		while ([self localesForFile:synthName] != nil) {
+			synthName = [NSString stringWithFormat:@"unknown-%u %x", counter, hash_position];
+			counter++;
+		}
+		
 		[tempDict setObject:[NSString stringWithFormat:@"unknown %x", hash_position] forKey:MPQFilename];
+		[tempDict setObject:[NSNumber numberWithBool:YES] forKey:MPQSyntheticFilename];
+		[tempDict setObject:[NSNumber numberWithBool:((block_entry->flags & MPQFileEncrypted) && encryption_key == 0) ? NO : YES] forKey:MPQFileCanOpenWithoutFilename];
 	}
 	
 	// If the file is pending addition, we need to get the size from the data source, not the block table entry
@@ -2291,7 +2305,7 @@ AbortDigest:
 		file_size = (uint32_t)source_length;
 	}
 	
-	// Give them the info from the block table
+	// block table info
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:file_size] forKey:MPQFileSize];
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:block_entry->archived_size] forKey:MPQFileArchiveSize];
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:block_entry->flags] forKey:MPQFileFlags];
@@ -2300,11 +2314,6 @@ AbortDigest:
 	// Compute the number of sectors based on the file size (so explicitely ignore sector adlers)
 	uint32_t sector_table_length = _MPQComputeSectorTableLength(full_sector_size, block_entry->size, (block_entry->flags & ~MPQFileHasSectorAdlers));
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:sector_table_length - 1] forKey:MPQFileNumberOfSectors];
-	
-	// Encryption key
-	uint32_t encryption_key = 0;
-	if (block_entry->flags & MPQFileEncrypted) encryption_key = [self getFileEncryptionKey:hash_position];
-	[tempDict setObject:[NSNumber numberWithUnsignedInt:encryption_key] forKey:MPQFileEncryptionKey];
 	
 	// Attributes
 	if (attributes_data) {
