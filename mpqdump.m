@@ -37,8 +37,9 @@ static void analyse_sectors(MPQFile *file, NSDictionary *fileInfo, uint32_t flag
     uint32_t encryption_key = [[fileInfo objectForKey:MPQFileEncryptionKey] unsignedIntValue];
     
     if (sector_count == 0) printf("    **** file has 0 sectors ****\n");
-    else if (!(flags & MPQFileCompressed)) printf("    **** file is not compressed or was compressed with Diablo compression ****\n");
-    else {
+	else if (flags & MPQFileDiabloCompressed) printf("    **** file is compressed with Diablo compression (implicit PKWARE) ***\n");
+    else if (!(flags & MPQFileCompressed)) printf("    **** file is not compressed ****\n");
+	else {
         NSData *raw_sector_data = [file _copyRawSector:0 error:&error];        
         if (!raw_sector_data) {
             printf("    **** could not get raw sector 0 data ****\n");
@@ -82,7 +83,7 @@ static void analyse_sectors(MPQFile *file, NSDictionary *fileInfo, uint32_t flag
             if (!raw_sector_data) {
                 printf("    **** could not get raw sector 1 data ****\n");
                 printf("    %s\n", [[error description] UTF8String]);
-            } else if ((sector_count == 1 && [raw_sector_data length] == file_size) || [raw_sector_data length] == full_sector_size) {
+            } else if ((sector_count == 2 && [raw_sector_data length] == file_size - full_sector_size) || [raw_sector_data length] == full_sector_size) {
                 printf("    **** sector 1 is uncompressed ****\n");
                 [raw_sector_data release];
             } else {
