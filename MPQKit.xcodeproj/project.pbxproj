@@ -152,7 +152,7 @@
 		312311A60549EF9B00833907 /* MPQ-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist; path = "MPQ-Info.plist"; sourceTree = "<group>"; };
 		312443EA0B474D98004DB138 /* MPQErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQErrors.h; sourceTree = "<group>"; };
 		312444110B47532F004DB138 /* PHSErrorMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PHSErrorMacros.h; sourceTree = "<group>"; };
-		312444210B475387004DB138 /* MPQErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQErrors.m; sourceTree = "<group>"; };
+		312444210B475387004DB138 /* MPQErrors.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = MPQErrors.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		3133BFC304C8EB0800A80102 /* NSStringAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSStringAdditions.h; sourceTree = "<group>"; };
 		3133BFC404C8EB0800A80102 /* NSStringAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSStringAdditions.m; sourceTree = "<group>"; };
 		313E4BDE04A2C80700A80102 /* SCompression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCompression.h; path = stormlib2/SCompression.h; sourceTree = "<group>"; };
