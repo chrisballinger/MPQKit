@@ -19,4 +19,4 @@
 
 #import <MPQKit/MPQArchivePrivate.h>
 
-extern char* _MPQCreateASCIIFilename(NSString* filename, NSError **error);
+extern char* _MPQCreateASCIIFilename(NSString* filename, NSError** error);

@@ -97,7 +97,7 @@ static RSA* starcraft_map_public_rsa		= NULL;
 
 static RSA* blizzard_weak_public_rsa		= NULL;
 
-static int _MPQMakeTempFileInDirectory(NSString* directory, NSString **tempFilePath, NSError **error) {
+static int _MPQMakeTempFileInDirectory(NSString* directory, NSString** tempFilePath, NSError** error) {
 	char* template = malloc(PATH_MAX + 1);
 	if (!template) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
 	
@@ -116,7 +116,7 @@ static int _MPQMakeTempFileInDirectory(NSString* directory, NSString **tempFileP
 	ReturnValueWithNoError(fd, error)
 }
 
-static inline BOOL _MPQFSCopy(NSString* destination, NSString* source, NSError **error) {
+static inline BOOL _MPQFSCopy(NSString* destination, NSString* source, NSError** error) {
 #if defined(__APPLE__)
 	OSStatus err = FSPathCopyObjectSync([source UTF8String], 
 										[[destination stringByDeletingLastPathComponent] UTF8String], 
@@ -134,7 +134,7 @@ static inline BOOL _MPQFSCopy(NSString* destination, NSString* source, NSError *
 #endif
 }
 
-static inline BOOL _MPQFSMove(NSString* destination, NSString* source, NSError **error) {
+static inline BOOL _MPQFSMove(NSString* destination, NSString* source, NSError** error) {
 #if defined(__APPLE__)
 	OSStatus err = FSPathMoveObjectSync([source UTF8String], 
 										[[destination stringByDeletingLastPathComponent] UTF8String], 
@@ -152,7 +152,7 @@ static inline BOOL _MPQFSMove(NSString* destination, NSString* source, NSError *
 #endif
 }
 
-char* _MPQCreateASCIIFilename(NSString* filename, NSError **error) {
+char* _MPQCreateASCIIFilename(NSString* filename, NSError** error) {
 	size_t filename_csize = [filename lengthOfBytesUsingEncoding:NSASCIIStringEncoding] + 1;
 	if (filename_csize > MPQ_MAX_PATH) ReturnValueWithError(NULL, MPQErrorDomain, errFilenameTooLong, nil, error)
 	

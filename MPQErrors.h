@@ -68,7 +68,7 @@ enum {
 	errInvalidSectorChecksum = 43,
 };
 
-static inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool* p) {
+static inline void MPQTransferErrorAndDrainPool(NSError** error, NSAutoreleasePool* p) {
 	NSError* e = (error) ? *error : (NSError*)nil;
 	[e retain];
 #if !defined(__APPLE__)
