@@ -175,7 +175,7 @@ static inline uint32_t _MPQComputeSectorTableLength(uint32_t full_sector_size, u
 
 
 @interface MPQFile (Initialization)
-- (id)initForFile:(NSDictionary*)descriptor error:(NSError **)error;
+- (id)initForFile:(NSDictionary*)descriptor error:(NSError**)error;
 @end
 
 
@@ -450,7 +450,7 @@ FreeData:
 
 #pragma mark file management
 
-- (BOOL)_truncateArchiveWithDelta:(off_t)delta error:(NSError **)error {
+- (BOOL)_truncateArchiveWithDelta:(off_t)delta error:(NSError**)error {
 	NSParameterAssert(archive_size + delta > 0);
 	if (archive_fd == -1) ReturnValueWithError(NO, MPQErrorDomain, errNoArchiveFile, nil, error)
 	
@@ -477,7 +477,7 @@ FreeData:
 
 #pragma mark structural tables
 
-- (uint32_t)createHashPosition:(const char*)filename error:(NSError **)error {
+- (uint32_t)createHashPosition:(const char*)filename error:(NSError**)error {
 	NSParameterAssert(filename != NULL);
 
 	// Compute the starting offset in the hash table using the filename we want to create a hash entry for.
@@ -496,7 +496,7 @@ FreeData:
 	ReturnValueWithNoError(current_position, error)
 }
 
-- (uint32_t)findHashPosition:(const char*)filename locale:(uint16_t)locale error:(NSError **)error {
+- (uint32_t)findHashPosition:(const char*)filename locale:(uint16_t)locale error:(NSError**)error {
 	NSParameterAssert(filename != NULL);
 
 	// Compute the starting hash table offset, as well as the verification hashes for the specified file.
@@ -533,7 +533,7 @@ FreeData:
 	return structural_size;
 }
 
-- (BOOL)_growBlockTable:(NSError **)error {
+- (BOOL)_growBlockTable:(NSError**)error {
 	if (header.block_table_length == UINT32_MAX) ReturnValueWithError(NO, MPQErrorDomain, errBlockTableFull, nil, error)
 	
 	// Save the current block table length and the corresponding structural tables size
@@ -593,7 +593,7 @@ FreeData:
 	ReturnValueWithNoError(YES, error)
 }
 
-- (uint32_t)createBlockTablePosition:(uint32_t)size error:(NSError **)error {
+- (uint32_t)createBlockTablePosition:(uint32_t)size error:(NSError**)error {
 	uint32_t block_entry_index = 0;
 	mpq_block_table_entry_t *block_table_entry = NULL;
 
@@ -638,7 +638,7 @@ FreeData:
 	memset(sector_tables_cache, 0, header.hash_table_length * sizeof(uint32_t*));
 }
 
-- (void)_cacheSectorTableForFile:(uint32_t)hash_position key:(uint32_t)encryptionKey error:(NSError **)error {
+- (void)_cacheSectorTableForFile:(uint32_t)hash_position key:(uint32_t)encryptionKey error:(NSError**)error {
 	NSParameterAssert(hash_position < header.hash_table_length);
 	
 	// Do nothing if that hash entry is empty or deleted
@@ -692,7 +692,7 @@ FreeData:
 		if (hash_entry->block_table_index != HASH_TABLE_EMPTY && hash_entry->block_table_index != HASH_TABLE_DELETED) {
 			// Do we have the encryption key?
 			uint32_t encryptionKey = [self getFileEncryptionKey:hash_position];
-			if (encryptionKey) [self _cacheSectorTableForFile:hash_position key:encryptionKey error:(NSError **)NULL];
+			if (encryptionKey) [self _cacheSectorTableForFile:hash_position key:encryptionKey error:(NSError**)NULL];
 		}
 		
 		hash_position++;
@@ -883,7 +883,7 @@ AllocateFailure:
 
 #pragma mark listfile
 
-- (BOOL)_addListfileToArchive:(NSError **)error {
+- (BOOL)_addListfileToArchive:(NSError**)error {
 	NSAutoreleasePool *p = [NSAutoreleasePool new];
 	
 	BOOL result = NO;
@@ -915,7 +915,7 @@ AllocateFailure:
 	return result;
 }
 
-- (BOOL)_addListfileEntry:(NSString*)filename error:(NSError **)error {
+- (BOOL)_addListfileEntry:(NSString*)filename error:(NSError**)error {
 	NSParameterAssert(filename != NULL);
 	char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
 	if (!filename_cstring) return NO;
@@ -947,7 +947,7 @@ AllocateFailure:
 
 #pragma mark private inner table access
 
-- (char **)_filenameTable {
+- (char**)_filenameTable {
 	return filename_table;
 }
 
@@ -961,7 +961,7 @@ AllocateFailure:
 
 #pragma mark complementary init
 
-- (BOOL)_createNewArchive:(uint32_t)hash_table_length version:(uint16_t)version offset:(off_t)offset error:(NSError **)error {
+- (BOOL)_createNewArchive:(uint32_t)hash_table_length version:(uint16_t)version offset:(off_t)offset error:(NSError**)error {
 	// If this parameter is 0, we set it to 1024 (default value)
 	if (hash_table_length == 0) hash_table_length = 1024;
 		
@@ -1029,7 +1029,7 @@ AllocateFailure:
 	ReturnValueWithNoError(YES, error)
 }
 
-- (void)_loadAttributes:(NSError **)error {
+- (void)_loadAttributes:(NSError**)error {
 	MPQFile *attributes_file = [self openFile:kAttributesFilename locale:MPQNeutral error:error];
 	if (!attributes_file) return;
 	
@@ -1062,7 +1062,7 @@ AllocateFailure:
 	ReturnWithNoError(error)
 }
 
-- (BOOL)_loadWithPath:(NSString*)path ignoreHeaderSizeField:(BOOL)ignoreHeaderSizeField error:(NSError **)error {
+- (BOOL)_loadWithPath:(NSString*)path ignoreHeaderSizeField:(BOOL)ignoreHeaderSizeField error:(NSError**)error {
 	// Copy the path argument
 	archive_path = [path copy];
 
@@ -1278,22 +1278,22 @@ AllocateFailure:
 #pragma mark init
 
 + (id)archiveWithFileLimit:(uint32_t)limit {
-	return [self archiveWithFileLimit:limit error:(NSError **)NULL];
+	return [self archiveWithFileLimit:limit error:(NSError**)NULL];
 }
 
-+ (id)archiveWithFileLimit:(uint32_t)limit error:(NSError **)error {
++ (id)archiveWithFileLimit:(uint32_t)limit error:(NSError**)error {
 	return [[[self alloc] initWithFileLimit:limit error:error] autorelease];
 }
 
 + (id)archiveWithPath:(NSString*)path {
-	return [self archiveWithPath:path error:(NSError **)NULL];
+	return [self archiveWithPath:path error:(NSError**)NULL];
 }
 
-+ (id)archiveWithPath:(NSString*)path error:(NSError **)error {
++ (id)archiveWithPath:(NSString*)path error:(NSError**)error {
 	return [[[self alloc] initWithPath:path error:error] autorelease];
 }
 
-+ (id)archiveWithAttributes:(NSDictionary*)attributes error:(NSError **)error {
++ (id)archiveWithAttributes:(NSDictionary*)attributes error:(NSError**)error {
 	return [[[[self class] alloc] initWithAttributes:attributes error:error] autorelease];
 }
 
@@ -1325,7 +1325,7 @@ AllocateFailure:
 	return nil;
 }
 
-- (id)initWithAttributes:(NSDictionary*)attributes error:(NSError **)error {
+- (id)initWithAttributes:(NSDictionary*)attributes error:(NSError**)error {
 	NSParameterAssert(attributes != nil);
 	
 	NSNumber* temp;
@@ -1395,18 +1395,18 @@ AllocateFailure:
 }
 
 - (id)initWithFileLimit:(uint32_t)limit {
-	return [self initWithFileLimit:limit error:(NSError **)NULL];
+	return [self initWithFileLimit:limit error:(NSError**)NULL];
 }
 
-- (id)initWithFileLimit:(uint32_t)limit error:(NSError **)error {
+- (id)initWithFileLimit:(uint32_t)limit error:(NSError**)error {
 	return [self initWithAttributes:[NSDictionary dictionaryWithObject:[NSNumber numberWithUnsignedInt:limit] forKey:MPQMaximumNumberOfFiles] error:error];
 }
 
 - (id)initWithPath:(NSString*)path {
-	return [self initWithPath:path error:(NSError **)NULL];
+	return [self initWithPath:path error:(NSError**)NULL];
 }
 
-- (id)initWithPath:(NSString*)path error:(NSError **)error {
+- (id)initWithPath:(NSString*)path error:(NSError**)error {
 	return [self initWithAttributes:[NSDictionary dictionaryWithObject:path forKey:MPQArchivePath] error:error];
 }
 
@@ -1505,7 +1505,7 @@ AllocateFailure:
 	return deferred_operations_count;
 }
 
-- (BOOL)undoLastOperation:(NSError **)error {	 
+- (BOOL)undoLastOperation:(NSError**)error {	 
 	if (deferred_operations_count == 0) ReturnValueWithNoError(YES, error)
 	mpq_deferred_operation_t *operation = last_operation;
 	
@@ -1540,7 +1540,7 @@ AllocateFailure:
 
 #pragma mark digital signing
 
-- (NSData*)computeWeakSignatureDigest:(NSError **)error {
+- (NSData*)computeWeakSignatureDigest:(NSError**)error {
 	int perr = 0;
 	int stage = 0;
 	
@@ -1604,7 +1604,7 @@ AllocateFailure:
 	while(total_bytes_to_read > 0) {
 #if defined(MPQKIT_USE_AIO)
 		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb **)(iocbs + current_iocb), 1, NULL);
+		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
 		
 		// Get result from iocbs[current_iocb]
 		perr = aio_error(iocbs[current_iocb]);
@@ -1723,7 +1723,7 @@ AllocateFailure:
 	while(total_bytes_to_read > 0) {
 #if defined(MPQKIT_USE_AIO)
 		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb **)(iocbs + current_iocb), 1, NULL);
+		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
 		
 		// Get result from iocbs[current_iocb]
 		perr = aio_error(iocbs[current_iocb]);
@@ -1827,7 +1827,7 @@ AbortDigest:
 	return nil;
 }
 
-- (BOOL)verifyBlizzardWeakSignature:(BOOL*)isSigned error:(NSError **)error {
+- (BOOL)verifyBlizzardWeakSignature:(BOOL*)isSigned error:(NSError**)error {
 	// If the archive is not weakly signed, we return NO
 	if (!weak_signature_hash_entry) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
@@ -1849,7 +1849,7 @@ AbortDigest:
 	ReturnValueWithNoError(NO, error)
 }
 
-- (NSData*)computeStrongSignatureDigestFrom:(off_t)digestOffset size:(off_t)digestSize tail:(NSData*)digestTail error:(NSError **)error {
+- (NSData*)computeStrongSignatureDigestFrom:(off_t)digestOffset size:(off_t)digestSize tail:(NSData*)digestTail error:(NSError**)error {
 	int perr = 0;
 	int stage = 0;
 	
@@ -1908,7 +1908,7 @@ AbortDigest:
 	while(total_bytes_to_read > 0) {
 #if defined(MPQKIT_USE_AIO)
 		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb **)(iocbs + current_iocb), 1, NULL);
+		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
 		
 		// Get result from iocbs[current_iocb]
 		perr = aio_error(iocbs[current_iocb]);
@@ -2019,7 +2019,7 @@ AbortDigest:
 	return YES;
 }
 
-- (BOOL)verifyStrongSignatureWithKey:(RSA*)key digest:(NSData*)digest error:(NSError **)error {
+- (BOOL)verifyStrongSignatureWithKey:(RSA*)key digest:(NSData*)digest error:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
@@ -2030,7 +2030,7 @@ AbortDigest:
 	ReturnValueWithNoError(NO, error)
 }
 
-- (BOOL)verifyBlizzardStrongSignature:(NSError **)error {
+- (BOOL)verifyBlizzardStrongSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
@@ -2043,7 +2043,7 @@ AbortDigest:
 	return result;
 }
 
-- (BOOL)verifyWoWSurveySignature:(NSError **)error {
+- (BOOL)verifyWoWSurveySignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 		
@@ -2056,7 +2056,7 @@ AbortDigest:
 	return result;
 }
 
-- (BOOL)verifyWoWMacPatchSignature:(NSError **)error {
+- (BOOL)verifyWoWMacPatchSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
@@ -2069,7 +2069,7 @@ AbortDigest:
 	return result;
 }
 
-- (BOOL)verifyWarcraft3MapSignature:(NSError **)error {
+- (BOOL)verifyWarcraft3MapSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
@@ -2085,7 +2085,7 @@ AbortDigest:
 	return result;
 }
 
-- (BOOL)verifyStarcraftMapSignature:(NSError **)error {
+- (BOOL)verifyStarcraftMapSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
@@ -2129,7 +2129,7 @@ AbortDigest:
 
 #pragma mark file list
 
-- (BOOL)loadInternalListfile:(NSError **)error {
+- (BOOL)loadInternalListfile:(NSError**)error {
 	NSAutoreleasePool *p = [NSAutoreleasePool new];
 	BOOL result = NO;
 	
@@ -2152,10 +2152,10 @@ AbortDigest:
 }
 
 - (BOOL)addArrayToFileList:(NSArray*)listfile {
-	return [self addArrayToFileList:listfile error:(NSError **)NULL];
+	return [self addArrayToFileList:listfile error:(NSError**)NULL];
 }
 
-- (BOOL)addArrayToFileList:(NSArray*)listfile error:(NSError **)error {
+- (BOOL)addArrayToFileList:(NSArray*)listfile error:(NSError**)error {
 	NSParameterAssert(listfile != nil);
 	NSAutoreleasePool *p = [NSAutoreleasePool new];
 	
@@ -2178,10 +2178,10 @@ AbortDigest:
 }
 
 - (BOOL)addContentsOfFileToFileList:(NSString*)path {
-	return [self addContentsOfFileToFileList:path error:(NSError **)NULL];
+	return [self addContentsOfFileToFileList:path error:(NSError**)NULL];
 }
 
-- (BOOL)addContentsOfFileToFileList:(NSString*)path error:(NSError **)error {
+- (BOOL)addContentsOfFileToFileList:(NSString*)path error:(NSError**)error {
 	NSParameterAssert(path != nil);
 	NSAutoreleasePool *p = [NSAutoreleasePool new];
 
@@ -2238,10 +2238,10 @@ AbortDigest:
 }
 
 - (NSDictionary*)fileInfoForPosition:(uint32_t)hash_position {
-	return [self fileInfoForPosition:hash_position error:(NSError **)NULL];
+	return [self fileInfoForPosition:hash_position error:(NSError**)NULL];
 }
 
-- (NSDictionary*)fileInfoForPosition:(uint32_t)hash_position error:(NSError **)error {
+- (NSDictionary*)fileInfoForPosition:(uint32_t)hash_position error:(NSError**)error {
 	NSParameterAssert(hash_position < header.hash_table_length);
 	
 	// If the file is invalid, we can't delete it
@@ -2338,10 +2338,10 @@ AbortDigest:
 }
 
 - (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale {
-	return [self fileInfoForFile:filename locale:locale error:(NSError **)NULL];
+	return [self fileInfoForFile:filename locale:locale error:(NSError**)NULL];
 }
 
-- (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
 	NSParameterAssert(filename != nil);
 	
 	char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
@@ -2382,7 +2382,7 @@ AbortDigest:
 
 #pragma mark delete
 
-- (BOOL)deleteFileAtPosition:(uint32_t)hash_position error:(NSError **)error {
+- (BOOL)deleteFileAtPosition:(uint32_t)hash_position error:(NSError**)error {
 	NSParameterAssert(hash_position < header.hash_table_length);
 	MPQDebugLog(@"deleting file at position %u", hash_position);
 	
@@ -2441,18 +2441,18 @@ AbortDigest:
 }
 
 - (BOOL)deleteFile:(NSString*)filename {
-	return [self deleteFile:filename locale:MPQNeutral error:(NSError **)NULL];
+	return [self deleteFile:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (BOOL)deleteFile:(NSString*)filename error:(NSError **)error {
+- (BOOL)deleteFile:(NSString*)filename error:(NSError**)error {
 	return [self deleteFile:filename locale:MPQNeutral error:error];
 }
 
 - (BOOL)deleteFile:(NSString*)filename locale:(MPQLocale)locale {
-	return [self deleteFile:filename locale:locale error:(NSError **)NULL];
+	return [self deleteFile:filename locale:locale error:(NSError**)NULL];
 }
 
-- (BOOL)deleteFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (BOOL)deleteFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
 	NSParameterAssert(filename != nil);
 	
 	if ([delegate respondsToSelector:@selector(archive:shouldDeleteFile:)])
@@ -2484,10 +2484,10 @@ AbortDigest:
 #pragma mark adding
 
 - (BOOL)addFileWithPath:(NSString*)path filename:(NSString*)filename parameters:(NSDictionary*)parameters {
-	return [self addFileWithPath:path filename:filename parameters:parameters error:(NSError **)NULL];
+	return [self addFileWithPath:path filename:filename parameters:parameters error:(NSError**)NULL];
 }
 
-- (BOOL)addFileWithPath:(NSString*)path filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError **)error {
+- (BOOL)addFileWithPath:(NSString*)path filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError**)error {
 	NSParameterAssert(path != nil);
 	
 	MPQDataSourceProxy *dataSourceProxy = [[MPQDataSourceProxy alloc] initWithPath:path error:error];
@@ -2499,10 +2499,10 @@ AbortDigest:
 }
 
 - (BOOL)addFileWithData:(NSData*)data filename:(NSString*)filename parameters:(NSDictionary*)parameters {
-	return [self addFileWithData:data filename:filename parameters:parameters error:(NSError **)NULL];
+	return [self addFileWithData:data filename:filename parameters:parameters error:(NSError**)NULL];
 }
 
-- (BOOL)addFileWithData:(NSData*)data filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError **)error {
+- (BOOL)addFileWithData:(NSData*)data filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError**)error {
 	NSParameterAssert(data != nil);
 	
 	MPQDataSourceProxy *dataSourceProxy = [[MPQDataSourceProxy alloc] initWithData:data error:error];
@@ -2513,7 +2513,7 @@ AbortDigest:
 	return result;
 }
 
-- (BOOL)addFileWithDataSourceProxy:(MPQDataSourceProxy*)dataSourceProxy filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError **)error {
+- (BOOL)addFileWithDataSourceProxy:(MPQDataSourceProxy*)dataSourceProxy filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError**)error {
 	NSParameterAssert(dataSourceProxy != nil);
 	NSParameterAssert(filename != nil);
 	
@@ -2601,7 +2601,7 @@ AbortDigest:
 		if (overwrite) {
 			// Make sure the name of the file we are about to delete is in the name table, otherwise, we won't be able to un-delete it!
 			// This would normally be done by the delete methods, but to save us a hashing we're going to call deleteFileAtPosition directly.
-			if (!filename_table[old_hash_position]) filename_table[old_hash_position] =_MPQCreateASCIIFilename(filename, (NSError **)NULL);
+			if (!filename_table[old_hash_position]) filename_table[old_hash_position] =_MPQCreateASCIIFilename(filename, (NSError**)NULL);
 			
 			// Delete the existing file
 			MPQDebugLog(@"deleting existing file");
@@ -2690,7 +2690,7 @@ AbortDigest:
 	ReturnValueWithNoError(YES, error)
 }
 
-- (BOOL)_performFileAddOperation:(mpq_deferred_operation_t*)operation error:(NSError **)error {
+- (BOOL)_performFileAddOperation:(mpq_deferred_operation_t*)operation error:(NSError**)error {
 	NSParameterAssert(operation != NULL);
 	NSParameterAssert(operation->type == MPQDOAdd);
 	mpq_deferred_operation_add_context_t *context = (mpq_deferred_operation_add_context_t*)operation->context;
@@ -2940,7 +2940,7 @@ AbortDigest:
 
 #pragma mark opening
 
-- (MPQFile*)openFileAtPosition:(uint32_t)hash_position error:(NSError **)error {
+- (MPQFile*)openFileAtPosition:(uint32_t)hash_position error:(NSError**)error {
 	NSParameterAssert(hash_position < header.hash_table_length);
 	
 	// If the file is invalid, we can't open it
@@ -3063,18 +3063,18 @@ AbortDigest:
 }
 
 - (MPQFile*)openFile:(NSString*)filename {
-	return [self openFile:filename locale:MPQNeutral error:(NSError **)NULL];
+	return [self openFile:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (MPQFile*)openFile:(NSString*)filename error:(NSError **)error {
+- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error {
 	return [self openFile:filename locale:MPQNeutral error:error];
 }
 
 - (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale {
-	return [self openFile:filename locale:locale error:(NSError **)NULL];
+	return [self openFile:filename locale:locale error:(NSError**)NULL];
 }
 
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
 	NSParameterAssert(filename != nil);
 	
 	char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
@@ -3099,34 +3099,34 @@ AbortDigest:
 #pragma mark reading
 
 - (NSData*)copyDataForFile:(NSString*)filename {
-	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:(NSError **)NULL];
+	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename error:(NSError**)error {
 	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:error];
 }
 
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange {
-	return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:(NSError **)NULL];
+	return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError**)error {
 	return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:error];
 }
 
 - (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale {
-	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:(NSError **)NULL];
+	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
 	return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:error];
 }
 
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale {
-	return [self copyDataForFile:filename range:dataRange locale:locale error:(NSError **)NULL];
+	return [self copyDataForFile:filename range:dataRange locale:locale error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError**)error {
 	MPQFile *theFile = [self openFile:filename locale:locale error:error];
 	if (!theFile) return nil;
 	
@@ -3147,18 +3147,18 @@ AbortDigest:
 #pragma mark existence
 
 - (BOOL)fileExists:(NSString*)filename {
-	return [self fileExists:filename locale:MPQNeutral error:(NSError **)NULL];
+	return [self fileExists:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (BOOL)fileExists:(NSString*)filename error:(NSError **)error {
+- (BOOL)fileExists:(NSString*)filename error:(NSError**)error {
 	return [self fileExists:filename locale:MPQNeutral error:error];
 }
 
 - (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale {
-	return [self fileExists:filename locale:locale error:(NSError **)NULL];
+	return [self fileExists:filename locale:locale error:(NSError**)NULL];
 }
 
-- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
 	NSParameterAssert(filename != nil);
 
 	char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
@@ -3179,7 +3179,7 @@ AbortDigest:
 - (NSArray*)localesForFile:(NSString*)filename {
 	NSParameterAssert(filename != nil);
 	
-	char *filename_cstring = _MPQCreateASCIIFilename(filename, (NSError **)NULL);
+	char *filename_cstring = _MPQCreateASCIIFilename(filename, (NSError**)NULL);
 	if (!filename_cstring) return nil;
 	
 	// Compute the starting hash table offset, as well as the verification hashes for the specified file.
@@ -3200,7 +3200,7 @@ AbortDigest:
 			hash_table[current_hash_position].block_table_index != HASH_TABLE_DELETED)
 		{
 			// Make sure we have the name in the name table
-			if (!filename_table[current_hash_position]) filename_table[current_hash_position] = _MPQCreateASCIIFilename(filename, (NSError **)NULL);
+			if (!filename_table[current_hash_position]) filename_table[current_hash_position] = _MPQCreateASCIIFilename(filename, (NSError**)NULL);
 			[locales addObject:[NSNumber numberWithUnsignedInt:hash_table[current_hash_position].locale]];
 		}
 		
@@ -3218,10 +3218,10 @@ AbortDigest:
 #pragma mark writing
 
 - (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically {
-	return [self writeToFile:path atomically:atomically error:(NSError **)NULL];
+	return [self writeToFile:path atomically:atomically error:(NSError**)NULL];
 }
 
-- (BOOL)_writeStructuralTables:(NSError **)error {
+- (BOOL)_writeStructuralTables:(NSError**)error {
 	// Quantities to process the structural tables
 	ssize_t bytes_written = 0;
 	
@@ -3344,7 +3344,7 @@ AbortDigest:
 	ReturnValueWithNoError(YES, error)
 }
 
-- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError **)error {
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError**)error {
 	NSParameterAssert(path != nil);
 	MPQDebugLog(@"writing archive to disk");
 	

@@ -179,7 +179,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 #pragma mark MPQFileSystem
 @implementation MPQFileSystem
 
-- (BOOL)buildTree_:(NSError **)error {
+- (BOOL)buildTree_:(NSError**)error {
     archiveTree_ = [[MPQFSTree alloc] init];
     
     // Load the internal listfile
@@ -225,7 +225,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     ReturnValueWithNoError(YES, error)
 }
 
-- (id)initWithArchive:(MPQArchive*)archive mountPoint:(NSString*)mnt arguments:(struct fuse_args*)arguments error:(NSError **)error {
+- (id)initWithArchive:(MPQArchive*)archive mountPoint:(NSString*)mnt arguments:(struct fuse_args*)arguments error:(NSError**)error {
     self = [super init];
     if (!self) return nil;
     
@@ -415,7 +415,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 #pragma mark Open/Close
 
-- (MPQFile*)openFileAtPath:(NSString*)path mode:(int)mode error:(NSError **)error {
+- (MPQFile*)openFileAtPath:(NSString*)path mode:(int)mode error:(NSError**)error {
     if (mode & (O_WRONLY | O_RDWR | O_APPEND | O_CREAT | O_TRUNC)) ReturnValueWithError(nil, NSPOSIXErrorDomain, EROFS, nil, error)
     
     MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
@@ -435,7 +435,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 #pragma mark Reading
 
-- (NSArray*)fullDirectoryContentsAtPath:(NSString*)path error:(NSError **)error {
+- (NSArray*)fullDirectoryContentsAtPath:(NSString*)path error:(NSError**)error {
     MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
     BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
     if (!isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOTDIR, nil, error)

@@ -9,6 +9,6 @@
 #import <MPQKit/MPQFile.h>
 
 @interface MPQFile (MPQFilePrivate)
-- (NSData*)_copyRawSector:(uint32_t)index error:(NSError **)error;
+- (NSData*)_copyRawSector:(uint32_t)index error:(NSError**)error;
 @end
 

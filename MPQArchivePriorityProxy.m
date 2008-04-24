@@ -165,7 +165,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	return [self openFile:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (MPQFile*)openFile:(NSString*)filename error:(NSError **)error {
+- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error {
 	return [self openFile:filename locale:MPQNeutral error:error];
 }
 
@@ -173,7 +173,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	return [self openFile:filename locale:locale error:(NSError**)NULL];
 }
 
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
     NSParameterAssert(filename != nil);
 	NSError *local_error = nil;
     
@@ -222,7 +222,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename error:(NSError**)error {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:error];
 }
 
@@ -230,7 +230,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError**)error {
     return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:error];
 }
 
@@ -238,7 +238,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:error];
 }
 
@@ -246,7 +246,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     return [self copyDataForFile:filename range:dataRange locale:locale error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError**)error {
     MPQFile *theFile = [self openFile:filename locale:locale error:error];
     if (!theFile) return nil;
     
@@ -268,7 +268,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	return [self fileExists:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (BOOL)fileExists:(NSString*)filename error:(NSError **)error {
+- (BOOL)fileExists:(NSString*)filename error:(NSError**)error {
 	return [self fileExists:filename locale:MPQNeutral error:error];
 }
 
@@ -276,7 +276,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     return [self fileExists:filename locale:locale error:(NSError**)NULL];
 }
 
-- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
     NSParameterAssert(filename != nil);
 	NSError *local_error = nil;
 	

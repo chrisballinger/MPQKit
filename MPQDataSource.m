@@ -23,7 +23,7 @@
 
 @implementation MPQDataSourceProxy
 
-- (id)initWithData:(NSData*)data error:(NSError **)error {
+- (id)initWithData:(NSData*)data error:(NSError**)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -33,7 +33,7 @@
     ReturnValueWithNoError(self, error)
 }
 
-- (id)initWithPath:(NSString*)path error:(NSError **)error {
+- (id)initWithPath:(NSString*)path error:(NSError**)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -80,7 +80,7 @@
     [super dealloc];
 }
 
-- (id)createActualDataSource:(NSError **)error {
+- (id)createActualDataSource:(NSError**)error {
 #if defined(__APPLE__)
     OSErr oerr;
     Boolean wasChanged;
@@ -113,7 +113,7 @@
 
 @implementation MPQDataSource
 
-- (id)initWithData:(NSData*)data error:(NSError **)error {
+- (id)initWithData:(NSData*)data error:(NSError**)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -123,7 +123,7 @@
     ReturnValueWithNoError(self, error)
 }
 
-- (id)initWithPath:(NSString*)path error:(NSError **)error {
+- (id)initWithPath:(NSString*)path error:(NSError**)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -134,7 +134,7 @@
     ReturnValueWithNoError(self, error)
 }
 
-- (id)initWithURL:(NSURL*)url error:(NSError **)error {
+- (id)initWithURL:(NSURL*)url error:(NSError**)error {
     return [self initWithPath:[url path] error:error];
 }
 
@@ -155,7 +155,7 @@
     [super dealloc];
 }
 
-- (off_t)length:(NSError **)error {
+- (off_t)length:(NSError**)error {
     struct stat sb;
     switch(_backingStoreType) {
         case NSDataBackingStore:
@@ -168,7 +168,7 @@
     }
 }
 
-- (ssize_t)pread:(void*)buffer size:(size_t)size offset:(off_t)offset error:(NSError **)error {
+- (ssize_t)pread:(void*)buffer size:(size_t)size offset:(off_t)offset error:(NSError**)error {
     ssize_t bytes_read = 0;
     off_t length = [self length:error];
     if (length == -1) return -1;

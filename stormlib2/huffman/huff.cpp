@@ -386,7 +386,7 @@ void THuffmanTree::BuildTree(uint32_t nCmpType)
     memset(items306C, 0, sizeof(items306C));
  
     maxByte = 0;                                        // Greatest character found init to zero.
-    itemPtr = (THTreeItem **)&items306C;                // Pointer to current entry in HTree item pointer array
+    itemPtr = (THTreeItem**)&items306C;                // Pointer to current entry in HTree item pointer array
  
     // Ensure we have low 8 bits only
     nCmpType &= 0xFF;

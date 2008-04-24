@@ -21,22 +21,22 @@
 - (void)removeArchive:(MPQArchive*)archive;
 
 - (MPQFile*)openFile:(NSString*)filename;
-- (MPQFile*)openFile:(NSString*)filename error:(NSError **)error;
+- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error;
 - (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale;
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error;
 
 - (NSData*)copyDataForFile:(NSString*)filename;
-- (NSData*)copyDataForFile:(NSString*)filename error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename error:(NSError**)error;
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange;
-- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError**)error;
 - (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale;
-- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error;
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale;
-- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError**)error;
 
 - (BOOL)fileExists:(NSString*)filename;
-- (BOOL)fileExists:(NSString*)filename error:(NSError **)error;
+- (BOOL)fileExists:(NSString*)filename error:(NSError**)error;
 - (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale;
-- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error;
 
 @end

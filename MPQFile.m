@@ -87,7 +87,7 @@
 	return nil;
 }
 
-- (id)initForFile:(NSDictionary*)descriptor error:(NSError **)error {
+- (id)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
 	if (descriptor == nil) {
 		[self release];
 		return nil;
@@ -133,26 +133,26 @@
 }
 
 - (NSDictionary*)fileInfo {
-	return [parent fileInfoForPosition:hash_position error:(NSError **)NULL];
+	return [parent fileInfoForPosition:hash_position error:(NSError**)NULL];
 }
 
-- (NSDictionary*)fileInfo:(NSError **)error {
+- (NSDictionary*)fileInfo:(NSError**)error {
 	return [parent fileInfoForPosition:hash_position error:error];
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset {
-	return [self seekToFileOffset:offset mode:MPQFileStart error:(NSError **)NULL];
+	return [self seekToFileOffset:offset mode:MPQFileStart error:(NSError**)NULL];
 }
 
-- (uint32_t)seekToFileOffset:(off_t)offset error:(NSError **)error {
+- (uint32_t)seekToFileOffset:(off_t)offset error:(NSError**)error {
 	return [self seekToFileOffset:offset mode:MPQFileStart error:error];
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode {
-	return [self seekToFileOffset:offset mode:mode error:(NSError **)NULL];
+	return [self seekToFileOffset:offset mode:mode error:(NSError**)NULL];
 }
 
-- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error { 
+- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError**)error { 
 	off_t new_offset;
 	
 	switch (mode) {
@@ -194,10 +194,10 @@
 }
 
 - (NSData*)copyDataOfLength:(uint32_t)length {
-	return [self copyDataOfLength:length error:(NSError **)NULL];
+	return [self copyDataOfLength:length error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataOfLength:(uint32_t)length error:(NSError **)error {
+- (NSData*)copyDataOfLength:(uint32_t)length error:(NSError**)error {
 	NSMutableData *data = [[NSMutableData alloc] initWithLength:length];
 	ssize_t bytes_read = [self read:[data mutableBytes] size:length error:error];
 	if (bytes_read == -1) {
@@ -210,39 +210,39 @@
 }
 
 - (NSData*)copyDataToEndOfFile {
-	return [self copyDataOfLength:[self length] error:(NSError **)NULL];
+	return [self copyDataOfLength:[self length] error:(NSError**)NULL];
 }
 
-- (NSData*)copyDataToEndOfFile:(NSError **)error {
+- (NSData*)copyDataToEndOfFile:(NSError**)error {
 	return [self copyDataOfLength:[self length] error:error];
 }
 
 - (NSData*)getDataOfLength:(uint32_t)length {
-	return [[self copyDataOfLength:length error:(NSError **)NULL] autorelease];
+	return [[self copyDataOfLength:length error:(NSError**)NULL] autorelease];
 }
 
-- (NSData*)getDataOfLength:(uint32_t)length error:(NSError **)error {
+- (NSData*)getDataOfLength:(uint32_t)length error:(NSError**)error {
 	return [[self copyDataOfLength:length error:error] autorelease];
 }
 
 - (NSData*)getDataToEndOfFile {
-	return [[self copyDataToEndOfFile:(NSError **)NULL] autorelease];
+	return [[self copyDataToEndOfFile:(NSError**)NULL] autorelease];
 }
 
-- (NSData*)getDataToEndOfFile:(NSError **)error {
+- (NSData*)getDataToEndOfFile:(NSError**)error {
 	return [[self copyDataToEndOfFile:error] autorelease];
 }
 
-- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError **)error {
+- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError**)error {
 	[self doesNotRecognizeSelector:_cmd];
 	return -1;
 }
 
 - (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically {
-	return [self writeToFile:path atomically:atomically error:(NSError **)NULL];
+	return [self writeToFile:path atomically:atomically error:(NSError**)NULL];
 }
 
-- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError **)error {
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError**)error {
 	uint32_t old = file_pointer;
 	file_pointer = 0;
 	
@@ -272,7 +272,7 @@
 
 @implementation MPQFileDataSource
 
-- (id)initForFile:(NSDictionary*)descriptor error:(NSError **)error {
+- (id)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
 	self = [super initForFile:descriptor error:error];
 	if (!self) return nil;
 	
@@ -296,7 +296,7 @@
 	return (uint32_t)length;
 }
 
-- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError **)error {
+- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError**)error {
 	if (file_pointer >= [self length]) ReturnValueWithNoError(0, error)
 	
 	size = MIN(size, [self length] - file_pointer);
@@ -309,7 +309,7 @@
 	ReturnValueWithNoError(read_bytes, error)
 }
 
-- (NSData*)_copyRawSector:(uint32_t)index error:(NSError **)error {
+- (NSData*)_copyRawSector:(uint32_t)index error:(NSError**)error {
 	ReturnValueWithError(nil, MPQErrorDomain, errInvalidOperation, nil, error);
 }
 
@@ -338,7 +338,7 @@
 
 @implementation MPQFileConcreteMPQ
 
-- (id)initForFile:(NSDictionary*)descriptor error:(NSError **)error {
+- (id)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
 	self = [super initForFile:descriptor error:error];
 	if (!self) return nil;
 	
@@ -388,7 +388,7 @@
 	[super dealloc];
 }
 
-- (ssize_t)_readSectors:(void*)buf range:(NSRange)which keeping:(NSRange)bytesToKeep error:(NSError **)error {
+- (ssize_t)_readSectors:(void*)buf range:(NSRange)which keeping:(NSRange)bytesToKeep error:(NSError**)error {
 	int perr = 0;
 	int stage = 0;
 	
@@ -482,7 +482,7 @@
 	while (current_sector < last_needed_sector_plus_one) {
 #if defined(MPQFILE_AIO)
 		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb **)(iocbs + current_iocb), 1, NULL);
+		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
 		
 		// Get result from iocbs[current_iocb]
 		perr = aio_error(iocbs[current_iocb]);
@@ -702,7 +702,7 @@ ErrorExit:
 	return -1;
 }
 
-- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError **)error {
+- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError**)error {
 	if (file_pointer >= block_entry.size) ReturnValueWithNoError(0, error)
 	
 	size = MIN(size, block_entry.size - file_pointer);
@@ -718,7 +718,7 @@ ErrorExit:
 	return bytes_read;
 }
 
-- (NSData*)_copyRawSector:(uint32_t)index error:(NSError **)error {
+- (NSData*)_copyRawSector:(uint32_t)index error:(NSError**)error {
 	if (index > sector_table_length - 2) ReturnValueWithError(nil, MPQErrorDomain, errOutOfBounds, nil, error)
 	size_t sector_size = sector_table[index + 1] - sector_table[index];
 	ssize_t bytes_read = pread(archive_fd, read_buffer, sector_size, file_archive_offset + sector_table[index]);
@@ -742,7 +742,7 @@ ErrorExit:
 
 @implementation MPQFileConcreteMPQOneSector
 
-- (id)initForFile:(NSDictionary*)descriptor error:(NSError **)error {
+- (id)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
 	self = [super initForFile:descriptor error:error];
 	if (!self) return nil;
 	
@@ -760,7 +760,7 @@ ErrorExit:
 	[super dealloc];
 }
 
-- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError **)error {
+- (ssize_t)read:(void*)buf size:(size_t)size error:(NSError**)error {
 	if (file_pointer >= block_entry.size) ReturnValueWithNoError(0, error)
 	
 	size = MIN(size, block_entry.size - file_pointer);
@@ -818,7 +818,7 @@ ErrorExit:
 	ReturnValueWithNoError(size, error)
 }
 
-- (NSData*)_copyRawSector:(uint32_t)index error:(NSError **)error {
+- (NSData*)_copyRawSector:(uint32_t)index error:(NSError**)error {
 	if (index > 0) ReturnValueWithError(nil, MPQErrorDomain, errOutOfBounds, nil, error)
 	void *read_buffer = malloc(block_entry.archived_size);
 	if (!read_buffer) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)

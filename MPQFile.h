@@ -67,7 +67,7 @@
 	@result An NSDictionary object containing the file's information. nil on failure.
 */
 - (NSDictionary*)fileInfo;
-- (NSDictionary*)fileInfo:(NSError **)error;
+- (NSDictionary*)fileInfo:(NSError**)error;
 
 /*! 
 	@method seekToFileOffset:
@@ -78,7 +78,7 @@
 	
 */
 - (uint32_t)seekToFileOffset:(off_t)offset;
-- (uint32_t)seekToFileOffset:(off_t)offset error:(NSError **)error;
+- (uint32_t)seekToFileOffset:(off_t)offset error:(NSError**)error;
 
 /*! 
 	@method seekToFileOffset:mode:
@@ -95,7 +95,7 @@
 	@result The new file position, or -1 on error.
 */
 - (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode;
-- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError **)error;
+- (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError**)error;
 
 /*! 
 	@method offsetInFile
@@ -135,7 +135,7 @@
 	@result An NSData object containing the requested bytes (or less). nil on failure.
 */
 - (NSData*)copyDataOfLength:(uint32_t)length;
-- (NSData*)copyDataOfLength:(uint32_t)length error:(NSError **)error;
+- (NSData*)copyDataOfLength:(uint32_t)length error:(NSError**)error;
 
 /*! 
 	@method copyDataToEndOfFile
@@ -157,7 +157,7 @@
 		end of file. nil on failure.
 */
 - (NSData*)copyDataToEndOfFile;
-- (NSData*)copyDataToEndOfFile:(NSError **)error;
+- (NSData*)copyDataToEndOfFile:(NSError**)error;
 
 /*! 
 	@method getDataOfLength:
@@ -172,7 +172,7 @@
 	@result An autoreleased NSData object containing the requested bytes (or less). nil on failure.
 */
 - (NSData*)getDataOfLength:(uint32_t)length;
-- (NSData*)getDataOfLength:(uint32_t)length error:(NSError **)error;
+- (NSData*)getDataOfLength:(uint32_t)length error:(NSError**)error;
 
 /*! 
 	@method getDataToEndOfFile
@@ -190,9 +190,9 @@
 		end of file. nil on failure.
 */
 - (NSData*)getDataToEndOfFile;
-- (NSData*)getDataToEndOfFile:(NSError **)error;
+- (NSData*)getDataToEndOfFile:(NSError**)error;
 
-- (ssize_t)read:(void*)buffer size:(size_t)size error:(NSError **)error;
+- (ssize_t)read:(void*)buffer size:(size_t)size error:(NSError**)error;
 
 /*! 
 	@method writeToFile:atomically:
@@ -207,7 +207,7 @@
 	@result YES on success and NO on failure.
 */
 - (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically;
-- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError **)error;
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError**)error;
 
 @end
 
