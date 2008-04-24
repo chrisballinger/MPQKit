@@ -415,7 +415,7 @@ int pk_explode(
    uint8_t      *work_buf,
    void         *param)
 {
-    TDcmpStruct * pWork = (TDcmpStruct *)work_buf;
+    TDcmpStruct * pWork = (TDcmpStruct*)work_buf;
 
     // Set the whole work buffer to zeros
     memset(pWork, 0, sizeof(TDcmpStruct));

@@ -20,8 +20,8 @@
 #include "MPQByteOrder.h"
 #include "huff.h"
 
-#define PTR_NOT(ptr)                (THTreeItem *)(~(uintptr_t)(ptr))
-#define PTR_PTR(ptr)                ((THTreeItem *)(ptr))
+#define PTR_NOT(ptr)                (THTreeItem*)(~(uintptr_t)(ptr))
+#define PTR_PTR(ptr)                ((THTreeItem*)(ptr))
 #define PTR_INT(ptr)                (intptr_t)(ptr)
 #define PTR_VALID(ptr)              (((intptr_t)(ptr) * addr_multiplier) > 0)
 #define PTR_INVALID(ptr)            (((intptr_t)(ptr) * addr_multiplier) < 0)
@@ -117,7 +117,7 @@ uint32_t TInputStream::GetBit() {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 32) {
-            bit_bucket = MPQSwapInt32LittleToHost(*(uint32_t *)buffer);
+            bit_bucket = MPQSwapInt32LittleToHost(*(uint32_t*)buffer);
             bit_count = 32;
             
             buffer += 4;
@@ -148,7 +148,7 @@ uint32_t TInputStream::Get8Bits() {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 16) {
-            bit_bucket |= ((uint32_t)MPQSwapInt16LittleToHost(*(uint16_t *)buffer)) << bit_count;
+            bit_bucket |= ((uint32_t)MPQSwapInt16LittleToHost(*(uint16_t*)buffer)) << bit_count;
             bit_count += 16;
             
             buffer += 2;
@@ -179,7 +179,7 @@ uint32_t TInputStream::Peek7Bits() {
         assert(buffer_bit_size >= 8);
         
         if (buffer_bit_size >= 16) {
-            bit_bucket |= ((uint32_t)MPQSwapInt16LittleToHost(*(uint16_t *)buffer)) << bit_count;
+            bit_bucket |= ((uint32_t)MPQSwapInt16LittleToHost(*(uint16_t*)buffer)) << bit_count;
             bit_count += 16;
             
             buffer += 2;
@@ -292,9 +292,9 @@ static void InsertItem(THTreeItem ** itemPtr, THTreeItem * item, uint32_t where,
  
             if(PTR_INVALID(next2))
                 next2 = (intptr_t)(item2 - item2->next->prev);
-//              next2 = (THTreeItem *)(unsigned long)((unsigned char *)item2 - (unsigned char *)(item2->next->prev));
+//              next2 = (THTreeItem*)(unsigned long)((unsigned char*)item2 - (unsigned char*)(item2->next->prev));
  
-//          prev2 = (THTreeItem *)((char *)prev2 + (unsigned long)next2);// ???
+//          prev2 = (THTreeItem*)((char*)prev2 + (unsigned long)next2);// ???
             prev2 += next2;
             prev2->next = item;
             item2->prev = item;                 // Set the next/last item
@@ -596,7 +596,7 @@ THTreeItem * THuffmanTree::Call1500E740(uint32_t nValue)
     }
     else
     {
-        pItem1->next = (THTreeItem *)ppItem;
+        pItem1->next = (THTreeItem*)ppItem;
         pItem1->prev = ppItem[1];
         // edi = pItem305C;
         pPrev = ppItem[1];      // ecx
@@ -612,7 +612,7 @@ THTreeItem * THuffmanTree::Call1500E740(uint32_t nValue)
         else
         {
             if(PTR_INVALID(pItem305C))
-                pPrev += (THTreeItem *)ppItem - (*ppItem)->prev;
+                pPrev += (THTreeItem*)ppItem - (*ppItem)->prev;
             else
                 pPrev += PTR_INT(pItem305C);
  

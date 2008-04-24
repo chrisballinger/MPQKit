@@ -20,7 +20,7 @@
 #include "MPQByteOrder.h"
 #include "MPQCryptography.h"
 
-#define BUFFER_OFFSET(buffer, bytes) ((uint8_t *)buffer + (bytes))
+#define BUFFER_OFFSET(buffer, bytes) ((uint8_t*)buffer + (bytes))
 
 #if !defined(Boolean)
 #define Boolean int
@@ -84,7 +84,7 @@ void mpq_encrypt(void *data, size_t length, uint32_t key, bool disable_input_swa
     assert(crypt_table_initialized);
     assert(data);
     
-    uint32_t *buffer32 = (uint32_t *)data;
+    uint32_t *buffer32 = (uint32_t*)data;
     uint32_t seed = 0xEEEEEEEE;
     uint32_t ch;
     
@@ -121,7 +121,7 @@ void mpq_decrypt(void *data, size_t length, uint32_t key, bool disable_output_sw
     assert(crypt_table_initialized);
     assert(data);
     
-    uint32_t *buffer32 = (uint32_t *)data;
+    uint32_t *buffer32 = (uint32_t*)data;
     uint32_t seed = 0xEEEEEEEE;
     uint32_t ch;
     

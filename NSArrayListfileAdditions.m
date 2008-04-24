@@ -11,7 +11,7 @@
 
 @implementation NSArray (ListfileAdditions)
 
-+ (id)arrayWithListfileData:(NSData *)listfileData {
++ (id)arrayWithListfileData:(NSData*)listfileData {
     NSParameterAssert(listfileData != nil);
     
     // What we are doing to do here is extract all the lines from stringData and add an entry for each of those lines
@@ -28,11 +28,11 @@
 
 @implementation NSMutableArray (ListfileAdditions)
 
-+ (id)arrayWithListfileData:(NSData *)listfileData {
++ (id)arrayWithListfileData:(NSData*)listfileData {
     return [[[[self class] alloc] initWithListfileData:listfileData] autorelease];
 }
 
-- (id)initWithListfileData:(NSData *)listfileData {
+- (id)initWithListfileData:(NSData*)listfileData {
     NSParameterAssert(listfileData != nil);
     
     NSArray *returnArray = [NSArray arrayWithListfileData:listfileData];

@@ -33,24 +33,24 @@
         digestString[2*i]   = __HEHexDigits[digest[i] >> 4];                                    \
         digestString[2*i+1] = __HEHexDigits[digest[i] & 0x0f];                                  \
     }                                                                                           \
-    return [NSString stringWithCString:(char *)digestString length:2*method##_DIGEST_LENGTH];
+    return [NSString stringWithCString:(char*)digestString length:2*method##_DIGEST_LENGTH];
 
 #define SHA1_CTX                SHA_CTX
 #define SHA1_DIGEST_LENGTH      SHA_DIGEST_LENGTH
 
-- (NSData *)md5 {
+- (NSData*)md5 {
     HEComputeDigestNSData(MD5);
 }
 
-- (NSString *)md5String {
+- (NSString*)md5String {
     HEComputeDigestNSString(MD5);
 }
 
-- (NSData *)sha1 {
+- (NSData*)sha1 {
     HEComputeDigestNSData(SHA1);
 }
 
-- (NSString *)sha1String {
+- (NSString*)sha1String {
     HEComputeDigestNSString(SHA1);
 }
 

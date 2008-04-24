@@ -99,20 +99,20 @@ struct mpq_deferred_operation_file_context {
     mpq_block_table_entry_t block_entry;
     off_t block_offset;
     uint32_t encryption_key;
-    NSString *filename;
+    NSString* filename;
 };
 typedef struct mpq_deferred_operation_file_context mpq_deferred_operation_file_context_t;
 
 struct mpq_deferred_operation {
     MPQDeferredOperationType type;
     mpq_deferred_operation_file_context_t primary_file_context;
-    void *context;
+    void* context;
     struct mpq_deferred_operation *previous;
 };
 typedef struct mpq_deferred_operation mpq_deferred_operation_t;
 
 struct mpq_deferred_operation_add_context {
-    MPQDataSourceProxy *dataSourceProxy;
+    MPQDataSourceProxy* dataSourceProxy;
     uint32_t compressor;
     int32_t compression_quality;
 };
@@ -151,7 +151,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     BOOL save_listfile;
     
     int archive_fd;
-    NSString *archive_path;
+    NSString* archive_path;
 
     off_t archive_offset;
     off_t archive_write_offset;
@@ -165,31 +165,31 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     off_t hash_table_offset;
     off_t block_table_offset;
     
-    mpq_hash_table_entry_t *hash_table;
-    mpq_block_table_entry_t *block_table;
+    mpq_hash_table_entry_t* hash_table;
+    mpq_block_table_entry_t* block_table;
     
-    off_t *block_offset_table;
-    char **filename_table;
-    NSDictionary **file_info_cache;
+    off_t* block_offset_table;
+    char** filename_table;
+    NSDictionary** file_info_cache;
     
     void *attributes_data;
     uint32_t attributes_data_size;
     
-    mpq_hash_table_entry_t *weak_signature_hash_entry;
+    mpq_hash_table_entry_t* weak_signature_hash_entry;
     uint8_t *strong_signature;
     
     uint32_t open_file_count;
-    uint32_t *open_file_count_table;
+    uint32_t* open_file_count_table;
     
-    void *read_buffer;
-    void *compression_buffer;
+    void* read_buffer;
+    void* compression_buffer;
     
-    mpq_deferred_operation_t *last_operation;
-    mpq_deferred_operation_t **operation_hash_table;
+    mpq_deferred_operation_t* last_operation;
+    mpq_deferred_operation_t** operation_hash_table;
     uint32_t deferred_operations_count;
     
-    uint32_t **sector_tables_cache;
-    uint32_t *encryption_keys_cache;
+    uint32_t** sector_tables_cache;
+    uint32_t* encryption_keys_cache;
     
     uint32_t default_compressor;
     
@@ -203,9 +203,9 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The locale code. Must be a valid locale code.
     @result Returns an NSString object, or nil if the locale code is invalid.
 */
-+ (NSString *)localeName:(MPQLocale)locale;
++ (NSString*)localeName:(MPQLocale)locale;
 #if defined(__APPLE__)
-+ (NSLocale *)localeForMPQLocale:(MPQLocale)locale;
++ (NSLocale*)localeForMPQLocale:(MPQLocale)locale;
 #endif
 
 #pragma mark initialization
@@ -231,8 +231,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param path The POSIX path to the archive. Must be a fully expanded path. Must not be nil.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-+ (id)archiveWithPath:(NSString *)path;
-+ (id)archiveWithPath:(NSString *)path error:(NSError **)error;
++ (id)archiveWithPath:(NSString*)path;
++ (id)archiveWithPath:(NSString*)path error:(NSError **)error;
 
 /*!
     @method archiveWithAttributes:error:
@@ -242,7 +242,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-+ (id)archiveWithAttributes:(NSDictionary *)attributes error:(NSError **)error;
++ (id)archiveWithAttributes:(NSDictionary*)attributes error:(NSError**)error;
 
 /*!
     @method initWithAttributes:error:
@@ -271,7 +271,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-- (id)initWithAttributes:(NSDictionary *)attributes error:(NSError **)error;
+- (id)initWithAttributes:(NSDictionary*)attributes error:(NSError**)error;
 
 /*! 
     @method initWithFileLimit:
@@ -297,8 +297,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param path The POSIX path to the archive. Must be a fully expanded path. Must not be nil.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-- (id)initWithPath:(NSString *)path;
-- (id)initWithPath:(NSString *)path error:(NSError **)error;
+- (id)initWithPath:(NSString*)path;
+- (id)initWithPath:(NSString*)path error:(NSError **)error;
 
 #pragma mark delegate
 
@@ -335,7 +335,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         This is the offset of the MPQ archive within its container file in bytes as an integer.
     @result An NSDictionary object containing the archive's information on success or nil on failure.
 */
-- (NSDictionary *)archiveInfo;
+- (NSDictionary*)archiveInfo;
 
 /*! 
     @method path
@@ -344,7 +344,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         initWithFileLimit: and the archive has never been saved yet.
     @result Returns the absolute path of the archive as an integer.
 */
-- (NSString *)path;
+- (NSString*)path;
 
 /*! 
     @method modified
@@ -438,7 +438,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
 	@result Returns the weak archive digest or nil on error.
 */
-- (NSData *)computeWeakSignatureDigest:(NSError **)error;
+- (NSData*)computeWeakSignatureDigest:(NSError **)error;
 
 /*!
 	@method verifyBlizzardWeakSignature:
@@ -450,7 +450,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
 	@result Returns YES if the archive was weakly signed by Blizzard and the signature is valid, NO otherwise.
 */
-- (BOOL)verifyBlizzardWeakSignature:(BOOL *)isSigned error:(NSError **)error;
+- (BOOL)verifyBlizzardWeakSignature:(BOOL*)isSigned error:(NSError **)error;
 
 /*!
 	@method computeStrongSignatureDigestFrom:size:tail:
@@ -477,7 +477,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
 	@result Returns the strong archive digest or nil on error.
 */
-- (NSData *)computeStrongSignatureDigestFrom:(off_t)digestOffset size:(off_t)digestSize tail:(NSData *)digestTail error:(NSError **)error;
+- (NSData*)computeStrongSignatureDigestFrom:(off_t)digestOffset size:(off_t)digestSize tail:(NSData*)digestTail error:(NSError **)error;
 
 /*!
     @method hasStrongSignature
@@ -501,7 +501,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
     @result Returns YES if the archive was signed with the provided public key's associated private key, NO otherwise.
 */
-- (BOOL)verifyStrongSignatureWithKey:(RSA *)key digest:(NSData *)digest error:(NSError **)error;
+- (BOOL)verifyStrongSignatureWithKey:(RSA*)key digest:(NSData*)digest error:(NSError **)error;
 
 - (BOOL)verifyBlizzardStrongSignature:(NSError **)error;
 - (BOOL)verifyWoWSurveySignature:(NSError **)error;
@@ -603,8 +603,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param listfile A NSArray containing file paths. Note that the path separator MUST BE \, and not /.
     @result YES on sucess or NO on failure.
 */
-- (BOOL)addArrayToFileList:(NSArray *)listfile;
-- (BOOL)addArrayToFileList:(NSArray *)listfile error:(NSError **)error;
+- (BOOL)addArrayToFileList:(NSArray*)listfile;
+- (BOOL)addArrayToFileList:(NSArray*)listfile error:(NSError **)error;
 
 /*! 
     @method addContentsOfFileToFileList:
@@ -616,8 +616,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param path System path to the file.
     @result YES on sucess or NO on failure.
 */
-- (BOOL)addContentsOfFileToFileList:(NSString *)path;
-- (BOOL)addContentsOfFileToFileList:(NSString *)path error:(NSError **)error;
+- (BOOL)addContentsOfFileToFileList:(NSString*)path;
+- (BOOL)addContentsOfFileToFileList:(NSString*)path error:(NSError **)error;
 
 /*! 
     @method fileList
@@ -628,7 +628,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         know about any of the files in the archive (or if the archive is empty).
     @result An NSArray containing all the known files stored the instance's archive.
 */
-- (NSArray *)fileList;
+- (NSArray*)fileList;
 
 #pragma mark file info
 
@@ -660,7 +660,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         * MPQFilename: The file's path inside the MPQ archive. Note that the path separator is \.
     @result An NSEnumerator subclass object you can use to cycle through the file information dictionaries. nil on failure.
 */
-- (NSEnumerator *)fileInfoEnumerator;
+- (NSEnumerator*)fileInfoEnumerator;
 
 /*!
     @method fileInfoForPosition:
@@ -694,8 +694,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param hash_position  An integer specifying the position of the file you wish information about. Must not be out of bounds.
     @result An NSDictionary object containing the file's information. nil on failure.
 */
-- (NSDictionary *)fileInfoForPosition:(uint32_t)hash_position;
-- (NSDictionary *)fileInfoForPosition:(uint32_t)hash_position error:(NSError **)error;
+- (NSDictionary*)fileInfoForPosition:(uint32_t)hash_position;
+- (NSDictionary*)fileInfoForPosition:(uint32_t)hash_position error:(NSError **)error;
 
 /*! 
     @method fileInfoForFile:locale:
@@ -727,8 +727,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result An NSDictionary object containing the file's information. nil on failure or if the file is not found.
 */
-- (NSDictionary *)fileInfoForFile:(NSString *)filename locale:(MPQLocale)locale;
-- (NSDictionary *)fileInfoForFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale;
+- (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
 
 /*! 
     @method fileInfoForFiles:locale:
@@ -763,7 +763,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The locale to be used for every file in fileArray.
     @result An NSArray of NSDictionary objects containing the files' information. nil on failure.
 */
-- (NSArray *)fileInfoForFiles:(NSArray *)fileArray locale:(MPQLocale)locale;
+- (NSArray*)fileInfoForFiles:(NSArray*)fileArray locale:(MPQLocale)locale;
 
 #pragma mark adding
 
@@ -799,8 +799,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param parameters A NSDictionary containing file addition parameters. Pass nil for default parameters.
     @result YES on success or NO on failure.
 */
-- (BOOL)addFileWithPath:(NSString *)path filename:(NSString *)filename parameters:(NSDictionary *)parameters;
-- (BOOL)addFileWithPath:(NSString *)path filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
+- (BOOL)addFileWithPath:(NSString*)path filename:(NSString*)filename parameters:(NSDictionary*)parameters;
+- (BOOL)addFileWithPath:(NSString*)path filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError **)error;
 
 /*! 
     @method addFileWithData:filename:parameters:
@@ -835,10 +835,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param parameters A NSDictionary containing file addition parameters. Can be nil.
     @result YES on success or NO on failure.
 */
-- (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters;
-- (BOOL)addFileWithData:(NSData *)data filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
+- (BOOL)addFileWithData:(NSData*)data filename:(NSString*)filename parameters:(NSDictionary*)parameters;
+- (BOOL)addFileWithData:(NSData*)data filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError **)error;
 
-- (BOOL)addFileWithDataSourceProxy:(MPQDataSourceProxy *)dataSourceProxy filename:(NSString *)filename parameters:(NSDictionary *)parameters error:(NSError **)error;
+- (BOOL)addFileWithDataSourceProxy:(MPQDataSourceProxy*)dataSourceProxy filename:(NSString*)filename parameters:(NSDictionary*)parameters error:(NSError **)error;
 
 #pragma mark delete
 
@@ -853,8 +853,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The path of the MPQ file to delete. Note that the path separator MUST be \. Must not be nil.
     @result YES on success or NO on failure.
 */
-- (BOOL)deleteFile:(NSString *)filename;
-- (BOOL)deleteFile:(NSString *)filename error:(NSError **)error;
+- (BOOL)deleteFile:(NSString*)filename;
+- (BOOL)deleteFile:(NSString*)filename error:(NSError **)error;
 
 /*! 
     @method deleteFile:locale:
@@ -866,8 +866,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result YES on success or NO on failure.
 */
-- (BOOL)deleteFile:(NSString *)filename locale:(MPQLocale)locale;
-- (BOOL)deleteFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (BOOL)deleteFile:(NSString*)filename locale:(MPQLocale)locale;
+- (BOOL)deleteFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
 
 /*
     @method renameFile:as:
@@ -881,7 +881,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param new_filename The new path of the MPQ file. Note that the path separator MUST be \. Must not be nil.
     @result YES on success or NO on failure.
 */
-// TODO: - (BOOL)renameFile:(NSString *)old_filename as:(NSString *)new_filename;
+// TODO: - (BOOL)renameFile:(NSString*)old_filename as:(NSString*)new_filename;
 
 /*
     @method renameFile:as:locale:
@@ -894,7 +894,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The old and new file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result YES on success or NO on failure.
 */
-// TODO: - (BOOL)renameFile:(NSString *)old_filename as:(NSString *)new_filename locale:(MPQLocale)locale;
+// TODO: - (BOOL)renameFile:(NSString*)old_filename as:(NSString*)new_filename locale:(MPQLocale)locale;
 
 #pragma mark opening
 
@@ -908,8 +908,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The filename of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
     @result An MPQFile instance on success or nil on failure. The sender is responsible for releasing the instance.
 */
-- (MPQFile *)openFile:(NSString *)filename;
-- (MPQFile *)openFile:(NSString *)filename error:(NSError **)error;
+- (MPQFile*)openFile:(NSString*)filename;
+- (MPQFile*)openFile:(NSString*)filename error:(NSError **)error;
 
 /*! 
     @method openFile:locale:
@@ -920,10 +920,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The old and new file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result An MPQFile instance on success or nil on failure. The sender is responsible for releasing the instance.
 */
-- (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale;
-- (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
 
-- (MPQFile *)openFileAtPosition:(uint32_t)hash_position error:(NSError **)error;
+- (MPQFile*)openFileAtPosition:(uint32_t)hash_position error:(NSError **)error;
 
 #pragma mark reading
 
@@ -938,8 +938,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The path of the MPQ file to read from. Note that the path separator MUST be \. Must not be nil.
     @result An NSData instance containing the requested data on success or nil on failure.
 */
-- (NSData *)copyDataForFile:(NSString *)filename;
-- (NSData *)copyDataForFile:(NSString *)filename error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename;
+- (NSData*)copyDataForFile:(NSString*)filename error:(NSError **)error;
 
 /*! 
     @method copyDataForFile:range:
@@ -953,8 +953,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         as the length will return all the data from the starting offset up until the end of file.
     @result An NSData instance containing the requested data on success or nil on failure.
 */
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange;
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange;
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError **)error;
 
 /*! 
     @method copyDataForFile:locale:
@@ -967,8 +967,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result An NSData instance containing the requested data on success or nil on failure.
 */
-- (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale;
-- (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale;
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
 
 /*! 
     @method copyDataForFile:range:locale:
@@ -983,8 +983,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         MPQSharedConstants.h for a list of valid values.
     @result An NSData instance containing the requested data on success or nil on failure.
 */
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale;
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error;
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale;
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error;
 
 #pragma mark existence
 
@@ -995,8 +995,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The path of the MPQ file to search for. Note that the path separator MUST be \. Must not be nil.
     @result YES if the file exists, or NO if it does not.
 */
-- (BOOL)fileExists:(NSString *)filename;
-- (BOOL)fileExists:(NSString *)filename error:(NSError **)error;
+- (BOOL)fileExists:(NSString*)filename;
+- (BOOL)fileExists:(NSString*)filename error:(NSError **)error;
 
 /*! 
     @method fileExists:locale:
@@ -1006,8 +1006,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result YES if the file exists, or NO if it does not.
 */
-- (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale;
-- (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error;
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale;
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error;
 
 /*! 
     @method localesForFile:
@@ -1017,7 +1017,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @result An autoreleased NSArray instance containing the the list of locale codes for which the file exists, 
         or nil if the file does not exists for any of the known locales.
 */
-- (NSArray *)localesForFile:(NSString *)filename;
+- (NSArray*)localesForFile:(NSString*)filename;
 
 #pragma mark writing
 
@@ -1048,8 +1048,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         is re-initialized with the original archive on disk (if there was an original). The instance is 
         marked as not modified if this method succeeds.
 */
-- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically;
-- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically error:(NSError **)error;
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically;
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError **)error;
 
 @end
 
@@ -1068,7 +1068,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive that is about to be saved.
     @result A response from the delegate.
 */
-- (BOOL)archiveShouldSave:(MPQArchive *)archive;
+- (BOOL)archiveShouldSave:(MPQArchive*)archive;
 
 /*!
     @method archiveWillSave:
@@ -1077,7 +1077,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion This message is always sent if the delegate implements it.
     @param archive The archive that is about to be saved.
 */
-- (void)archiveWillSave:(MPQArchive *)archive;
+- (void)archiveWillSave:(MPQArchive*)archive;
 
 /*!
     @method archiveDidSave:
@@ -1085,7 +1085,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion archiveDidSave: will not be sent to the delegate if the save operation failed.
     @param archive The archive that did save.
 */
-- (void)archiveDidSave:(MPQArchive *)archive;
+- (void)archiveDidSave:(MPQArchive*)archive;
 
 /*!
     @method archive:shouldAddFile:
@@ -1101,7 +1101,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The MPQ filename of the file that is about to be added.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldAddFile:(NSString *)filename;
+- (BOOL)archive:(MPQArchive*)archive shouldAddFile:(NSString*)filename;
 
 /*!
     @method archive:willAddFile:
@@ -1111,7 +1111,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive in which the file will be added.
     @param filename The MPQ filename of the file that is about to be added.
 */
-- (void)archive:(MPQArchive *)archive willAddFile:(NSString *)filename;
+- (void)archive:(MPQArchive*)archive willAddFile:(NSString*)filename;
 
 /*!
     @method archive:didAddFile:
@@ -1120,7 +1120,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive in which the file was added.
     @param filename The MPQ filename of the file that was added.
 */
-- (void)archive:(MPQArchive *)archive didAddFile:(NSString *)filename;
+- (void)archive:(MPQArchive*)archive didAddFile:(NSString*)filename;
 
 /*!
     @method archive:shouldDeleteFile:
@@ -1130,7 +1130,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The MPQ filename of the file that is about to be deleted.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldDeleteFile:(NSString *)filename;
+- (BOOL)archive:(MPQArchive*)archive shouldDeleteFile:(NSString*)filename;
 
 /*!
     @method archive:willDeleteFile:
@@ -1144,7 +1144,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive from which file will be deleted.
     @param filename The MPQ filename of the file that is about to be deleted.
 */
-- (void)archive:(MPQArchive *)archive willDeleteFile:(NSString *)filename;
+- (void)archive:(MPQArchive*)archive willDeleteFile:(NSString*)filename;
 
 /*!
     @method archive:didDeleteFile:
@@ -1158,7 +1158,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive from which file was deleted.
     @param filename The MPQ filename of the file that was deleted.
 */
-- (void)archive:(MPQArchive *)archive didDeleteFile:(NSString *)filename;
+- (void)archive:(MPQArchive*)archive didDeleteFile:(NSString*)filename;
 
 /*!
     @method archive:shouldRenameFile:as:
@@ -1173,7 +1173,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param newFilename The new MPQ filename of the file that is about to be renamed.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldRenameFile:(NSString *)filename as:(NSString *)newFilename;
+- (BOOL)archive:(MPQArchive*)archive shouldRenameFile:(NSString*)filename as:(NSString*)newFilename;
 
 /*!
     @method archive:willRenameFile:as:
@@ -1185,7 +1185,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The MPQ filename of the file that is about to be renamed.
     @param newFilename The new MPQ filename of the file that is about to be renamed.
 */
-- (void)archive:(MPQArchive *)archive willRenameFile:(NSString *)filename as:(NSString *)newFilename;
+- (void)archive:(MPQArchive*)archive willRenameFile:(NSString*)filename as:(NSString*)newFilename;
 
 /*!
     @method archive:didRenameFile:as:
@@ -1196,7 +1196,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The MPQ filename of the file that was renamed.
     @param newFilename The new MPQ filename of the file that was renamed.
 */
-- (void)archive:(MPQArchive *)archive didRenameFile:(NSString *)filename as:(NSString *)newFilename;
+- (void)archive:(MPQArchive*)archive didRenameFile:(NSString*)filename as:(NSString*)newFilename;
 
 /*!
     @method archive:shouldOpenFile:
@@ -1206,7 +1206,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The MPQ filename of the file that is about to be opened.
     @result A response from the delegate.
 */
-- (BOOL)archive:(MPQArchive *)archive shouldOpenFile:(NSString *)filename;
+- (BOOL)archive:(MPQArchive*)archive shouldOpenFile:(NSString*)filename;
 
 /*!
     @method archive:willOpenFile:
@@ -1215,7 +1215,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive containing the file that is about to be opened.
     @param filename The MPQ filename of the file that is about to be opened.
 */
-- (void)archive:(MPQArchive *)archive willOpenFile:(NSString *)filename;
+- (void)archive:(MPQArchive*)archive willOpenFile:(NSString*)filename;
 
 /*!
     @method archive:didOpenFile:
@@ -1225,6 +1225,6 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param archive The archive from which file was opened.
     @param file The MPQFile instance for the file that was opened.
 */
-- (void)archive:(MPQArchive *)archive didOpenFile:(MPQFile *)file;
+- (void)archive:(MPQArchive*)archive didOpenFile:(MPQFile*)file;
 
 @end

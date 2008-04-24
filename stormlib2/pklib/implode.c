@@ -119,7 +119,7 @@ static void SortBuffer(TCmpStruct * pWork, uint8_t * uncmp_data, uint8_t * work_
     uint32_t     add;
 
     // Fill 0x480 dwords (0x1200 bytes)
-    ndwords = (uint32_t)((pWork->out_buff - (uint8_t *)pWork->offs0DC8 + 1) >> 2);
+    ndwords = (uint32_t)((pWork->out_buff - (uint8_t*)pWork->offs0DC8 + 1) >> 2);
     if(ndwords <= 1)
         ndwords = 1;
     memset(pWork->offs0DC8, 0, ndwords << 2);
@@ -546,7 +546,7 @@ int pk_implode(
    uint32_t     *type,
    uint32_t     *dsize)
 {
-    TCmpStruct * pWork = (TCmpStruct *)work_buf;
+    TCmpStruct * pWork = (TCmpStruct*)work_buf;
     uint32_t nChCode;
     uint32_t nCount;
     uint32_t i;

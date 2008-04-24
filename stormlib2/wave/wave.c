@@ -241,7 +241,7 @@ uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *i
         nOneWord = (int16_t)MPQSwapInt16LittleToHost(*in.pw);
         SInt32Array2[i] = nOneWord;
         if(dwOutLengthCopy < 2)
-            return (uint32_t)(out.pb - (uint8_t *)outBuffer);
+            return (uint32_t)(out.pb - (uint8_t*)outBuffer);
 
         *out.pw++ = *in.pw++;
 		// Explicit cast is OK here
@@ -270,7 +270,7 @@ uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *i
                         SInt32Array1[nIndex]--;
 
                     if(dwOutLengthCopy < 2)
-                        return (uint32_t)(out.pb - (uint8_t *)outBuffer);
+                        return (uint32_t)(out.pb - (uint8_t*)outBuffer);
 
                     *out.pw++ = (int16_t)MPQSwapInt16HostToLittle(SInt32Array2[nIndex]);
 					// Explicit cast is OK here
@@ -354,5 +354,5 @@ uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *i
                 SInt32Array1[nIndex] = 0x58;
         }
     }
-    return (uint32_t)(out.pb - (uint8_t *)outBuffer);
+    return (uint32_t)(out.pb - (uint8_t*)outBuffer);
 }

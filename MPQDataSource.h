@@ -28,8 +28,8 @@ typedef uint8_t MPQDataSourceBackingStoreType;
 #endif
 }
 
-- (id)initWithData:(NSData *)data error:(NSError **)error;
-- (id)initWithPath:(NSString *)path error:(NSError **)error;
+- (id)initWithData:(NSData*)data error:(NSError **)error;
+- (id)initWithPath:(NSString*)path error:(NSError **)error;
 
 - (id)createActualDataSource:(NSError **)error;
 
@@ -41,11 +41,11 @@ typedef uint8_t MPQDataSourceBackingStoreType;
     int _fileDescriptorBackingStore;
 }
 
-- (id)initWithData:(NSData *)data error:(NSError **)error;
-- (id)initWithPath:(NSString *)path error:(NSError **)error;
-- (id)initWithURL:(NSURL *)url error:(NSError **)error;
+- (id)initWithData:(NSData*)data error:(NSError **)error;
+- (id)initWithPath:(NSString*)path error:(NSError **)error;
+- (id)initWithURL:(NSURL*)url error:(NSError **)error;
 
 - (off_t)length:(NSError **)error;
-- (ssize_t)pread:(void *)buffer size:(size_t)size offset:(off_t)offset error:(NSError **)error;
+- (ssize_t)pread:(void*)buffer size:(size_t)size offset:(off_t)offset error:(NSError **)error;
 
 @end

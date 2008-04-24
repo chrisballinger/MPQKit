@@ -25,8 +25,8 @@ struct _archive_binary_tree {
 };
 
 static int _archive_binary_tree_compare(const void *v1, const void *v2) {
-	struct _archive_binary_tree *t1 = (struct _archive_binary_tree *)v1;
-	struct _archive_binary_tree *t2 = (struct _archive_binary_tree *)v2;
+	struct _archive_binary_tree *t1 = (struct _archive_binary_tree*)v1;
+	struct _archive_binary_tree *t2 = (struct _archive_binary_tree*)v2;
 	
 	if (t1->priority < t2->priority) return -1;
 	if (t1->priority == t2->priority) return 0;
@@ -49,7 +49,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (void)dealloc {
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree *)_archives;
+	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
 	for (uint32_t i = 0; i < _priority_count; i++) {
 		struct _archive_binary_tree_node *next = archives[i].top;
 		while (next) {
@@ -65,8 +65,8 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	[super dealloc];
 }
 
-- (void)addArchive:(MPQArchive *)archive withPriority:(uint32_t)priority {
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree *)_archives;
+- (void)addArchive:(MPQArchive*)archive withPriority:(uint32_t)priority {
+	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
 	
 	// Quick path for the first insertion
 	if (_priority_count == 0) {
@@ -105,7 +105,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 		if (_priority_count == _priority_allocated - 1) {
 			_priority_allocated += 0x10;
 			_archives = realloc(_archives, _priority_allocated * sizeof(struct _archive_binary_tree));
-			archives = (struct _archive_binary_tree *)_archives;
+			archives = (struct _archive_binary_tree*)_archives;
 		}
 		
 		// Create the new priority
@@ -135,8 +135,8 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	[archive release];
 }
 
-- (void)removeArchive:(MPQArchive *)archive {
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree *)_archives;
+- (void)removeArchive:(MPQArchive*)archive {
+	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
 	
 	// Quick path if the tree is empty
 	if (_priority_count == 0) return;
@@ -161,26 +161,26 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	}
 }
 
-- (MPQFile *)openFile:(NSString *)filename {
+- (MPQFile*)openFile:(NSString*)filename {
 	return [self openFile:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (MPQFile *)openFile:(NSString *)filename error:(NSError **)error {
+- (MPQFile*)openFile:(NSString*)filename error:(NSError **)error {
 	return [self openFile:filename locale:MPQNeutral error:error];
 }
 
-- (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale {
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale {
 	return [self openFile:filename locale:locale error:(NSError**)NULL];
 }
 
-- (MPQFile *)openFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
     NSParameterAssert(filename != nil);
 	NSError *local_error = nil;
     
     char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
     if (!filename_cstring) return nil;
 	
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree *)_archives;
+	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
 	struct _archive_binary_tree_node *next = NULL;
 	uint32_t hash_position = 0;
 	for (uint32_t i = 0; i < _priority_count; i++) {
@@ -218,35 +218,35 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     return [next->archive openFileAtPosition:hash_position error:error];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename {
+- (NSData*)copyDataForFile:(NSString*)filename {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename error:(NSError **)error {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:MPQNeutral error:error];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange {
     return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange error:(NSError **)error {
     return [self copyDataForFile:filename range:dataRange locale:MPQNeutral error:error];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale {
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:(NSError**)NULL];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
     return [self copyDataForFile:filename range:NSMakeRange(0, 0) locale:locale error:error];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale {
     return [self copyDataForFile:filename range:dataRange locale:locale error:(NSError**)NULL];
 }
 
-- (NSData *)copyDataForFile:(NSString *)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error {
+- (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError **)error {
     MPQFile *theFile = [self openFile:filename locale:locale error:error];
     if (!theFile) return nil;
     
@@ -264,26 +264,26 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
     ReturnValueWithNoError(returnData, error)
 }
 
-- (BOOL)fileExists:(NSString *)filename {
+- (BOOL)fileExists:(NSString*)filename {
 	return [self fileExists:filename locale:MPQNeutral error:(NSError**)NULL];
 }
 
-- (BOOL)fileExists:(NSString *)filename error:(NSError **)error {
+- (BOOL)fileExists:(NSString*)filename error:(NSError **)error {
 	return [self fileExists:filename locale:MPQNeutral error:error];
 }
 
-- (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale {
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale {
     return [self fileExists:filename locale:locale error:(NSError**)NULL];
 }
 
-- (BOOL)fileExists:(NSString *)filename locale:(MPQLocale)locale error:(NSError **)error {
+- (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError **)error {
     NSParameterAssert(filename != nil);
 	NSError *local_error = nil;
 	
     char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
     if (!filename_cstring) return NO;
     
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree *)_archives;
+	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
 	for (uint32_t i = 0; i < _priority_count; i++) {
 		struct _archive_binary_tree_node *next = archives[i].top;
 		while (next) {

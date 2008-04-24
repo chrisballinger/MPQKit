@@ -21,7 +21,7 @@ NSString *const MPQErrorExpectedSectorChecksum = @"MPQErrorExpectedSectorChecksu
 
 @implementation MPQError
 
-- (NSString *)localizedDescription {
+- (NSString*)localizedDescription {
 	NSDictionary *ui = [self userInfo];
 	if (ui) {
 		NSString *description = [ui objectForKey:NSLocalizedDescriptionKey];

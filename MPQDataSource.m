@@ -23,7 +23,7 @@
 
 @implementation MPQDataSourceProxy
 
-- (id)initWithData:(NSData *)data error:(NSError **)error {
+- (id)initWithData:(NSData*)data error:(NSError **)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -33,7 +33,7 @@
     ReturnValueWithNoError(self, error)
 }
 
-- (id)initWithPath:(NSString *)path error:(NSError **)error {
+- (id)initWithPath:(NSString*)path error:(NSError **)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -41,7 +41,7 @@
     
 #if defined(__APPLE__)
     const char *cPath = [path fileSystemRepresentation];
-    CFURLRef fileURLRef = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8 *)cPath, strlen(cPath) + 1, false);
+    CFURLRef fileURLRef = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8*)cPath, strlen(cPath) + 1, false);
     if (fileURLRef == NULL) ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertPathToURL, nil, error)
     
     FSRef pathRef;
@@ -98,7 +98,7 @@
             if (oerr != noErr) ReturnValueWithError(nil, NSOSStatusErrorDomain, oerr, nil, error)
             urlRef = CFURLCreateFromFSRef(NULL, &fileRef);
             if (urlRef == NULL) ReturnValueWithError(nil, MPQErrorDomain, errCouldNotConvertFSRefToURL, nil, error)
-            dataSource = [[MPQDataSource alloc] initWithURL:(NSURL *)urlRef error:error];
+            dataSource = [[MPQDataSource alloc] initWithURL:(NSURL*)urlRef error:error];
             CFRelease(urlRef);
 #else
             dataSource = [[MPQDataSource alloc] initWithPath:_path error:error];
@@ -113,7 +113,7 @@
 
 @implementation MPQDataSource
 
-- (id)initWithData:(NSData *)data error:(NSError **)error {
+- (id)initWithData:(NSData*)data error:(NSError **)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -123,7 +123,7 @@
     ReturnValueWithNoError(self, error)
 }
 
-- (id)initWithPath:(NSString *)path error:(NSError **)error {
+- (id)initWithPath:(NSString*)path error:(NSError **)error {
     self = [super init];
     if (!self) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
@@ -134,7 +134,7 @@
     ReturnValueWithNoError(self, error)
 }
 
-- (id)initWithURL:(NSURL *)url error:(NSError **)error {
+- (id)initWithURL:(NSURL*)url error:(NSError **)error {
     return [self initWithPath:[url path] error:error];
 }
 
@@ -168,7 +168,7 @@
     }
 }
 
-- (ssize_t)pread:(void *)buffer size:(size_t)size offset:(off_t)offset error:(NSError **)error {
+- (ssize_t)pread:(void*)buffer size:(size_t)size offset:(off_t)offset error:(NSError **)error {
     ssize_t bytes_read = 0;
     off_t length = [self length:error];
     if (length == -1) return -1;

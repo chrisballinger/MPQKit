@@ -10,6 +10,6 @@
 
 
 @interface NSString (MPQKitAdditions)
-- (NSString *)stringByReplacingBackslashWithSlash;
-- (NSString *)stringByReplacingSlashWithBackslash;
+- (NSString*)stringByReplacingBackslashWithSlash;
+- (NSString*)stringByReplacingSlashWithBackslash;
 @end

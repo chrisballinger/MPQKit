@@ -11,7 +11,7 @@
 
 @implementation NSString (MPQKitAdditions)
 
-- (NSString *)stringByReplacingBackslashWithSlash {
+- (NSString*)stringByReplacingBackslashWithSlash {
     NSMutableString *newStr = [self mutableCopyWithZone:[self zone]];
     NSRange searchRange;
     NSRange foundRange;
@@ -25,7 +25,7 @@
     return [newStr autorelease];
 }
 
-- (NSString *)stringByReplacingSlashWithBackslash {
+- (NSString*)stringByReplacingSlashWithBackslash {
     NSMutableString *newStr = [self mutableCopyWithZone:[self zone]];
     NSRange searchRange;
     NSRange foundRange;

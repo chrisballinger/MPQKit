@@ -48,7 +48,7 @@
 	@discussion Note that the path separator is \.
 	@result An NSString containing the file's path.
 */
-- (NSString *)name;
+- (NSString*)name;
 
 /*! 
 	@method length
@@ -66,8 +66,8 @@
 		see the documentation for fileInfoForPosition: in MPQArchive.
 	@result An NSDictionary object containing the file's information. nil on failure.
 */
-- (NSDictionary *)fileInfo;
-- (NSDictionary *)fileInfo:(NSError **)error;
+- (NSDictionary*)fileInfo;
+- (NSDictionary*)fileInfo:(NSError **)error;
 
 /*! 
 	@method seekToFileOffset:
@@ -134,8 +134,8 @@
 	@param length The number of bytes to read.
 	@result An NSData object containing the requested bytes (or less). nil on failure.
 */
-- (NSData *)copyDataOfLength:(uint32_t)length;
-- (NSData *)copyDataOfLength:(uint32_t)length error:(NSError **)error;
+- (NSData*)copyDataOfLength:(uint32_t)length;
+- (NSData*)copyDataOfLength:(uint32_t)length error:(NSError **)error;
 
 /*! 
 	@method copyDataToEndOfFile
@@ -156,8 +156,8 @@
 	@result An NSData object containing the bytes from the old file pointer down to the
 		end of file. nil on failure.
 */
-- (NSData *)copyDataToEndOfFile;
-- (NSData *)copyDataToEndOfFile:(NSError **)error;
+- (NSData*)copyDataToEndOfFile;
+- (NSData*)copyDataToEndOfFile:(NSError **)error;
 
 /*! 
 	@method getDataOfLength:
@@ -171,8 +171,8 @@
 	@param length The number of bytes to read.
 	@result An autoreleased NSData object containing the requested bytes (or less). nil on failure.
 */
-- (NSData *)getDataOfLength:(uint32_t)length;
-- (NSData *)getDataOfLength:(uint32_t)length error:(NSError **)error;
+- (NSData*)getDataOfLength:(uint32_t)length;
+- (NSData*)getDataOfLength:(uint32_t)length error:(NSError **)error;
 
 /*! 
 	@method getDataToEndOfFile
@@ -189,10 +189,10 @@
 	@result An autoreleased NSData object containing the bytes from the old file pointer down to the
 		end of file. nil on failure.
 */
-- (NSData *)getDataToEndOfFile;
-- (NSData *)getDataToEndOfFile:(NSError **)error;
+- (NSData*)getDataToEndOfFile;
+- (NSData*)getDataToEndOfFile:(NSError **)error;
 
-- (ssize_t)read:(void *)buffer size:(size_t)size error:(NSError **)error;
+- (ssize_t)read:(void*)buffer size:(size_t)size error:(NSError **)error;
 
 /*! 
 	@method writeToFile:atomically:
@@ -206,8 +206,8 @@
 	@param atomically Set to YES to write the data to a temporary file and move it to path after.
 	@result YES on success and NO on failure.
 */
-- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically;
-- (BOOL)writeToFile:(NSString *)path atomically:(BOOL)atomically error:(NSError **)error;
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically;
+- (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError **)error;
 
 @end
 

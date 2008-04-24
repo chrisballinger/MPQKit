@@ -32,7 +32,7 @@
     BOOL isMounted_;
 }
 
-- (id)initWithArchive:(MPQArchive *)archive mountPoint:(NSString *)mnt arguments:(struct fuse_args *)arguments error:(NSError **)error;
+- (id)initWithArchive:(MPQArchive*)archive mountPoint:(NSString*)mnt arguments:(struct fuse_args*)arguments error:(NSError **)error;
 - (void)startFuse;
 
 @end

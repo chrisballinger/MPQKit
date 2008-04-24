@@ -11,7 +11,7 @@
 
 @implementation MPQFSApplicationDelegate
 
-- (NSArray *)standardListfileArguments_ {
+- (NSArray*)standardListfileArguments_ {
     NSString *listfileDirectory = [[NSBundle mainBundle] pathForResource:@"listfiles" ofType:@""];
     if (!listfileDirectory) return [NSArray array];
     
@@ -27,7 +27,7 @@
     return arguments;
 }
 
-- (NSString *)mountPointForArchivePath_:(NSString *)path {
+- (NSString*)mountPointForArchivePath_:(NSString*)path {
     NSFileManager *manager = [NSFileManager defaultManager];
     NSString *basePoint = [@"/Volumes" stringByAppendingPathComponent:[path lastPathComponent]];
     
@@ -41,7 +41,7 @@
     return mountPoint;
 }
 
-- (BOOL)mountArchive_:(NSString *)path loadingListfiles:(BOOL)loadListfiles {
+- (BOOL)mountArchive_:(NSString*)path loadingListfiles:(BOOL)loadListfiles {
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:path, [self mountPointForArchivePath_:path], nil];
     if (loadListfiles) [arguments addObjectsFromArray:[self standardListfileArguments_]];
     // FIXME: add support for volicon
@@ -55,7 +55,7 @@
     return YES;
 }
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename {
+- (BOOL)application:(NSApplication*)theApplication openFile:(NSString*)filename {
     return [self mountArchive_:filename loadingListfiles:NO];
 }
 

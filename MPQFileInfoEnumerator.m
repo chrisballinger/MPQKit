@@ -11,16 +11,16 @@
 
 
 @interface MPQArchive (Private)
-- (NSDictionary *)_nextFileInfo:(uint32_t *)hash_position;
+- (NSDictionary*)_nextFileInfo:(uint32_t*)hash_position;
 @end
 
 @implementation _MPQFileInfoEnumerator
 
-+ (id)enumeratorWithArchive:(MPQArchive *)archive {
++ (id)enumeratorWithArchive:(MPQArchive*)archive {
     return [[[_MPQFileInfoEnumerator alloc] initWithArchive:archive] autorelease];
 }
 
-- (id)initWithArchive:(MPQArchive *)archive {
+- (id)initWithArchive:(MPQArchive*)archive {
     self = [super init];
     if (!self) return nil;
     
@@ -39,7 +39,7 @@
     return [_archive _nextFileInfo:&_position];
 }
 
-- (NSArray *)allObjects {
+- (NSArray*)allObjects {
     id obj;
     NSMutableArray *arr = [NSMutableArray array];
     while ((obj = [self nextObject])) [arr addObject:obj];

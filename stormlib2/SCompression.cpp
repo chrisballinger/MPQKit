@@ -77,7 +77,7 @@ typedef struct
 
 static uint32_t ReadInputData(uint8_t *buf, uint32_t *size, void *param)
 {
-    TDataInfo *pInfo = (TDataInfo *)param;
+    TDataInfo *pInfo = (TDataInfo*)param;
     uint32_t nMaxAvail = (pInfo->nInBytes - pInfo->nInPos);
     uint32_t nToRead = *size;
 
@@ -101,7 +101,7 @@ static uint32_t ReadInputData(uint8_t *buf, uint32_t *size, void *param)
 
 static void WriteOutputData(uint8_t *buf, uint32_t *size, void *param)
 {
-    TDataInfo *pInfo = (TDataInfo *)param;
+    TDataInfo *pInfo = (TDataInfo*)param;
     uint32_t nMaxWrite = (pInfo->nMaxOut - pInfo->nOutPos);
     uint32_t nToWrite = *size;
 
@@ -123,24 +123,24 @@ static void WriteOutputData(uint8_t *buf, uint32_t *size, void *param)
 
 int Compress_adpcm_mono(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
-    *outBufferLength = CompressWave((unsigned char *)outBuffer, *outBufferLength, (short *)inBuffer, inBufferLength, 1, compressionLevel);
+    *outBufferLength = CompressWave((unsigned char*)outBuffer, *outBufferLength, (short*)inBuffer, inBufferLength, 1, compressionLevel);
     return 1;
 }
 
 int Decompress_adpcm_mono(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength)
 {
-    *outBufferLength = DecompressWave((int16_t *)outBuffer, *outBufferLength, (uint8_t *)inBuffer, inBufferLength, 1);
+    *outBufferLength = DecompressWave((int16_t*)outBuffer, *outBufferLength, (uint8_t*)inBuffer, inBufferLength, 1);
     return 1;
 }
 
 int Compress_adpcm_stereo(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
-    *outBufferLength = CompressWave((unsigned char *)outBuffer, *outBufferLength, (short *)inBuffer, inBufferLength, 2, compressionLevel);
+    *outBufferLength = CompressWave((unsigned char*)outBuffer, *outBufferLength, (short*)inBuffer, inBufferLength, 2, compressionLevel);
     return 1;
 }
 
 int Decompress_adpcm_stereo(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength) {
-    *outBufferLength = DecompressWave((int16_t *)outBuffer, *outBufferLength, (uint8_t *)inBuffer, inBufferLength, 2);
+    *outBufferLength = DecompressWave((int16_t*)outBuffer, *outBufferLength, (uint8_t*)inBuffer, inBufferLength, 2);
     return 1;
 }
 
@@ -156,16 +156,16 @@ int Compress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
     TOutputStream os;
 
     // Initialize output stream
-    os.pbOutBuffer = (uint8_t *)outBuffer;
+    os.pbOutBuffer = (uint8_t*)outBuffer;
     os.dwOutSize   = *outBufferLength;
-    os.pbOutPos    = (uint8_t *)outBuffer;
+    os.pbOutPos    = (uint8_t*)outBuffer;
     os.dwBitBuff   = 0;
     os.nBits       = 0;
 
     // Initialize the Huffman tree for compression
     ht->InitTree(true);
 
-    *outBufferLength = ht->DoCompression(&os, (uint8_t *)inBuffer, inBufferLength, compressionType);
+    *outBufferLength = ht->DoCompression(&os, (uint8_t*)inBuffer, inBufferLength, compressionType);
 
     delete ht;
     return 1;
@@ -174,12 +174,12 @@ int Compress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
 int Decompress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength)
 {
     THuffmanTree *ht = THuffmanTree::AllocateTree();
-    TInputStream is((uint8_t *)inBuffer, inBufferLength);
+    TInputStream is((uint8_t*)inBuffer, inBufferLength);
 
     // Initialize the Huffman tree for decompression
     ht->InitTree(false);
 
-    *outBufferLength = ht->DoDecompression((uint8_t *)outBuffer, *outBufferLength, &is);
+    *outBufferLength = ht->DoDecompression((uint8_t*)outBuffer, *outBufferLength, &is);
     
     delete ht;
     return 1;
@@ -197,10 +197,10 @@ int Compress_zlib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
     int nResult;
     
     // Fill the stream structure for zlib
-    z.next_in   = (Bytef *)inBuffer;
+    z.next_in   = (Bytef*)inBuffer;
     z.avail_in  = inBufferLength;
     z.total_in  = inBufferLength;
-    z.next_out  = (Bytef *)outBuffer;
+    z.next_out  = (Bytef*)outBuffer;
     z.avail_out = *outBufferLength;
     z.total_out = 0;
     z.zalloc    = 0;
@@ -231,10 +231,10 @@ int Decompress_zlib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, 
     int nResult;
     
     // Fill the stream structure for zlib
-    z.next_in   = (Bytef *)inBuffer;
+    z.next_in   = (Bytef*)inBuffer;
     z.avail_in  = inBufferLength;
     z.total_in  = inBufferLength;
-    z.next_out  = (Bytef *)outBuffer;
+    z.next_out  = (Bytef*)outBuffer;
     z.avail_out = *outBufferLength;
     z.total_out = 0;
     z.zalloc    = 0;
@@ -273,10 +273,10 @@ int Compress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, u
     uint32_t ctype;                     // Compression type
 
     // Fill data information structure
-    Info.pInBuff  = (uint8_t *)inBuffer;
+    Info.pInBuff  = (uint8_t*)inBuffer;
     Info.nInPos   = 0;
     Info.nInBytes = inBufferLength;
-    Info.pOutBuff = (uint8_t *)outBuffer;
+    Info.pOutBuff = (uint8_t*)outBuffer;
     Info.nOutPos  = 0;
     Info.nMaxOut  = *outBufferLength;
 
@@ -298,10 +298,10 @@ int Decompress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer,
     uint8_t work_buf[EXP_BUFFER_SIZE];  // Pklib's work buffer
 
     // Fill data information structure
-    Info.pInBuff  = (uint8_t *)inBuffer;
+    Info.pInBuff  = (uint8_t*)inBuffer;
     Info.nInPos   = 0;
     Info.nInBytes = inBufferLength;
-    Info.pOutBuff = (uint8_t *)outBuffer;
+    Info.pOutBuff = (uint8_t*)outBuffer;
     Info.nOutPos  = 0;
     Info.nMaxOut  = *outBufferLength;
 
@@ -330,9 +330,9 @@ int Compress_bz2(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uin
     int nResult;
 	
     // Fill the stream structure for bz2
-    s.next_in   = (char *)inBuffer;
+    s.next_in   = (char*)inBuffer;
     s.avail_in  = inBufferLength;
-    s.next_out  = (char *)outBuffer;
+    s.next_out  = (char*)outBuffer;
     s.avail_out = *outBufferLength;
 	s.bzalloc   = 0;
 	s.bzfree    = 0;
@@ -362,9 +362,9 @@ int Decompress_bz2(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, u
     int nResult;
 	
     // Fill the stream structure for bz2
-    s.next_in   = (char *)inBuffer;
+    s.next_in   = (char*)inBuffer;
     s.avail_in  = inBufferLength;
-    s.next_out  = (char *)outBuffer;
+    s.next_out  = (char*)outBuffer;
     s.avail_out = *outBufferLength;
 	s.bzalloc   = 0;
 	s.bzfree    = 0;
@@ -463,7 +463,7 @@ int SCompCompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
             // Perform the partial compression
             dwOutSize = *outBufferLength - 1;
 
-            cmp_table[i].Compress((uint8_t *)pbOutput + 1, &dwOutSize, pbInput, dwInSize, compressionType, compressionLevel);
+            cmp_table[i].Compress((uint8_t*)pbOutput + 1, &dwOutSize, pbInput, dwInSize, compressionType, compressionLevel);
             if(dwOutSize == 0)
             {
                 *outBufferLength = 0;
@@ -475,7 +475,7 @@ int SCompCompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
             if(dwOutSize >= dwInSize - 1)
             {
                 if(dwDoneCount > 0)
-                    pbOutput = (uint8_t *)pbOutput + 1;
+                    pbOutput = (uint8_t*)pbOutput + 1;
 
                 memcpy(pbOutput, pbInput, dwInSize);
                 pbInput = pbOutput;
@@ -484,7 +484,7 @@ int SCompCompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
             }
             else
             {
-                pbInput = (uint8_t *)pbOutput + 1;
+                pbInput = (uint8_t*)pbOutput + 1;
                 dwInSize = dwOutSize;
                 dwDoneCount++;
             }
@@ -497,7 +497,7 @@ int SCompCompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
         // Did we actually use the output of a compressor and have enough space in the output buffer to store the final compressed data and the compressor BOM
         if(compressors && (dwInSize + 1) <= *outBufferLength)
         {
-            *((uint8_t *)outBuffer) = compressors;
+            *((uint8_t*)outBuffer) = compressors;
             *outBufferLength = dwInSize + 1;
         }
         else
@@ -563,8 +563,8 @@ int SCompDecompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, 
 	}
     
     // Get applied compression types and decrement data length
-    fDecompressions1 = fDecompressions2 = *((uint8_t *)inBuffer);
-    inBuffer = (void *)((uint8_t *)inBuffer + 1);
+    fDecompressions1 = fDecompressions2 = *((uint8_t*)inBuffer);
+    inBuffer = (void*)((uint8_t*)inBuffer + 1);
     inBufferLength--;
     
     // Search decompression table type and get all types of compression

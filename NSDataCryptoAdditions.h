@@ -9,9 +9,9 @@
 #import <Foundation/Foundation.h>
 
 @interface NSData (CryptographicAdditions)
-- (NSData *)md5;
-- (NSString *)md5String;
+- (NSData*)md5;
+- (NSString*)md5String;
 
-- (NSData *)sha1;
-- (NSString *)sha1String;
+- (NSData*)sha1;
+- (NSString*)sha1String;
 @end

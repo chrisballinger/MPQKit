@@ -16,7 +16,7 @@
     uint32_t _position;
 }
 
-+ (id)enumeratorWithArchive:(MPQArchive *)archive;
-- (id)initWithArchive:(MPQArchive *)archive;
++ (id)enumeratorWithArchive:(MPQArchive*)archive;
+- (id)initWithArchive:(MPQArchive*)archive;
 
 @end
