@@ -107,7 +107,7 @@ struct mpq_deferred_operation {
     MPQDeferredOperationType type;
     mpq_deferred_operation_file_context_t primary_file_context;
     void* context;
-    struct mpq_deferred_operation *previous;
+    struct mpq_deferred_operation* previous;
 };
 typedef struct mpq_deferred_operation mpq_deferred_operation_t;
 
@@ -172,11 +172,11 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     char** filename_table;
     NSDictionary** file_info_cache;
     
-    void *attributes_data;
+    void* attributes_data;
     uint32_t attributes_data_size;
     
     mpq_hash_table_entry_t* weak_signature_hash_entry;
-    uint8_t *strong_signature;
+    uint8_t* strong_signature;
     
     uint32_t open_file_count;
     uint32_t* open_file_count_table;
