@@ -13,13 +13,13 @@
 #import <Foundation/NSString.h>
 
 // Error domains
-extern NSString *const MPQErrorDomain;
+extern NSString* const MPQErrorDomain;
 
 // Error user info dictionary keys
-extern NSString *const MPQErrorFileInfo;
-extern NSString *const MPQErrorSectorIndex;
-extern NSString *const MPQErrorComputedSectorChecksum;
-extern NSString *const MPQErrorExpectedSectorChecksum;
+extern NSString* const MPQErrorFileInfo;
+extern NSString* const MPQErrorSectorIndex;
+extern NSString* const MPQErrorComputedSectorChecksum;
+extern NSString* const MPQErrorExpectedSectorChecksum;
 
 // MPQ errors
 enum {
@@ -68,8 +68,8 @@ enum {
 	errInvalidSectorChecksum = 43,
 };
 
-static inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool *p) {
-	NSError *e = (error) ? *error : (NSError*)nil;
+static inline void MPQTransferErrorAndDrainPool(NSError **error, NSAutoreleasePool* p) {
+	NSError* e = (error) ? *error : (NSError*)nil;
 	[e retain];
 #if !defined(__APPLE__)
 	[p emptyPool];

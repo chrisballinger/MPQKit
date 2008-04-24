@@ -20,8 +20,8 @@
 
 union TByteAndWordPtr
 {
-    int16_t *pw;
-    uint8_t *pb;
+    int16_t* pw;
+    uint8_t* pb;
 };
 typedef union TByteAndWordPtr TByteAndWordPtr;
 
@@ -63,7 +63,7 @@ static int32_t Table1503F1A0[] =
 // CompressWave
 
 // 1500EF70
-uint32_t CompressWave(uint8_t *outBuffer, uint32_t outBufferLength, int16_t *inBuffer, uint32_t inBufferLength, uint8_t channels, uint8_t compressionLevel)
+uint32_t CompressWave(uint8_t* outBuffer, uint32_t outBufferLength, int16_t* inBuffer, uint32_t inBufferLength, uint8_t channels, uint8_t compressionLevel)
 {
     TByteAndWordPtr out;                                // Pointer to the output buffer
     int32_t SInt32Array1[2];
@@ -216,11 +216,11 @@ uint32_t CompressWave(uint8_t *outBuffer, uint32_t outBufferLength, int16_t *inB
 // DecompressWave
 
 // 1500F230
-uint32_t DecompressWave(int16_t *outBuffer, uint32_t outBufferLength, uint8_t *inBuffer, uint32_t inBufferLength, uint8_t channels)
+uint32_t DecompressWave(int16_t* outBuffer, uint32_t outBufferLength, uint8_t* inBuffer, uint32_t inBufferLength, uint8_t channels)
 {
     TByteAndWordPtr out;                // Output buffer
     TByteAndWordPtr in;
-    uint8_t *pbInBufferEnd = (inBuffer + inBufferLength);
+    uint8_t* pbInBufferEnd = (inBuffer + inBufferLength);
     int32_t SInt32Array1[2];
     int32_t SInt32Array2[2];
     int16_t nOneWord;

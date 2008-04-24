@@ -20,9 +20,9 @@
 #define _FILE_OFFSET_BITS 64
 #import <fuse.h>
 
-static NSString *archive_path = nil;
-static NSMutableArray *listfiles = nil;
-static NSString *mount_point = nil;
+static NSString* archive_path = nil;
+static NSMutableArray* listfiles = nil;
+static NSString* mount_point = nil;
 
 static BOOL has_volname = NO;
 
@@ -42,7 +42,7 @@ static struct fuse_opt mpqfs_opts[] = {
     FUSE_OPT_END
 };
 
-static void usage(const char *program) {
+static void usage(const char* program) {
     fprintf(stderr, 
 "usage: %s archive mountpoint [options]\n"
 "\n"
@@ -58,8 +58,8 @@ static void usage(const char *program) {
 
 static struct fuse_operations dummy_opts;
 
-static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args *outargs) {
-    NSString *listfile = nil;
+static int mpqfs_opt_proc(void* data, const char* arg, int key, struct fuse_args* outargs) {
+    NSString* listfile = nil;
     switch (key) {
         case FUSE_OPT_KEY_OPT:
             if (strstr(arg, "volname") != NULL) {
@@ -102,9 +102,9 @@ static int mpqfs_opt_proc(void *data, const char *arg, int key, struct fuse_args
     }
 }
 
-int main(int argc, char *argv[]) {
-    NSAutoreleasePool *p = [NSAutoreleasePool new];
-    NSError *error = nil;
+int main(int argc, char* argv[]) {
+    NSAutoreleasePool* p = [NSAutoreleasePool new];
+    NSError* error = nil;
     
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
     listfiles = [[NSMutableArray alloc] init];
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
         goto Exit1;
     }
     
-    MPQArchive *archive = [[MPQArchive alloc] initWithPath:archive_path error:&error];
+    MPQArchive* archive = [[MPQArchive alloc] initWithPath:archive_path error:&error];
     if (!archive) {
         fprintf(stderr, "error opening archive: %s\n", [[error description] UTF8String]);
         fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
@@ -132,15 +132,15 @@ int main(int argc, char *argv[]) {
     [archive_path release];
     
     if ([listfiles count] > 0) {
-        NSEnumerator *listfileEnum = [listfiles objectEnumerator];
-        NSString *listfile;
+        NSEnumerator* listfileEnum = [listfiles objectEnumerator];
+        NSString* listfile;
         while ((listfile = [listfileEnum nextObject])) {
             [archive addContentsOfFileToFileList:listfile];
         }
     }
     [listfiles release];
     
-    MPQFileSystem *fs = [[MPQFileSystem alloc] initWithArchive:archive mountPoint:mount_point arguments:&args error:&error];
+    MPQFileSystem* fs = [[MPQFileSystem alloc] initWithArchive:archive mountPoint:mount_point arguments:&args error:&error];
     if (!fs) {
         fprintf(stderr, "error creating MPQ filesystem: %s\n", [[error description] UTF8String]);
         [archive release];

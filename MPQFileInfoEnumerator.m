@@ -41,7 +41,7 @@
 
 - (NSArray*)allObjects {
     id obj;
-    NSMutableArray *arr = [NSMutableArray array];
+    NSMutableArray* arr = [NSMutableArray array];
     while ((obj = [self nextObject])) [arr addObject:obj];
     return [NSArray arrayWithArray:arr];
 }

@@ -410,8 +410,8 @@ static uint32_t Expand(TDcmpStruct * pWork)
 // Main exploding function.
 
 int pk_explode(
-   uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
-   void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
+   uint32_t     (*read_buf)(uint8_t* buf, uint32_t* size, void* param),
+   void         (*write_buf)(uint8_t* buf, uint32_t* size, void* param),
    uint8_t      *work_buf,
    void         *param)
 {

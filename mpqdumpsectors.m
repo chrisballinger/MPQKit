@@ -14,9 +14,9 @@
 CFStringEncoding CFStringFileSystemEncoding(void);
 #endif
 
-int main(int argc, char *argv[]) {
-    NSAutoreleasePool *p = [NSAutoreleasePool new];
-    NSError *error = nil;
+int main(int argc, char* argv[]) {
+    NSAutoreleasePool* p = [NSAutoreleasePool new];
+    NSError* error = nil;
     
     
     

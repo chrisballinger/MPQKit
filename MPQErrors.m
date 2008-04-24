@@ -12,19 +12,19 @@
 #import <Foundation/NSDictionary.h>
 #import <MPQKit/MPQKitPrivate.h>
 
-NSString *const MPQErrorDomain = @"MPQErrorDomain";
+NSString* const MPQErrorDomain = @"MPQErrorDomain";
 
-NSString *const MPQErrorFileInfo = @"MPQErrorFileInfo";
-NSString *const MPQErrorSectorIndex = @"MPQErrorSectorIndex";
-NSString *const MPQErrorComputedSectorChecksum = @"MPQErrorComputedSectorChecksum";
-NSString *const MPQErrorExpectedSectorChecksum = @"MPQErrorExpectedSectorChecksum";
+NSString* const MPQErrorFileInfo = @"MPQErrorFileInfo";
+NSString* const MPQErrorSectorIndex = @"MPQErrorSectorIndex";
+NSString* const MPQErrorComputedSectorChecksum = @"MPQErrorComputedSectorChecksum";
+NSString* const MPQErrorExpectedSectorChecksum = @"MPQErrorExpectedSectorChecksum";
 
 @implementation MPQError
 
 - (NSString*)localizedDescription {
-	NSDictionary *ui = [self userInfo];
+	NSDictionary* ui = [self userInfo];
 	if (ui) {
-		NSString *description = [ui objectForKey:NSLocalizedDescriptionKey];
+		NSString* description = [ui objectForKey:NSLocalizedDescriptionKey];
 		if (description) return description;
 	}
 	

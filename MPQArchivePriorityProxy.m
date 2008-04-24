@@ -15,18 +15,18 @@
 #import "MPQArchivePriorityProxy.h"
 
 struct _archive_binary_tree_node {
-	MPQArchive *archive;
-	struct _archive_binary_tree_node *next;
+	MPQArchive* archive;
+	struct _archive_binary_tree_node* next;
 };
 
 struct _archive_binary_tree {
 	uint32_t priority;
-	struct _archive_binary_tree_node *top;
+	struct _archive_binary_tree_node* top;
 };
 
-static int _archive_binary_tree_compare(const void *v1, const void *v2) {
-	struct _archive_binary_tree *t1 = (struct _archive_binary_tree*)v1;
-	struct _archive_binary_tree *t2 = (struct _archive_binary_tree*)v2;
+static int _archive_binary_tree_compare(const void* v1, const void* v2) {
+	struct _archive_binary_tree* t1 = (struct _archive_binary_tree*)v1;
+	struct _archive_binary_tree* t2 = (struct _archive_binary_tree*)v2;
 	
 	if (t1->priority < t2->priority) return -1;
 	if (t1->priority == t2->priority) return 0;
@@ -49,11 +49,11 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (void)dealloc {
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
+	struct _archive_binary_tree* archives = (struct _archive_binary_tree*)_archives;
 	for (uint32_t i = 0; i < _priority_count; i++) {
-		struct _archive_binary_tree_node *next = archives[i].top;
+		struct _archive_binary_tree_node* next = archives[i].top;
 		while (next) {
-			struct _archive_binary_tree_node *current = next;
+			struct _archive_binary_tree_node* current = next;
 			[current->archive release];
 			next = current->next;
 			free(current);
@@ -66,7 +66,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (void)addArchive:(MPQArchive*)archive withPriority:(uint32_t)priority {
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
+	struct _archive_binary_tree* archives = (struct _archive_binary_tree*)_archives;
 	
 	// Quick path for the first insertion
 	if (_priority_count == 0) {
@@ -88,7 +88,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	// Binary search to find the priority queue
 	uint32_t l = 0;
 	uint32_t r = _priority_count - 1;
-	struct _archive_binary_tree *requested_priority_tree = NULL;
+	struct _archive_binary_tree* requested_priority_tree = NULL;
 	
 	while (l <= r) {
 		uint32_t m = l + (r - l) / 2;
@@ -124,7 +124,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 
 	} else {
 		// Push the archive at the top
-		struct _archive_binary_tree_node *old = requested_priority_tree->top;
+		struct _archive_binary_tree_node* old = requested_priority_tree->top;
 		requested_priority_tree->top = malloc(sizeof(struct _archive_binary_tree_node));
 		requested_priority_tree->top->archive = [archive retain];
 		requested_priority_tree->top->next = old;
@@ -136,7 +136,7 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (void)removeArchive:(MPQArchive*)archive {
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
+	struct _archive_binary_tree* archives = (struct _archive_binary_tree*)_archives;
 	
 	// Quick path if the tree is empty
 	if (_priority_count == 0) return;
@@ -146,9 +146,9 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 	
 	// Linear search for the archive
 	for (uint32_t i = 0; i < _priority_count; i++) {
-		struct _archive_binary_tree_node *next = archives[i].top;
+		struct _archive_binary_tree_node* next = archives[i].top;
 		while (next) {
-			struct _archive_binary_tree_node *current = next;
+			struct _archive_binary_tree_node* current = next;
 			if (current->archive == archive) {
 				[current->archive release];
 				next = current->next;
@@ -175,13 +175,13 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 
 - (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
     NSParameterAssert(filename != nil);
-	NSError *local_error = nil;
+	NSError* local_error = nil;
     
-    char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
+    char* filename_cstring = _MPQCreateASCIIFilename(filename, error);
     if (!filename_cstring) return nil;
 	
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
-	struct _archive_binary_tree_node *next = NULL;
+	struct _archive_binary_tree* archives = (struct _archive_binary_tree*)_archives;
+	struct _archive_binary_tree_node* next = NULL;
 	uint32_t hash_position = 0;
 	for (uint32_t i = 0; i < _priority_count; i++) {
 		next = archives[i].top;
@@ -247,10 +247,10 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 }
 
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError**)error {
-    MPQFile *theFile = [self openFile:filename locale:locale error:error];
+    MPQFile* theFile = [self openFile:filename locale:locale error:error];
     if (!theFile) return nil;
     
-    NSData *returnData = nil;
+    NSData* returnData = nil;
     if (dataRange.length == 0) {
         [theFile seekToFileOffset:dataRange.location];
         returnData = [theFile copyDataToEndOfFile];
@@ -278,14 +278,14 @@ static int _archive_binary_tree_compare(const void *v1, const void *v2) {
 
 - (BOOL)fileExists:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
     NSParameterAssert(filename != nil);
-	NSError *local_error = nil;
+	NSError* local_error = nil;
 	
-    char *filename_cstring = _MPQCreateASCIIFilename(filename, error);
+    char* filename_cstring = _MPQCreateASCIIFilename(filename, error);
     if (!filename_cstring) return NO;
     
-	struct _archive_binary_tree *archives = (struct _archive_binary_tree*)_archives;
+	struct _archive_binary_tree* archives = (struct _archive_binary_tree*)_archives;
 	for (uint32_t i = 0; i < _priority_count; i++) {
-		struct _archive_binary_tree_node *next = archives[i].top;
+		struct _archive_binary_tree_node* next = archives[i].top;
 		while (next) {
 			// Find the file in the hash table
 			uint32_t hash_position = [next->archive findHashPosition:filename_cstring locale:locale error:&local_error];

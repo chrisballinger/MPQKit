@@ -28,7 +28,7 @@
 static const char* kMPQFileSystemExtendedAttributeNameC = "org.macstorm.mpqkit";
 static NSString* kMPQFileSystemExtendedAttributeName = @"org.macstorm.mpqkit";
 
-static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
+static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
     assert(dest);
     assert(src);
     
@@ -43,10 +43,10 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 #pragma mark MPQFSTree
 @interface MPQFSTree : NSObject {
-    MPQFSTree *parent_;
-    NSString *name_;
-    NSMutableDictionary *subtrees_;
-    NSMutableDictionary *attributes;
+    MPQFSTree* parent_;
+    NSString* name_;
+    NSMutableDictionary* subtrees_;
+    NSMutableDictionary* attributes;
 }
 
 - (NSString*)name;
@@ -75,8 +75,8 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 - (void)dealloc {
-    NSEnumerator *subtreeEnum = [subtrees_ objectEnumerator];
-    MPQFSTree *subtree;
+    NSEnumerator* subtreeEnum = [subtrees_ objectEnumerator];
+    MPQFSTree* subtree;
     while ((subtree = [subtreeEnum nextObject])) {
         subtree->parent_ = nil;
     }
@@ -93,9 +93,9 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 - (MPQFSTree*)subtreeForName:(NSString*)name create:(BOOL)create {
-    NSString *key = [name uppercaseString];
+    NSString* key = [name uppercaseString];
     
-    MPQFSTree *subtree = [subtrees_ objectForKey:key];
+    MPQFSTree* subtree = [subtrees_ objectForKey:key];
     if (!subtree && create) {
         subtree = [MPQFSTree new];
         subtree->name_ = [name copy];
@@ -116,15 +116,15 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 - (void)deleteSubtreeWithName:(NSString*)name {
-    NSString *key = [name uppercaseString];
+    NSString* key = [name uppercaseString];
     [subtrees_ removeObjectForKey:key];
 }
 
 - (uint32_t)totalNodeCount {
     uint32_t n = (uint32_t)[subtrees_ count];
     
-    NSEnumerator *subtreeEnum = [subtrees_ objectEnumerator];
-    MPQFSTree *subtree;
+    NSEnumerator* subtreeEnum = [subtrees_ objectEnumerator];
+    MPQFSTree* subtree;
     while ((subtree = [subtreeEnum nextObject])) {
         n += [subtree totalNodeCount];
     }
@@ -142,7 +142,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     if ([[components objectAtIndex:0] length] == 0) [components removeObjectAtIndex:0];
     if ([components count] == 0) return self;
     
-    NSString *nodeName = [components objectAtIndex:0];
+    NSString* nodeName = [components objectAtIndex:0];
     node = [subtrees_ objectForKey:nodeName];
     if (node) {
         if (componentCount == 1) return node;
@@ -155,7 +155,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 - (MPQFSTree*)findSubtree:(NSString*)path {
-    NSArray *components = [[path uppercaseString] componentsSeparatedByString:@"\\"];
+    NSArray* components = [[path uppercaseString] componentsSeparatedByString:@"\\"];
     return [self findSubtreeComponents_:[[components mutableCopy] autorelease]];
 }
 
@@ -186,34 +186,34 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     if (![archive_ loadInternalListfile:error]) {
         if ((error && [*error code] != errHashTableEntryNotFound) || !error) return NO;
     }
-    NSAutoreleasePool *p = [NSAutoreleasePool new];
+    NSAutoreleasePool* p = [NSAutoreleasePool new];
 #if !defined(GNUSTEP)
-    NSLocale *locale = [NSLocale currentLocale];
+    NSLocale* locale = [NSLocale currentLocale];
 #endif
     
-    NSEnumerator *fileInfoEnumerator = [archive_ fileInfoEnumerator];
-    NSDictionary *fileInfo;
+    NSEnumerator* fileInfoEnumerator = [archive_ fileInfoEnumerator];
+    NSDictionary* fileInfo;
     while ((fileInfo = [fileInfoEnumerator nextObject])) {
-        NSString *filename = [fileInfo objectForKey:MPQFilename];
+        NSString* filename = [fileInfo objectForKey:MPQFilename];
         if (!filename) continue;
         if (![[fileInfo objectForKey:MPQFileCanOpenWithoutFilename] boolValue]) continue;
         
 #if !defined(GNUSTEP)
-        NSLocale *file_locale = [MPQArchive localeForMPQLocale:[[fileInfo objectForKey:MPQFileLocale] unsignedShortValue]];
+        NSLocale* file_locale = [MPQArchive localeForMPQLocale:[[fileInfo objectForKey:MPQFileLocale] unsignedShortValue]];
         if (file_locale) {
-            NSString *file_locale_id = [locale displayNameForKey:NSLocaleIdentifier value:[file_locale objectForKey:NSLocaleIdentifier]];
+            NSString* file_locale_id = [locale displayNameForKey:NSLocaleIdentifier value:[file_locale objectForKey:NSLocaleIdentifier]];
             if (!file_locale_id) file_locale_id = [file_locale localeIdentifier];
-            NSString *extension = [filename pathExtension];
+            NSString* extension = [filename pathExtension];
             filename = [NSString stringWithFormat:@"%@ - %@%@%@", 
                 [filename stringByDeletingPathExtension], file_locale_id, ([extension length] == 0) ? @"" : @".", extension];
         }
 #endif
         
-        MPQFSTree *current_tree = archiveTree_;
-        NSArray *components = [filename componentsSeparatedByString:@"\\"];
+        MPQFSTree* current_tree = archiveTree_;
+        NSArray* components = [filename componentsSeparatedByString:@"\\"];
         
-        NSEnumerator *nodeEnumerator = [components objectEnumerator];
-        NSString *node;
+        NSEnumerator* nodeEnumerator = [components objectEnumerator];
+        NSString* node;
         while ((node = [nodeEnumerator nextObject])) {
             current_tree = [current_tree subtreeForName:node create:YES];
         }
@@ -291,7 +291,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 - (int)fillStatvfsBuffer:(struct statvfs*)stbuf forPath:(NSString*)path {
     // TODO: Should we have memset the statbuf to zero, or does fuse pre-fill values?
-    NSDictionary *archive_info = [archive_ archiveInfo];
+    NSDictionary* archive_info = [archive_ archiveInfo];
     
     // Block size
     stbuf->f_bsize = stbuf->f_frsize = MPQ_BASE_SECTOR_SIZE << [[archive_info objectForKey:MPQSectorSizeShift] unsignedIntValue];
@@ -334,7 +334,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
     // Since the NSDate returns a double, we can fill this in as well.
     
     // TODO: Fill mdate, atime, ctime from the MPQ time attribute
-    NSDate *cdate = [fileInfo objectForKey:@"CreationDate"];
+    NSDate* cdate = [fileInfo objectForKey:@"CreationDate"];
     
     // mtime, atime
 //    if (mdate) {
@@ -371,12 +371,12 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 - (int)fillStatBuffer:(struct stat*)stbuf forPath:(NSString*)path {
-    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    MPQFSTree* node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
     if (!node) return -ENOENT;
     BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
     
     // Get file information from the archive
-    NSDictionary *fileInfo = [NSDictionary dictionary];
+    NSDictionary* fileInfo = [NSDictionary dictionary];
     if (!isDirectory) fileInfo = [archive_ fileInfoForPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue]];
     
     return [self fillStatBuffer:stbuf withFileInfo:fileInfo isDirectory:isDirectory];
@@ -385,7 +385,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 #pragma mark Extended attributes
 
 - (int)listExtendedAttributes:(NSString*)path inBuffer:(char*)buffer size:(size_t)size {
-    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    MPQFSTree* node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
     if (!node) return -ENOENT;
 	BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
 	
@@ -395,7 +395,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 }
 
 - (int)getExtendedAttribute:(NSString*)path attribute:(NSString*)name buffer:(char*)buffer size:(size_t)size {
-    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    MPQFSTree* node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
     if (!node) return -ENOENT;
 	BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
 	
@@ -406,7 +406,7 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 	if (![NSPropertyListSerialization propertyList:fileInfo isValidForFormat:NSPropertyListXMLFormat_v1_0]) return -EIO;
 	
 	NSString* error = nil;
-	NSData *fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListXMLFormat_v1_0 errorDescription:&error];
+	NSData* fileInfoXML = [NSPropertyListSerialization dataFromPropertyList:fileInfo format:NSPropertyListXMLFormat_v1_0 errorDescription:&error];
 	if (!fileInfoXML) return -EIO;
 	
 	if (buffer) {if (size < [fileInfoXML length]) return -ERANGE; else [fileInfoXML getBytes:buffer];}
@@ -418,13 +418,13 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 - (MPQFile*)openFileAtPath:(NSString*)path mode:(int)mode error:(NSError**)error {
     if (mode & (O_WRONLY | O_RDWR | O_APPEND | O_CREAT | O_TRUNC)) ReturnValueWithError(nil, NSPOSIXErrorDomain, EROFS, nil, error)
     
-    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    MPQFSTree* node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
     if (!node) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
     
     BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
     if (isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, EISDIR, nil, error)
     
-    MPQFile *file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:(NSError**)NULL];
+    MPQFile* file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:(NSError**)NULL];
     if (!file) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
     ReturnValueWithNoError(file, error)
 }
@@ -436,15 +436,15 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 #pragma mark Reading
 
 - (NSArray*)fullDirectoryContentsAtPath:(NSString*)path error:(NSError**)error {
-    MPQFSTree *node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
+    MPQFSTree* node = [archiveTree_ findSubtree:[path stringByReplacingSlashWithBackslash]];
     BOOL isDirectory = ([[node subtrees] count] == 0) ? NO : YES;
     if (!isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOTDIR, nil, error)
     
-    NSMutableArray *fullContents = [NSMutableArray array];
+    NSMutableArray* fullContents = [NSMutableArray array];
     [fullContents addObject:@"."];
     [fullContents addObject:@".."];
     
-    NSEnumerator *subtreeEnum = [node subtreeEnumerator];
+    NSEnumerator* subtreeEnum = [node subtreeEnumerator];
     while ((node = [subtreeEnum nextObject])) {
         [fullContents addObject:[node name]];
     }
@@ -499,10 +499,10 @@ static void mpqfs_dupargs(struct fuse_args *dest, struct fuse_args *src) {
 
 #pragma mark FUSE operations
 
-static void *fusefm_init(struct fuse_conn_info *conn) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+static void* fusefm_init(struct fuse_conn_info* conn) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     
-    MPQFileSystem *manager = [MPQFileSystem currentFS];
+    MPQFileSystem* manager = [MPQFileSystem currentFS];
 	[manager retain];
     [manager fuseInit];
     
@@ -510,16 +510,16 @@ static void *fusefm_init(struct fuse_conn_info *conn) {
     return manager;
 }
 
-static void fusefm_destroy(void *private_data) {
+static void fusefm_destroy(void* private_data) {
     NSAutoreleasePool* pool = [NSAutoreleasePool new];
-	MPQFileSystem *manager = [MPQFileSystem currentFS];
+	MPQFileSystem* manager = [MPQFileSystem currentFS];
     [manager fuseDestroy];
 	[manager release];
     [pool release];
 }
 
 static int fusefm_statfs(const char* path, struct statvfs* stbuf) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     
     int res = 0;
     memset(stbuf, 0, sizeof(struct statvfs));
@@ -530,8 +530,8 @@ static int fusefm_statfs(const char* path, struct statvfs* stbuf) {
     return res;
 }
 
-static int fusefm_getattr(const char *path, struct stat *stbuf) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+static int fusefm_getattr(const char* path, struct stat* stbuf) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     
     int res = 0;
     memset(stbuf, 0, sizeof(struct stat));
@@ -542,24 +542,24 @@ static int fusefm_getattr(const char *path, struct stat *stbuf) {
     return res;
 }
 
-static int fusefm_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+static int fusefm_fgetattr(const char* path, struct stat* stbuf, struct fuse_file_info* fi) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     
 	int res = 0;
     memset(stbuf, 0, sizeof(struct stat));
     
-    MPQFile *file = (MPQFile*)(unsigned long)(fi->fh);
+    MPQFile* file = (MPQFile*)(unsigned long)(fi->fh);
     res = [[MPQFileSystem currentFS] fillStatBuffer:stbuf withFileInfo:[file fileInfo] isDirectory:NO];
     
     [pool release];
     return res;
 }
 
-static int fusefm_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+static int fusefm_readdir(const char* path, void* buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info* fi) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     
-    NSError *error = nil;
-    NSArray *contents = [[MPQFileSystem currentFS] fullDirectoryContentsAtPath:[NSString stringWithUTF8String:path] error:&error];
+    NSError* error = nil;
+    NSArray* contents = [[MPQFileSystem currentFS] fullDirectoryContentsAtPath:[NSString stringWithUTF8String:path] error:&error];
     if (!contents) {
         [pool release];
         return -[error code];
@@ -581,14 +581,14 @@ static int fusefm_create(const char* path, mode_t mode, struct fuse_file_info* f
 }
 
 static int fusefm_unlink(const char* path) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     int ret = [[MPQFileSystem currentFS] removeFileAtPath:[NSString stringWithUTF8String:path] handler:nil];
     [pool release];
     return ret;
 }
 
 static int fusefm_rename(const char* path, const char* toPath) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     
     NSString* source = [NSString stringWithUTF8String:path];
     NSString* destination = [NSString stringWithUTF8String:toPath];
@@ -607,14 +607,14 @@ static int fusefm_truncate(const char* path, off_t offset) {
 }
 
 static int fusefm_mkdir(const char* path, mode_t mode) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     int ret = [[MPQFileSystem currentFS] createDirectoryAtPath:[NSString stringWithUTF8String:path] attributes:nil];
     [pool release];
     return ret;
 }
 
 static int fusefm_rmdir(const char* path) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     int ret = [[MPQFileSystem currentFS] removeFileAtPath:[NSString stringWithUTF8String:path] handler:nil];
     [pool release];
     return ret;
@@ -628,9 +628,9 @@ static int fusefm_chmod(const char* path, mode_t mode) {
     return -ENOSYS;
 }
 
-static int fusefm_open(const char *path, struct fuse_file_info *fi) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    NSError *error = nil;
+static int fusefm_open(const char* path, struct fuse_file_info* fi) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
+    NSError* error = nil;
     
     id object = [[MPQFileSystem currentFS] openFileAtPath:[NSString stringWithUTF8String:path] mode:fi->flags error:&error];
     if (object == nil) {
@@ -643,15 +643,15 @@ static int fusefm_open(const char *path, struct fuse_file_info *fi) {
     return 0;
 }
 
-static int fusefm_release(const char *path, struct fuse_file_info *fi) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+static int fusefm_release(const char* path, struct fuse_file_info* fi) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     [[MPQFileSystem currentFS] releaseFileAtPath:[NSString stringWithUTF8String:path] handle:(MPQFile*)(unsigned long)fi->fh];
     [pool release];
     return 0;
 }
 
-static int fusefm_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi) {
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+static int fusefm_read(const char* path, char* buf, size_t size, off_t offset, struct fuse_file_info* fi) {
+    NSAutoreleasePool* pool = [NSAutoreleasePool new];
     int length = [[MPQFileSystem currentFS] readFileAtPath:[NSString stringWithUTF8String:path] handle:(MPQFile*)(unsigned long)fi->fh buffer:buf size:size offset:offset];
 	[pool release];
     return length;
@@ -664,7 +664,7 @@ static int fusefm_write(const char* path, const char* buf, size_t size, off_t of
     return length;
 }
 
-static int fusefm_ftruncate(const char* path, off_t offset, struct fuse_file_info *fh) {
+static int fusefm_ftruncate(const char* path, off_t offset, struct fuse_file_info* fh) {
     return fusefm_truncate(path, offset);
 }
 
@@ -690,7 +690,7 @@ static int fusefm_removexattr(const char* path, const char* attribute) {
 	return -EROFS;
 }
 
-static int fusefm_readlink(const char *path, char *buf, size_t size) {
+static int fusefm_readlink(const char* path, char* buf, size_t size) {
     return -ENOSYS;
 }
 
@@ -745,7 +745,7 @@ static struct fuse_operations fusefm_operations = {
     
 #if defined(__APPLE__)
     if (overwriteVolname) {
-		const char *flub = [[NSString stringWithFormat:@"-ovolname=%@", [[archive_ path] lastPathComponent]] UTF8String];
+		const char* flub = [[NSString stringWithFormat:@"-ovolname=%@", [[archive_ path] lastPathComponent]] UTF8String];
 		fuse_opt_add_arg(&args, flub);
 	}
 #endif

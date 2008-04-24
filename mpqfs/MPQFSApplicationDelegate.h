@@ -9,8 +9,8 @@
 #import <AppKit/AppKit.h>
 
 @interface MPQFSApplicationDelegate : NSObject {
-    IBOutlet NSView *loadStdListfilesView;
-    IBOutlet NSButton *loadStdListfilesButton;
+    IBOutlet NSView* loadStdListfilesView;
+    IBOutlet NSButton* loadStdListfilesButton;
 }
 
 @end

@@ -12,7 +12,7 @@
 @class MPQArchive;
 
 @interface _MPQFileInfoEnumerator : NSEnumerator {
-    MPQArchive *_archive;
+    MPQArchive* _archive;
     uint32_t _position;
 }
 

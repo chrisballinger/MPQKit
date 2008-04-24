@@ -11,10 +11,10 @@
 
 
 @interface MPQArchivePriorityProxy : NSObject {
-	void *_archives;
+	void* _archives;
 	uint32_t _priority_count;
 	uint32_t _priority_allocated;
-	NSMutableSet *_archives_set;
+	NSMutableSet* _archives_set;
 }
 
 - (void)addArchive:(MPQArchive*)archive withPriority:(uint32_t)priority;

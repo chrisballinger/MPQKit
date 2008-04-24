@@ -49,8 +49,8 @@ typedef struct
     uint16_t   offs09AE;            // 09AE : 
 
     void     * param;               // 09B0 : User parameter
-    uint32_t   (*read_buf)(uint8_t *buf, uint32_t *size, void *param);  // 9B4
-    void       (*write_buf)(uint8_t *buf, uint32_t *size, void *param); // 9B8
+    uint32_t   (*read_buf)(uint8_t* buf, uint32_t* size, void* param);  // 9B4
+    void       (*write_buf)(uint8_t* buf, uint32_t* size, void* param); // 9B8
 
     uint16_t   offs09BC[0x204];     // 09BC :
     uint32_t   offs0DC4;            // 0DC4 : 
@@ -79,8 +79,8 @@ typedef struct
     uint32_t      in_pos;               // 001C - Position in in_buff
     uint32_t      in_bytes;             // 0020 - Number of bytes in input buffer
     void        * param;                // 0024 - Custom parameter
-    uint32_t      (*read_buf)(uint8_t *buf, uint32_t *size, void *param); // 0028
-    void          (*write_buf)(uint8_t *buf, uint32_t *size, void *param);// 002C
+    uint32_t      (*read_buf)(uint8_t* buf, uint32_t* size, void* param); // 0028
+    void          (*write_buf)(uint8_t* buf, uint32_t* size, void* param);// 002C
     uint8_t       out_buff[0x2000];     // 0030 - Output circle buffer. Starting position is 0x1000
     uint8_t       offs2030[0x204];      // 2030 - ???
     uint8_t       in_buff[0x800];       // 2234 - Buffer for data to be decompressed
@@ -103,20 +103,20 @@ typedef struct
 // Public functions
 
 int pk_implode(
-   uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
-   void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
+   uint32_t     (*read_buf)(uint8_t* buf, uint32_t* size, void* param),
+   void         (*write_buf)(uint8_t* buf, uint32_t* size, void* param),
    uint8_t      *work_buf,
    void         *param,
    uint32_t     *type,
    uint32_t     *dsize);
 
 int pk_explode(
-   uint32_t     (*read_buf)(uint8_t *buf, uint32_t *size, void *param),
-   void         (*write_buf)(uint8_t *buf, uint32_t *size, void *param),
+   uint32_t     (*read_buf)(uint8_t* buf, uint32_t* size, void* param),
+   void         (*write_buf)(uint8_t* buf, uint32_t* size, void* param),
    uint8_t      *work_buf,
    void         *param);
 
-uint32_t pk_crc32(uint8_t *buffer, uint32_t size, uint32_t crc);
+uint32_t pk_crc32(uint8_t* buffer, uint32_t size, uint32_t crc);
 
 #ifdef __cplusplus
    }                         // End of 'extern "C"' declaration

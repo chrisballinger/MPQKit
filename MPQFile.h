@@ -31,8 +31,8 @@
 		Rather, use MPQArchive's openFile methods to get an MPQFile object for a given MPQ file.
 */
 @interface MPQFile : NSObject {
-	NSString *filename;
-	MPQArchive *parent;
+	NSString* filename;
+	MPQArchive* parent;
 	uint32_t file_pointer;
 	
 	uint32_t hash_position;

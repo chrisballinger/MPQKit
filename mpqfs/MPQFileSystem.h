@@ -21,12 +21,12 @@
 @class MPQFSTree;
 
 @interface MPQFileSystem : NSObject {
-    NSString *mountPoint_;
+    NSString* mountPoint_;
     
-    MPQArchive *archive_;
-    MPQFSTree *archiveTree_;
+    MPQArchive* archive_;
+    MPQFSTree* archiveTree_;
     
-    struct fuse_args *arguments_;
+    struct fuse_args* arguments_;
     BOOL overwriteVolname;
     
     BOOL isMounted_;

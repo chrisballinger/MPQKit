@@ -40,7 +40,7 @@
     _backingStoreType = FileDescriptorBackingStore;
     
 #if defined(__APPLE__)
-    const char *cPath = [path fileSystemRepresentation];
+    const char* cPath = [path fileSystemRepresentation];
     CFURLRef fileURLRef = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8*)cPath, strlen(cPath) + 1, false);
     if (fileURLRef == NULL) ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertPathToURL, nil, error)
     

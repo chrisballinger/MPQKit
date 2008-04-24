@@ -36,10 +36,10 @@
 // Information about the input and output buffers for pklib
 typedef struct
 {
-    uint8_t *pInBuff;                   // Pointer to input data buffer
+    uint8_t* pInBuff;                   // Pointer to input data buffer
     uint32_t nInPos;                    // Current offset in input data buffer
     uint32_t nInBytes;                  // Number of bytes in the input buffer
-    uint8_t *pOutBuff;                  // Pointer to output data buffer
+    uint8_t* pOutBuff;                  // Pointer to output data buffer
     uint32_t nOutPos;                   // Position in the output buffer
     uint32_t nMaxOut;                   // Maximum number of bytes in the output buffer
 } TDataInfo;
@@ -75,9 +75,9 @@ typedef struct
 //   unsigned int * size - Max. number of bytes to read
 //   void * param        - Custom pointer, parameter of pk_implode/pk_explode
 
-static uint32_t ReadInputData(uint8_t *buf, uint32_t *size, void *param)
+static uint32_t ReadInputData(uint8_t* buf, uint32_t* size, void* param)
 {
-    TDataInfo *pInfo = (TDataInfo*)param;
+    TDataInfo* pInfo = (TDataInfo*)param;
     uint32_t nMaxAvail = (pInfo->nInBytes - pInfo->nInPos);
     uint32_t nToRead = *size;
 
@@ -99,9 +99,9 @@ static uint32_t ReadInputData(uint8_t *buf, uint32_t *size, void *param)
 //   unsigned int * size - Number of bytes to write
 //   void * param        - Custom pointer, parameter of pk_implode/pk_explode
 
-static void WriteOutputData(uint8_t *buf, uint32_t *size, void *param)
+static void WriteOutputData(uint8_t* buf, uint32_t* size, void* param)
 {
-    TDataInfo *pInfo = (TDataInfo*)param;
+    TDataInfo* pInfo = (TDataInfo*)param;
     uint32_t nMaxWrite = (pInfo->nMaxOut - pInfo->nOutPos);
     uint32_t nToWrite = *size;
 
@@ -121,25 +121,25 @@ static void WriteOutputData(uint8_t *buf, uint32_t *size, void *param)
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_adpcm_mono(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_adpcm_mono(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     *outBufferLength = CompressWave((unsigned char*)outBuffer, *outBufferLength, (short*)inBuffer, inBufferLength, 1, compressionLevel);
     return 1;
 }
 
-int Decompress_adpcm_mono(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength)
+int Decompress_adpcm_mono(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     *outBufferLength = DecompressWave((int16_t*)outBuffer, *outBufferLength, (uint8_t*)inBuffer, inBufferLength, 1);
     return 1;
 }
 
-int Compress_adpcm_stereo(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     *outBufferLength = CompressWave((unsigned char*)outBuffer, *outBufferLength, (short*)inBuffer, inBufferLength, 2, compressionLevel);
     return 1;
 }
 
-int Decompress_adpcm_stereo(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength) {
+int Decompress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
     *outBufferLength = DecompressWave((int16_t*)outBuffer, *outBufferLength, (uint8_t*)inBuffer, inBufferLength, 2);
     return 1;
 }
@@ -150,9 +150,9 @@ int Decompress_adpcm_stereo(void *outBuffer, uint32_t *outBufferLength, void *in
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
-    THuffmanTree *ht = THuffmanTree::AllocateTree();
+    THuffmanTree* ht = THuffmanTree::AllocateTree();
     TOutputStream os;
 
     // Initialize output stream
@@ -171,9 +171,9 @@ int Compress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
     return 1;
 }
 
-int Decompress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength)
+int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
-    THuffmanTree *ht = THuffmanTree::AllocateTree();
+    THuffmanTree* ht = THuffmanTree::AllocateTree();
     TInputStream is((uint8_t*)inBuffer, inBufferLength);
 
     // Initialize the Huffman tree for decompression
@@ -191,7 +191,7 @@ int Decompress_huff(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, 
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_zlib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     z_stream z;
     int nResult;
@@ -225,7 +225,7 @@ int Compress_zlib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, ui
     return (nResult == Z_STREAM_END) ? 1 : 0;
 }
 
-int Decompress_zlib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength)
+int Decompress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     z_stream z;
     int nResult;
@@ -265,7 +265,7 @@ int Decompress_zlib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, 
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_pklib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     TDataInfo Info;                     // Data information
     uint8_t work_buf[CMP_BUFFER_SIZE];  // Pklib's work buffer
@@ -292,7 +292,7 @@ int Compress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, u
     return 1;
 }
 
-int Decompress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength)
+int Decompress_pklib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     TDataInfo Info;                     // Data information
     uint8_t work_buf[EXP_BUFFER_SIZE];  // Pklib's work buffer
@@ -324,7 +324,7 @@ int Decompress_pklib(void *outBuffer, uint32_t *outBufferLength, void *inBuffer,
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_bz2(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     bz_stream s;
     int nResult;
@@ -357,7 +357,7 @@ int Compress_bz2(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uin
     return (nResult == BZ_STREAM_END) ? 1 : 0;
 }
 
-int Decompress_bz2(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength) {
+int Decompress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
 	bz_stream s;	// Stream information for bz2
     int nResult;
 	
@@ -408,10 +408,10 @@ static TCompressTable cmp_table[] =
     {MPQBZIP2Compression, Compress_bz2}                     // bzip2
 };
 
-int SCompCompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength, MPQCompressorFlag compressors, int32_t compressionType, int32_t compressionLevel) {
-    void *pbTempBuff = 0;                   // Temporary storage for decompressed data
-    void *pbOutput;                         // Current output buffer
-    void *pbInput;                          // Current input buffer
+int SCompCompress(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, MPQCompressorFlag compressors, int32_t compressionType, int32_t compressionLevel) {
+    void* pbTempBuff = 0;                   // Temporary storage for decompressed data
+    void* pbOutput;                         // Current output buffer
+    void* pbInput;                          // Current input buffer
     uint8_t uCompressions2;
     uint32_t dwCompressCount = 0;
     uint32_t dwDoneCount = 0;
@@ -530,9 +530,9 @@ static TDecompressTable dcmp_table[] = {
     {MPQMonoADPCMCompression, Decompress_adpcm_mono}            // Mono ADPCM
 };
 
-int SCompDecompress(void *outBuffer, uint32_t *outBufferLength, void *inBuffer, uint32_t inBufferLength) {
-    void *pbTempBuff = 0;                           // Temporary storage for decompressed data
-    void *pbWorkBuff = 0;                           // Where to store decompressed data
+int SCompDecompress(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
+    void* pbTempBuff = 0;                           // Temporary storage for decompressed data
+    void* pbWorkBuff = 0;                           // Where to store decompressed data
     uint32_t dwOutLength = *outBufferLength;        // For storage number of output bytes
     uint8_t fDecompressions1;                       // Decompressions applied to the block
     uint8_t fDecompressions2;                       // Just another copy of decompressions applied to the block

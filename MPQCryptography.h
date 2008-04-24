@@ -25,21 +25,21 @@ extern "C" {
 
 extern void mpq_init_cryptography(void);
 
-extern const uint32_t *mpq_get_cryptography_table(void);
+extern const uint32_t* mpq_get_cryptography_table(void);
 
-extern void mpq_encrypt(void *data, size_t length, uint32_t key, bool disable_input_swapping);
-extern void mpq_decrypt(void *data, size_t length, uint32_t key, bool disable_output_swapping);
+extern void mpq_encrypt(void* data, size_t length, uint32_t key, bool disable_input_swapping);
+extern void mpq_decrypt(void* data, size_t length, uint32_t key, bool disable_output_swapping);
 
-extern uint32_t mpq_hash_cstring(const char *string, uint32_t type);
-extern uint32_t mpq_hash_data(const void *data, size_t length, uint32_t type);
+extern uint32_t mpq_hash_cstring(const char* string, uint32_t type);
+extern uint32_t mpq_hash_data(const void* data, size_t length, uint32_t type);
 
 #define MPQ_CRC_INIT 0x1
 #define MPQ_CRC_UPDATE 0x2
 #define MPQ_CRC_FINALIZE 0x4
-extern void mpq_crc32(const void *buffer, size_t length, uint32_t *crc, uint32_t flags);
+extern void mpq_crc32(const void* buffer, size_t length, uint32_t* crc, uint32_t flags);
 
-int mpq_verify_weak_signature(RSA *public_key, const void *signature, const void *digest);
-int mpq_verify_strong_signature(RSA *public_key, const void *signature, const void *digest);
+int mpq_verify_weak_signature(RSA* public_key, const void* signature, const void* digest);
+int mpq_verify_strong_signature(RSA* public_key, const void* signature, const void* digest);
 
 #if defined(__cplusplus)
 }

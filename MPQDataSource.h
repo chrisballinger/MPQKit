@@ -20,11 +20,11 @@ typedef uint8_t MPQDataSourceBackingStoreType;
 
 @interface MPQDataSourceProxy : NSObject {
     MPQDataSourceBackingStoreType _backingStoreType;
-    NSData *_dataBackingStore;
+    NSData* _dataBackingStore;
 #if defined(__APPLE__)
     AliasHandle _fileAlias;
 #else
-    NSString *_path;
+    NSString* _path;
 #endif
 }
 
@@ -37,7 +37,7 @@ typedef uint8_t MPQDataSourceBackingStoreType;
 
 @interface MPQDataSource : NSObject {
     MPQDataSourceBackingStoreType _backingStoreType;
-    NSData *_dataBackingStore;
+    NSData* _dataBackingStore;
     int _fileDescriptorBackingStore;
 }
 

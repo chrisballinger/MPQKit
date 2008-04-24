@@ -12,14 +12,14 @@
 @implementation MPQFSApplicationDelegate
 
 - (NSArray*)standardListfileArguments_ {
-    NSString *listfileDirectory = [[NSBundle mainBundle] pathForResource:@"listfiles" ofType:@""];
+    NSString* listfileDirectory = [[NSBundle mainBundle] pathForResource:@"listfiles" ofType:@""];
     if (!listfileDirectory) return [NSArray array];
     
-    NSArray *listfileDirectoryContent = [[NSFileManager defaultManager] directoryContentsAtPath:listfileDirectory];
-    NSMutableArray *arguments = [NSMutableArray arrayWithCapacity:[listfileDirectoryContent count]];
+    NSArray* listfileDirectoryContent = [[NSFileManager defaultManager] directoryContentsAtPath:listfileDirectory];
+    NSMutableArray* arguments = [NSMutableArray arrayWithCapacity:[listfileDirectoryContent count]];
     
-    NSEnumerator *directoryContentEnum = [listfileDirectoryContent objectEnumerator];
-    NSString *listfile;
+    NSEnumerator* directoryContentEnum = [listfileDirectoryContent objectEnumerator];
+    NSString* listfile;
     while ((listfile = [directoryContentEnum nextObject])) {
         [arguments addObject:[NSString stringWithFormat:@"--listfile=%@", [listfileDirectory stringByAppendingPathComponent:listfile]]];
     }
@@ -28,10 +28,10 @@
 }
 
 - (NSString*)mountPointForArchivePath_:(NSString*)path {
-    NSFileManager *manager = [NSFileManager defaultManager];
-    NSString *basePoint = [@"/Volumes" stringByAppendingPathComponent:[path lastPathComponent]];
+    NSFileManager* manager = [NSFileManager defaultManager];
+    NSString* basePoint = [@"/Volumes" stringByAppendingPathComponent:[path lastPathComponent]];
     
-    NSString *mountPoint = [NSString stringWithString:basePoint];
+    NSString* mountPoint = [NSString stringWithString:basePoint];
     uint32_t count = 1;
     while ([manager fileExistsAtPath:mountPoint]) {
         mountPoint = [basePoint stringByAppendingFormat:@" - %u", count++];
@@ -42,7 +42,7 @@
 }
 
 - (BOOL)mountArchive_:(NSString*)path loadingListfiles:(BOOL)loadListfiles {
-    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:path, [self mountPointForArchivePath_:path], nil];
+    NSMutableArray* arguments = [NSMutableArray arrayWithObjects:path, [self mountPointForArchivePath_:path], nil];
     if (loadListfiles) [arguments addObjectsFromArray:[self standardListfileArguments_]];
     // FIXME: add support for volicon
 	
@@ -60,7 +60,7 @@
 }
 
 - (IBAction)openDocument:(id)sender {
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    NSOpenPanel* openPanel = [NSOpenPanel openPanel];
     [openPanel setCanChooseFiles:YES];
     [openPanel setCanChooseDirectories:NO];
     [openPanel setAllowsMultipleSelection:NO];

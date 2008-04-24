@@ -48,7 +48,7 @@ static uint32_t crc_table[] =
     0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94, 0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D
 };
 
-uint32_t pk_crc32(uint8_t *buffer, uint32_t size, uint32_t crc) {
+uint32_t pk_crc32(uint8_t* buffer, uint32_t size, uint32_t crc) {
     uint32_t ch;
     while (size-- != 0) {
         ch = *buffer++ ^ (uint8_t)crc;

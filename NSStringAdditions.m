@@ -12,7 +12,7 @@
 @implementation NSString (MPQKitAdditions)
 
 - (NSString*)stringByReplacingBackslashWithSlash {
-    NSMutableString *newStr = [self mutableCopyWithZone:[self zone]];
+    NSMutableString* newStr = [self mutableCopyWithZone:[self zone]];
     NSRange searchRange;
     NSRange foundRange;
 
@@ -26,7 +26,7 @@
 }
 
 - (NSString*)stringByReplacingSlashWithBackslash {
-    NSMutableString *newStr = [self mutableCopyWithZone:[self zone]];
+    NSMutableString* newStr = [self mutableCopyWithZone:[self zone]];
     NSRange searchRange;
     NSRange foundRange;
 

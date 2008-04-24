@@ -198,7 +198,7 @@
 }
 
 - (NSData*)copyDataOfLength:(uint32_t)length error:(NSError**)error {
-	NSMutableData *data = [[NSMutableData alloc] initWithLength:length];
+	NSMutableData* data = [[NSMutableData alloc] initWithLength:length];
 	ssize_t bytes_read = [self read:[data mutableBytes] size:length error:error];
 	if (bytes_read == -1) {
 		[data release];
@@ -246,7 +246,7 @@
 	uint32_t old = file_pointer;
 	file_pointer = 0;
 	
-	NSData *fileData = [self copyDataToEndOfFile];
+	NSData* fileData = [self copyDataToEndOfFile];
 #if defined(__APPLE__)
 	BOOL result = [fileData writeToFile:path options:(atomically) ? NSAtomicWrite : 0 error:error];
 #else
@@ -266,7 +266,7 @@
 #pragma mark -
 
 @interface MPQFileDataSource : MPQFile {
-	MPQDataSource *dataSource;
+	MPQDataSource* dataSource;
 }
 @end
 
@@ -327,12 +327,12 @@
 	uint32_t full_sector_size;
 	
 	uint32_t sector_table_length;
-	uint32_t *sector_table;
-	uint32_t *_sector_adlers;
+	uint32_t* sector_table;
+	uint32_t* _sector_adlers;
 	
-	void *buffer_;
-	void *read_buffer;
-	void *data_buffer;
+	void* buffer_;
+	void* read_buffer;
+	void* data_buffer;
 }
 @end
 
@@ -430,18 +430,18 @@
 	off_t iocb_offsets[2] = {file_archive_offset + sector_table[which.location], file_archive_offset + sector_table[which.location] + (full_sector_size << 1)};
 	
 	// io_buffers
-	void *io_buffers[2] = {read_buffer + full_sector_size, read_buffer + (full_sector_size << 2)};
+	void* io_buffers[2] = {read_buffer + full_sector_size, read_buffer + (full_sector_size << 2)};
 #endif
 	
 #if defined(MPQFILE_PREAD_CHECK)
 	// memcmp and decompression buffer
-	void *memcmp_buffer = malloc(full_sector_size << 1);
+	void* memcmp_buffer = malloc(full_sector_size << 1);
 #endif
 	
 #if defined(MPQFILE_AIO)
 	// Prepare 2 aio control buffers
 	struct aiocb iocb_buffer[2];
-	struct aiocb *iocbs[2] = {iocb_buffer, iocb_buffer + 1};
+	struct aiocb* iocbs[2] = {iocb_buffer, iocb_buffer + 1};
 	
 	do {
 		bzero(iocbs[0], sizeof(struct aiocb));
@@ -500,7 +500,7 @@
 		if (current_iocb == 1) next_iocb = 0;
 		
 		// Compute sector_buffer and how many bytes are available in it (left-overs + new bytes)
-		void *sector_buffer = io_buffers[current_iocb] - bytes_available[next_iocb];
+		void* sector_buffer = io_buffers[current_iocb] - bytes_available[next_iocb];
 		uint32_t sector_buffer_offset = 0;
 		bytes_available[current_iocb] = bytes_read + bytes_available[next_iocb];
 #else
@@ -514,7 +514,7 @@
 			goto ErrorExit;
 		}
 		
-		void *sector_buffer = read_buffer;
+		void* sector_buffer = read_buffer;
 		uint32_t sector_buffer_offset = 0;
 		bytes_available[current_iocb] = bytes_read;
 #endif
@@ -551,7 +551,7 @@
 				adler = (uint32_t)adler32(adler, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
 				if (adler != _sector_adlers[current_sector]) {
 					if (error) {
-						NSDictionary *userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
+						NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
 							[self fileInfo], MPQErrorFileInfo, 
 							[NSNumber numberWithUnsignedInt:current_sector], MPQErrorSectorIndex, 
 							[NSNumber numberWithUnsignedInt:adler], MPQErrorComputedSectorChecksum, 
@@ -571,7 +571,7 @@
 			if (current_sector == last_sector) decompressed_sector_size = block_entry.size - (last_sector * full_sector_size);
 			
 			// normally we just decompress into the client buffer at the proper offset
-			void *decompression_destination_buffer = BUFFER_OFFSET(buf, data_offset);
+			void* decompression_destination_buffer = BUFFER_OFFSET(buf, data_offset);
 			
 			// however if we're processing the last needed sector or if the client buffer is just too small, we need to use a temporary buffer
 			if (current_sector == last_needed_sector || bytesToKeep.length < decompressed_sector_size) decompression_destination_buffer = data_buffer;
@@ -736,7 +736,7 @@ ErrorExit:
 	off_t file_archive_offset;
 	uint32_t encryption_key;
 	
-	void *data_cache_;
+	void* data_cache_;
 }
 @end
 
@@ -772,7 +772,7 @@ ErrorExit:
 		data_cache_ = malloc(block_entry.size);
 		if (!data_cache_) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
 		
-		void *read_buffer = malloc(block_entry.archived_size);
+		void* read_buffer = malloc(block_entry.archived_size);
 		if (!read_buffer) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
 					
 		// Read the data
@@ -820,7 +820,7 @@ ErrorExit:
 
 - (NSData*)_copyRawSector:(uint32_t)index error:(NSError**)error {
 	if (index > 0) ReturnValueWithError(nil, MPQErrorDomain, errOutOfBounds, nil, error)
-	void *read_buffer = malloc(block_entry.archived_size);
+	void* read_buffer = malloc(block_entry.archived_size);
 	if (!read_buffer) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
 	ssize_t bytes_read = pread(archive_fd, read_buffer, block_entry.archived_size, file_archive_offset);
 	if (bytes_read == -1) {

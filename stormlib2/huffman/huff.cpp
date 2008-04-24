@@ -699,7 +699,7 @@ void THuffmanTree::Call1500E820(THTreeItem * pItem)
 }
  
 // 1500E920
-uint32_t THuffmanTree::DoCompression(TOutputStream *os, uint8_t *pbInBuffer, int32_t nInLength, int32_t nCmpType)
+uint32_t THuffmanTree::DoCompression(TOutputStream* os, uint8_t* pbInBuffer, int32_t nInLength, int32_t nCmpType)
 {
     THTreeItem * pItem1;
     THTreeItem * pItem2;
@@ -877,7 +877,7 @@ uint32_t THuffmanTree::DoCompression(TOutputStream *os, uint8_t *pbInBuffer, int
 }
  
 // Decompression using Huffman tree (1500E450)
-uint32_t THuffmanTree::DoDecompression(uint8_t *pbOutBuffer, uint32_t dwOutLength, TInputStream *is)
+uint32_t THuffmanTree::DoDecompression(uint8_t* pbOutBuffer, uint32_t dwOutLength, TInputStream* is)
 {
     TQDecompress  * qd;
     THTreeItem    * pItem1;
