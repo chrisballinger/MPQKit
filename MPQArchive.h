@@ -167,6 +167,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     
     mpq_hash_table_entry_t* hash_table;
     mpq_block_table_entry_t* block_table;
+	
+	uint32_t _fileCountCache;
+	uint32_t _validFileCountCache;
+	BOOL _fileCountCachesDirty;
     
     off_t* block_offset_table;
     char** filename_table;

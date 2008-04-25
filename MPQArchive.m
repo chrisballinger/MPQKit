@@ -699,6 +699,31 @@ FreeData:
 	}
 }
 
+#pragma mark file count cache
+
+- (void)_updateFileCountCaches {
+	if (_fileCountCachesDirty == NO) return;
+	
+	// cache the file count and valid file count
+	_fileCountCache = 0;
+	_validFileCountCache = 0;
+	for (uint32_t hash_position = 0; hash_position < header.hash_table_length; hash_position++) {
+		mpq_hash_table_entry_t* e = hash_table + hash_position;
+		switch (e->block_table_index) {
+			case HASH_TABLE_EMPTY:
+				break;
+			case HASH_TABLE_DELETED:
+				_fileCountCache++;
+				break;
+			default:
+				_fileCountCache++;
+				_validFileCountCache++;
+		}
+	}
+	
+	_fileCountCachesDirty = NO;
+}
+
 #pragma mark memory management
 
 static void mpq_deferred_operation_add_context_free(mpq_deferred_operation_add_context_t* context) {
@@ -1014,6 +1039,10 @@ AllocateFailure:
 	hash_table_offset = 0;
 	block_table_offset = 0;
 	
+	// no files in
+	_fileCountCache = 0;
+	_validFileCountCache = 0;
+	
 	// We have no weak signature
 	weak_signature_hash_entry = NULL;
 	
@@ -1093,9 +1122,7 @@ AllocateFailure:
 	off_t file_size = sb.st_size;
 	
 	// If the file is too small to even be an MPQ archive, bail out
-	if (file_size < 32) {
-		ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
-	}
+	if (file_size < 32) ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
 	
 	// MPQ archives can be embedded in files, in which case the MPQ header must be 512 bytes aligned.
 	do {
@@ -1239,6 +1266,9 @@ AllocateFailure:
 	else archive_write_offset = block_table_offset;
 	if (header.version == 1 && (off_t)extended_header.extended_block_offset_table_offset < archive_write_offset)
 		archive_write_offset = extended_header.extended_block_offset_table_offset;
+	
+	// mark the file count caches as dirty
+	_fileCountCachesDirty = YES;
 	
 	// If the archive contains a weak signature, cache its block table entry
 	uint32_t signature_hash_position = [self findHashPosition:kSignatureEncryptionKey locale:MPQNeutral error:NULL];
@@ -1477,18 +1507,13 @@ AllocateFailure:
 }
 
 - (uint32_t)fileCount {
-	return header.block_table_length;
+	if (_fileCountCachesDirty) [self _updateFileCountCaches];
+	return _fileCountCache;
 }
 
 - (uint32_t)validFileCount {
-	uint32_t block_position = 0;
-	uint32_t numFiles = 0;
-	
-	for (; block_position < header.block_table_length; block_position++) {
-		if ((block_table[block_position].flags & MPQFileValid)) numFiles++;
-	}
-	
-	return numFiles;
+	if (_fileCountCachesDirty) [self _updateFileCountCaches];
+	return _validFileCountCache;
 }
 
 - (uint32_t)maximumNumberOfFiles {
@@ -2437,6 +2462,9 @@ AbortDigest:
 	if (sector_tables_cache[hash_position]) free(sector_tables_cache[hash_position]);
 	sector_tables_cache[hash_position] = NULL;
 	
+	// mark the file count caches as dirty
+	_fileCountCachesDirty = YES;
+	
 	ReturnValueWithNoError(YES, error)
 }
 
@@ -2686,6 +2714,9 @@ AbortDigest:
 		
 	// Cache the crypt key
 	encryption_keys_cache[hash_position] = encryption_key;
+	
+	// mark the file count caches as dirty
+	_fileCountCachesDirty = YES;
 	
 	ReturnValueWithNoError(YES, error)
 }
