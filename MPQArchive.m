@@ -3425,7 +3425,7 @@ AbortDigest:
 	if (archive_fd == -1) {
 		// Create (or overwrite) a file on disk at the specified path (or at a temporary path if atomical is true)
 		if (!atomically) {
-			archive_fd = open([path fileSystemRepresentation], O_RDWR | O_CREAT, 0644);
+			archive_fd = open([path fileSystemRepresentation], O_RDWR | O_CREAT | O_TRUNC, 0644);
 			if (archive_fd == -1) {
 				[p release];
 				ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
