@@ -2336,8 +2336,10 @@ AbortDigest:
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:block_entry->flags] forKey:MPQFileFlags];
 	[tempDict setObject:[NSNumber numberWithLongLong:block_offset_table[hash_entry->block_table_index]] forKey:MPQFileArchiveOffset];
 	
-	// Compute the number of sectors based on the file size (so explicitely ignore sector adlers)
-	uint32_t sector_table_length = _MPQComputeSectorTableLength(full_sector_size, block_entry->size, (block_entry->flags & ~MPQFileHasSectorAdlers));
+	// compute the number of sectors based on the file size (so explicitely ignore sector adlers)
+	uint32_t sector_table_length;
+	if ((block_entry->flags & MPQFileOneSector)) sector_table_length = 2;
+	else sector_table_length = _MPQComputeSectorTableLength(full_sector_size, block_entry->size, (block_entry->flags & ~MPQFileHasSectorAdlers));
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:sector_table_length - 1] forKey:MPQFileNumberOfSectors];
 	
 	// Attributes

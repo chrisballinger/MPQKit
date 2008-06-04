@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 45;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -140,7 +140,7 @@
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		310D91590BBECCC800FEA3C5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		310D91840BBECE5100FEA3C5 /* mpqfs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mpqfs.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = "mpqfs-Info.plist"; path = "mpqfs/mpqfs-Info.plist"; sourceTree = "<group>"; };
+		310D91860BBECE5100FEA3C5 /* mpqfs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "mpqfs-Info.plist"; path = "mpqfs/mpqfs-Info.plist"; sourceTree = "<group>"; };
 		310D91F20BBED5D000FEA3C5 /* MPQFSApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MPQFSApplicationDelegate.h; path = mpqfs/MPQFSApplicationDelegate.h; sourceTree = "<group>"; };
 		310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MPQFSApplicationDelegate.m; path = mpqfs/MPQFSApplicationDelegate.m; sourceTree = "<group>"; };
 		310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Fuse.icns; path = mpqfs/Fuse.icns; sourceTree = "<group>"; };
@@ -590,7 +590,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 31EB3F00085CCCD800290137 /* Build configuration list for PBXProject "MPQKit" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.1";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BZMPQ Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
