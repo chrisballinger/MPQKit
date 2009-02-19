@@ -6,11 +6,14 @@
 //  Copyright 2007 MacStorm. All rights reserved.
 //
 
-#import <AppKit/AppKit.h>
+#import <Cocoa/Cocoa.h>
+
+#import "RXVersionComparator.h"
 
 @interface MPQFSApplicationDelegate : NSObject {
     IBOutlet NSView* loadStdListfilesView;
     IBOutlet NSButton* loadStdListfilesButton;
+	IBOutlet RXVersionComparator* comparator;
 }
 
 @end

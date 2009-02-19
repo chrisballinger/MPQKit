@@ -14,8 +14,6 @@
 		310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */ = {isa = PBXBuildFile; fileRef = 310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */; };
 		3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3112FEEA0C38A0B100992F8F /* MPQArchivePriorityProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */; };
-		3116E2DC0CD78CD30090DA6B /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3116E2DB0CD78CD30090DA6B /* Sparkle.framework */; };
-		3116E2F30CD78CF30090DA6B /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3116E2DB0CD78CD30090DA6B /* Sparkle.framework */; };
 		3116E32E0CD7929D0090DA6B /* mpqfs.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3116E32C0CD7929D0090DA6B /* mpqfs.xib */; };
 		312311C70549F0D300833907 /* NSStringAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3133BFC304C8EB0800A80102 /* NSStringAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		312311C80549F0D300833907 /* NSStringAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3133BFC404C8EB0800A80102 /* NSStringAdditions.m */; };
@@ -44,6 +42,8 @@
 		314C610C0C18B43E005BBE02 /* mpqdumpsectors.m in Sources */ = {isa = PBXBuildFile; fileRef = 314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */; };
 		3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */ = {isa = PBXBuildFile; fileRef = 3150DB8C0AF455C300CF2965 /* Public RSA Keys */; };
 		3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */ = {isa = PBXBuildFile; fileRef = 3150DBF60AF5266700CF2965 /* MPQKit.pem */; };
+		315E3DA80F4D477A00CEFCFB /* RXVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */; };
+		315E3FED0F4D49E900CEFCFB /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */; };
 		315FB6D40C374F9A00475D07 /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 315FB6D30C374F9A00475D07 /* wave.c */; };
 		316186EF0C3DF5830024CABB /* MPQArchivePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE2750ADF74B3002BC846 /* NSArrayListfileAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -52,6 +52,7 @@
 		3173395B05B74E47003755C5 /* NSDateNTFSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */; };
 		31767CCC0C13A4FA0015A006 /* huff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31767CCA0C13A4FA0015A006 /* huff.cpp */; };
 		31767CCD0C13A4FA0015A006 /* huff.h in Headers */ = {isa = PBXBuildFile; fileRef = 31767CCB0C13A4FA0015A006 /* huff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		318161250F4D4A070019E7C3 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */; };
 		319811340BC2EF85009C3E08 /* listfiles in Resources */ = {isa = PBXBuildFile; fileRef = 319811260BC2EF85009C3E08 /* listfiles */; };
 		319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
 		319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
@@ -119,8 +120,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				318161250F4D4A070019E7C3 /* Sparkle.framework in CopyFiles */,
 				310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */,
-				3116E2F30CD78CF30090DA6B /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,7 +147,6 @@
 		310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Fuse.icns; path = mpqfs/Fuse.icns; sourceTree = "<group>"; };
 		3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchivePriorityProxy.h; sourceTree = "<group>"; };
 		3112FEE80C38A0B100992F8F /* MPQArchivePriorityProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPQArchivePriorityProxy.m; sourceTree = "<group>"; };
-		3116E2DB0CD78CD30090DA6B /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = mpqfs/Sparkle.framework; sourceTree = "<group>"; };
 		3116E32D0CD7929D0090DA6B /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = mpqfs/English.lproj/mpqfs.xib; sourceTree = "<group>"; };
 		3123119F0549EE5D00833907 /* MPQKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MPQKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		312311A60549EF9B00833907 /* MPQ-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist; path = "MPQ-Info.plist"; sourceTree = "<group>"; };
@@ -161,6 +161,9 @@
 		314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mpqdumpsectors.m; sourceTree = "<group>"; };
 		3150DB8C0AF455C300CF2965 /* Public RSA Keys */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Public RSA Keys"; sourceTree = "<group>"; };
 		3150DBF60AF5266700CF2965 /* MPQKit.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MPQKit.pem; sourceTree = "<group>"; };
+		315E3DA60F4D477A00CEFCFB /* RXVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RXVersionComparator.h; path = mpqfs/RXVersionComparator.h; sourceTree = "<group>"; };
+		315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RXVersionComparator.m; path = mpqfs/RXVersionComparator.m; sourceTree = "<group>"; };
+		315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = mpqfs/Sparkle.framework; sourceTree = "<group>"; };
 		315FB6D30C374F9A00475D07 /* wave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = stormlib2/wave/wave.c; sourceTree = "<group>"; };
 		316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchivePrivate.h; sourceTree = "<group>"; };
 		316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayListfileAdditions.h; sourceTree = "<group>"; };
@@ -221,7 +224,7 @@
 			files = (
 				310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */,
 				310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */,
-				3116E2DC0CD78CD30090DA6B /* Sparkle.framework in Frameworks */,
+				315E3FED0F4D49E900CEFCFB /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,8 +310,8 @@
 				31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */,
 				31A6B005068C07F80089D443 /* Foundation.framework */,
 				3191CA7D0BB859180004E8AA /* libfuse.dylib */,
+				315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */,
 				31DD6C990AEAF41B002CDD2C /* Security.framework */,
-				3116E2DB0CD78CD30090DA6B /* Sparkle.framework */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -402,6 +405,8 @@
 		31F0CF000BB849B800E24273 /* MPQFS */ = {
 			isa = PBXGroup;
 			children = (
+				315E3DA60F4D477A00CEFCFB /* RXVersionComparator.h */,
+				315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */,
 				3116E32C0CD7929D0090DA6B /* mpqfs.xib */,
 				310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */,
 				31A8A5B60BC14B72001F583D /* InfoPlist.strings */,
@@ -501,7 +506,7 @@
 				310D91820BBECE5100FEA3C5 /* Frameworks */,
 				310D91980BBECF8400FEA3C5 /* CopyFiles */,
 				31A8A5410BC147BC001F583D /* CopyFiles */,
-				3102E6010BC1F3F1006A9088 /* svnversion */,
+				3102E6010BC1F3F1006A9088 /* bzrversion */,
 			);
 			buildRules = (
 			);
@@ -522,7 +527,7 @@
 				3123119C0549EE5D00833907 /* Sources */,
 				3123119D0549EE5D00833907 /* Frameworks */,
 				3123119B0549EE5D00833907 /* Resources */,
-				31826B6D0915C76D00EB066F /* svnversion */,
+				31826B6D0915C76D00EB066F /* bzrversion */,
 			);
 			buildRules = (
 			);
@@ -631,33 +636,35 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3102E6010BC1F3F1006A9088 /* svnversion */ = {
+		3102E6010BC1F3F1006A9088 /* bzrversion */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = svnversion;
+			name = bzrversion;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env python";
-			shellScript = "#-*- encoding: utf-8 -*-\n# Xcode auto-versioning script for Subversion\n# by Axel Andersson, modified by Daniel Jalkut to use\n# svnversion instead of svn info, so that the current version\n# the highest local revision  number is always used.\n# Python version by Jean-Francois Roy\n        \nimport os, re\n\nif os.getenv(\"BUILT_PRODUCTS_DIR\") is None:\n    print \"Must be run from Xcode\"\n    sys.exit(1)\n\n# Add a few common directories to PATH\npathEntries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in pathEntries: pathEntries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in pathEntries: pathEntries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in pathEntries: pathEntries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(pathEntries)\n\n# Get the current subversion revision number and use it to set the CFBundleVersion value\np = os.popen2(['svnversion', '-n'])[1]\nREV = p.read()\np.close()\nINFO = \"%s/%s\" % (os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\n\nmatchObject = re.compile(\"([\\d]+:)?(\\d+[M|S]*).*\").match(REV)\nif not matchObject:\n    print \"No Subversion revision found\"\n    sys.exit(1)\nversion = matchObject.groups()[1]\n\nFH = open(INFO, 'a+')\nFH.seek(0)\n\ninfo = FH.read()\ninfo_re = re.compile(\"([\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(</string>)\", re.S | re.M)\ninfo = info_re.sub(r'\\g<1>%s\\g<2>' % version, info)\n\nFH.truncate(0)\nFH.write(info)\nFH.close()\n";
+			shellScript = "# Xcode auto-versioning script for Bazaar\n\nimport os, re, subprocess, sys\nfrom os import path\n\nif not \"BUILT_PRODUCTS_DIR\" in os.environ:\n    print \"Must be run by the Xcode build system\"\n    sys.exit(1)\n\n# MACOSX_DEPLOYMENT_TARGET plays badly with Python\nif \"MACOSX_DEPLOYMENT_TARGET\" in os.environ:\n\tdel os.environ[\"MACOSX_DEPLOYMENT_TARGET\"]\n\n# add a few common directories to PATH\npath_entries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in path_entries: path_entries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in path_entries: path_entries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in path_entries: path_entries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(path_entries)\n\n# output a build strings file\nbuild_strings_format = r'--template=\"BUILD_VERSION\" = \"{revno}\";\\n\"BUILD_DATE\" = \"{build_date}\";\\n\"BUILD_BRANCH\" = \"{branch_nick}\";\\n'\nbuild_strings_command = ['bzr', 'version-info', '--custom', build_strings_format]\np = subprocess.Popen(build_strings_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nbuild_strings = p.communicate()[0].decode('utf8')\n\nresources_path = path.join(os.environ['TARGET_BUILD_DIR'], os.environ['UNLOCALIZED_RESOURCES_FOLDER_PATH'])\nbuild_strings_file = open(path.join(resources_path, u\"build.strings\"), 'w')\nbuild_strings_file.write(build_strings.encode('utf16'))\nbuild_strings_file.close()\n\n# get the current bzr revision number and use it to set the CFBundleVersion value\nrevision_command = ['bzr', 'revno']\np = subprocess.Popen(revision_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nrevision_string = p.communicate()[0].decode('utf8')[:-1]\n\ninfo_plist_file = open(path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH']), 'r+')\ninfo_plist = info_plist_file.read().decode('utf8')\ninfo_plist_file.close()\n\ninfo_re = re.compile(u\"(?P<tag_begin>[\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(?P<tag_end></string>)\", re.S | re.M)\ninfo_plist = info_re.sub(r'\\g<tag_begin>bzr %s\\g<tag_end>' % revision_string, info_plist)\n\ninfo_plist_file = open(path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH']), 'w')\ninfo_plist_file.write(info_plist.encode('utf8'))\ninfo_plist_file.close()\n";
+			showEnvVarsInLog = 0;
 		};
-		31826B6D0915C76D00EB066F /* svnversion */ = {
+		31826B6D0915C76D00EB066F /* bzrversion */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = svnversion;
+			name = bzrversion;
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env python";
-			shellScript = "#-*- encoding: utf-8 -*-\n# Xcode auto-versioning script for Subversion\n# by Axel Andersson, modified by Daniel Jalkut to use\n# svnversion instead of svn info, so that the current version\n# the highest local revision  number is always used.\n# Python version by Jean-Francois Roy\nimport os, re, sys\n\nif os.getenv(\"BUILT_PRODUCTS_DIR\") is None:\n    print \"Must be run from Xcode\"\n    sys.exit(1)\n\n# Add a few common directories to PATH\npathEntries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in pathEntries: pathEntries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in pathEntries: pathEntries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in pathEntries: pathEntries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(pathEntries)\n\n# Get the current subversion revision number and use it to set the CFBundleVersion value\np = os.popen2(['svnversion', '-n'])[1]\nREV = p.read()\np.close()\n\nINFO = \"%s/%s\" % (os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\n\nmatchObject = re.compile(\"([\\d]+:)?(\\d+[M|S]*).*\").match(REV)\nif matchObject:\n    version = matchObject.groups()[1]\nelse:\n    print \"No Subversion revision found\"\n    version = \"1.0b3\"\n\nFH = open(INFO, 'a+')\nFH.seek(0)\n\ninfo = FH.read()\ninfo_re = re.compile(\"([\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(</string>)\", re.S | re.M)\ninfo = info_re.sub(r'\\g<1>%s\\g<2>' % version, info)\n\nFH.truncate(0)\nFH.write(info)\nFH.close()\n";
+			shellScript = "# Xcode auto-versioning script for Bazaar\n\nimport os, re, subprocess, sys\nfrom os import path\n\nif not \"BUILT_PRODUCTS_DIR\" in os.environ:\n    print \"Must be run by the Xcode build system\"\n    sys.exit(1)\n\n# MACOSX_DEPLOYMENT_TARGET plays badly with Python\nif \"MACOSX_DEPLOYMENT_TARGET\" in os.environ:\n\tdel os.environ[\"MACOSX_DEPLOYMENT_TARGET\"]\n\n# add a few common directories to PATH\npath_entries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in path_entries: path_entries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in path_entries: path_entries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in path_entries: path_entries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(path_entries)\n\n# output a build strings file\nbuild_strings_format = r'--template=\"BUILD_VERSION\" = \"{revno}\";\\n\"BUILD_DATE\" = \"{build_date}\";\\n\"BUILD_BRANCH\" = \"{branch_nick}\";\\n'\nbuild_strings_command = ['bzr', 'version-info', '--custom', build_strings_format]\np = subprocess.Popen(build_strings_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nbuild_strings = p.communicate()[0].decode('utf8')\n\nresources_path = path.join(os.environ['TARGET_BUILD_DIR'], os.environ['UNLOCALIZED_RESOURCES_FOLDER_PATH'])\nbuild_strings_file = open(path.join(resources_path, u\"build.strings\"), 'w')\nbuild_strings_file.write(build_strings.encode('utf16'))\nbuild_strings_file.close()\n\n# get the current bzr revision number and use it to set the CFBundleVersion value\nrevision_command = ['bzr', 'revno']\np = subprocess.Popen(revision_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nrevision_string = p.communicate()[0].decode('utf8')[:-1]\n\ninfo_plist_file = open(path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH']), 'r+')\ninfo_plist = info_plist_file.read().decode('utf8')\ninfo_plist_file.close()\n\ninfo_re = re.compile(u\"(?P<tag_begin>[\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(?P<tag_end></string>)\", re.S | re.M)\ninfo_plist = info_re.sub(r'\\g<tag_begin>bzr %s\\g<tag_end>' % revision_string, info_plist)\n\ninfo_plist_file = open(path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH']), 'w')\ninfo_plist_file.write(info_plist.encode('utf8'))\ninfo_plist_file.close()\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -668,6 +675,7 @@
 			files = (
 				310D91F50BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m in Sources */,
 				31A8A50E0BC1455A001F583D /* mpqfs.m in Sources */,
+				315E3DA80F4D477A00CEFCFB /* RXVersionComparator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -785,6 +793,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"\"$(SRCROOT)/mpqfs\"",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mpqfs\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -816,6 +825,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"\"$(SRCROOT)/mpqfs\"",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mpqfs\"";
 				GCC_C_LANGUAGE_STANDARD = c99;
@@ -981,6 +991,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				SDKROOT = macosx10.4;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
@@ -997,6 +1008,7 @@
 				);
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				SDKROOT = macosx10.4;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;

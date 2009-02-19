@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
-    <key>CFBundleDocumentTypes</key>
+	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -24,7 +24,7 @@
 				<string>W!pq</string>
 				<string>MPQA</string>
 				<string>D2pq</string>
-                <string>Smpq</string>
+				<string>Smpq</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
@@ -47,7 +47,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(REVISION)</string>
+	<string></string>
 	<key>NSMainNibFile</key>
 	<string>mpqfs</string>
 	<key>NSPrincipalClass</key>
@@ -80,7 +80,7 @@ WJdHtcSp4cEw3VRI8Tg=
     </string>
 	<key>SUShowReleaseNotes</key>
 	<true/>
-    <key>UTImportedTypeDeclarations</key>
+	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
 			<key>UTTypeConformsTo</key>
@@ -98,7 +98,7 @@ WJdHtcSp4cEw3VRI8Tg=
 					<string>D2pq</string>
 					<string>W!pq</string>
 					<string>MPQA</string>
-                    <string>Smpq</string>
+					<string>Smpq</string>
 				</array>
 				<key>public.filename-extension</key>
 				<array>

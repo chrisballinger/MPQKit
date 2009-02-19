@@ -6,10 +6,17 @@
 //  Copyright 2007 MacStorm. All rights reserved.
 //
 
+#import <Cocoa/Cocoa.h>
+#import <Sparkle/SUUpdater.h>
+
 #import "MPQFSApplicationDelegate.h"
 
 
 @implementation MPQFSApplicationDelegate
+
+- (id <SUVersionComparison>)versionComparatorForUpdater:(SUUpdater*)updater {
+	return comparator;
+}
 
 - (NSArray*)standardListfileArguments_ {
     NSString* listfileDirectory = [[NSBundle mainBundle] pathForResource:@"listfiles" ofType:@""];
@@ -73,7 +80,8 @@
     int returnCode = [openPanel runModalForTypes:
         [NSArray arrayWithObjects:@"mpq", @"MPQ", nil]];
 #endif
-    if (returnCode == NSOKButton) [self mountArchive_:[openPanel filename] loadingListfiles:([loadStdListfilesButton state] == NSOnState) ? YES : NO];
+    if (returnCode == NSOKButton)
+		[self mountArchive_:[openPanel filename] loadingListfiles:([loadStdListfilesButton state] == NSOnState) ? YES : NO];
 }
 
 @end

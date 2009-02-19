@@ -9,24 +9,25 @@
 #ifndef SUAPPCAST_H
 #define SUAPPCAST_H
 
-@class RSS, SUAppcastItem;
+@class SUAppcastItem;
 @interface SUAppcast : NSObject {
 	NSArray *items;
+	NSString *userAgentString;
 	id delegate;
+	NSMutableData *incrementalData;
 }
 
 - (void)fetchAppcastFromURL:(NSURL *)url;
 - (void)setDelegate:delegate;
+- (void)setUserAgentString:(NSString *)userAgentString;
 
-- (SUAppcastItem *)newestItem;
 - (NSArray *)items;
 
 @end
 
 @interface NSObject (SUAppcastDelegate)
 - (void)appcastDidFinishLoading:(SUAppcast *)appcast;
-- (void)appcastDidFailToLoad:(SUAppcast *)appcast;
-- (NSString *)userAgentForAppcast:(SUAppcast *)appcast;
+- (void)appcast:(SUAppcast *)appcast failedToLoadWithError:(NSError *)error;
 @end
 
 #endif

@@ -2,5 +2,5 @@
 
 CFBundleName = "mpqfs";
 CFBundleShortVersionString = "mpqfs version 0.3.4";
-CFBundleGetInfoString = "mpqfs version 0.3.4, © 2007-2008 MacStorm.";
-NSHumanReadableCopyright = "© MacStorm, 2007-2008";
+CFBundleGetInfoString = "mpqfs version 0.3.4, © 2007-2009 MacStorm.";
+NSHumanReadableCopyright = "© MacStorm, 2007-2009";
