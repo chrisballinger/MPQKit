@@ -179,7 +179,6 @@
 		31A6B005068C07F80089D443 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		31A82B290C5A87E50011E8E4 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
-		31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MPQKit.xcconfig; sourceTree = "<group>"; };
 		31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKitPrivate.h; sourceTree = "<group>"; };
 		31A8A4FB0BC14502001F583D /* mpqfsd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqfsd; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A8A50D0BC1455A001F583D /* mpqfs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mpqfs.m; path = mpqfs/mpqfs.m; sourceTree = "<group>"; };
@@ -385,7 +384,6 @@
 			children = (
 				31A82B290C5A87E50011E8E4 /* Base.xcconfig */,
 				31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */,
-				31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -789,25 +787,18 @@
 		310D91880BBECE5100FEA3C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"\"$(SRCROOT)/mpqfs\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mpqfs\"";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				PRODUCT_NAME = mpqfs;
-				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -819,27 +810,14 @@
 					ppc,
 					i386,
 				);
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_POSTPROCESSING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 					"\"$(SRCROOT)/mpqfs\"",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/mpqfs\"";
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PREBINDING = NO;
 				PRODUCT_NAME = mpqfs;
-				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -915,13 +893,10 @@
 		31A8A5090BC14526001F583D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/include/fuse,
@@ -931,10 +906,8 @@
 					"$(inherited)",
 					/usr/local/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				PREBINDING = NO;
+				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = mpqfsd;
-				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
 		};
@@ -945,13 +918,6 @@
 					ppc,
 					i386,
 				);
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/include/fuse,
@@ -961,26 +927,54 @@
 					"$(inherited)",
 					/usr/local/lib,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.4;
-				PREBINDING = NO;
+				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = mpqfsd;
-				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
-				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
 		};
 		31EB3EFB085CCCD800290137 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */;
 			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				HEADER_SEARCH_PATHS = (
+					"${inherited}",
+					stormlib2,
+				);
+				INFOPLIST_FILE = "MPQ-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lbz2",
+					"-lcrypto",
+				);
+				PRODUCT_NAME = MPQKit;
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
 		};
 		31EB3EFC085CCCD800290137 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31A82B2B0C5A87E50011E8E4 /* MPQKit.xcconfig */;
 			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				HEADER_SEARCH_PATHS = (
+					"${inherited}",
+					stormlib2,
+				);
+				INFOPLIST_FILE = "MPQ-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lbz2",
+					"-lcrypto",
+				);
+				PRODUCT_NAME = MPQKit;
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -988,10 +982,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				SDKROOT = macosx10.4;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.5;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
@@ -1000,16 +998,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-					ppc64,
-					x86_64,
-				);
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				SDKROOT = macosx10.4;
-				STRIP_INSTALLED_PRODUCT = NO;
+				SDKROOT = macosx10.5;
+				STRIP_INSTALLED_PRODUCT = YES;
 			};
 			name = Release;
 		};
