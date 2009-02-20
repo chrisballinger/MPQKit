@@ -41,7 +41,6 @@
 		314C61000C18B273005BBE02 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		314C610C0C18B43E005BBE02 /* mpqdumpsectors.m in Sources */ = {isa = PBXBuildFile; fileRef = 314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */; };
 		3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */ = {isa = PBXBuildFile; fileRef = 3150DB8C0AF455C300CF2965 /* Public RSA Keys */; };
-		3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */ = {isa = PBXBuildFile; fileRef = 3150DBF60AF5266700CF2965 /* MPQKit.pem */; };
 		315E3DA80F4D477A00CEFCFB /* RXVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */; };
 		315FB6D40C374F9A00475D07 /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 315FB6D30C374F9A00475D07 /* wave.c */; };
 		316186EF0C3DF5830024CABB /* MPQArchivePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -73,6 +72,29 @@
 		31DD6C9A0AEAF41B002CDD2C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31DD6C990AEAF41B002CDD2C /* Security.framework */; };
 		31F78D030F4E74CD00759CD7 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
 		31F78D130F4E74ED00759CD7 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
+		31FE1B090F4E78B70046698D /* sparkle.pem in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1B070F4E78B70046698D /* sparkle.pem */; };
+		31FE1B3B0F4E7BF50046698D /* FocusRingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A580F4E75A70046698D /* FocusRingView.m */; };
+		31FE1B3C0F4E7BF50046698D /* DropMPQController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A500F4E75A70046698D /* DropMPQController.m */; };
+		31FE1B3D0F4E7BF60046698D /* dropmpq.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A940F4E75A70046698D /* dropmpq.m */; };
+		31FE1B4B0F4E7CDE0046698D /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31FE1B4A0F4E7CDE0046698D /* PreferencePanes.framework */; };
+		31FE1B4C0F4E7CE10046698D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
+		31FE1B4D0F4E7CE40046698D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
+		31FE1B510F4E7CEA0046698D /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
+		31FE1B670F4E7E670046698D /* ImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A440F4E75A70046698D /* ImageAndTextCell.m */; };
+		31FE1B680F4E7E670046698D /* NSImageAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A460F4E75A70046698D /* NSImageAdditions.m */; };
+		31FE1B690F4E7E690046698D /* NSString+CarbonFSSpecCreation.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A480F4E75A70046698D /* NSString+CarbonFSSpecCreation.m */; };
+		31FE1B6A0F4E7E690046698D /* NSToolbarAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A4A0F4E75A70046698D /* NSToolbarAdditions.m */; };
+		31FE1B8C0F4E7EB60046698D /* sparkle.pem in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1B070F4E78B70046698D /* sparkle.pem */; };
+		31FE1B950F4E7ECA0046698D /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A510F4E75A70046698D /* Credits.rtf */; };
+		31FE1B960F4E7ECA0046698D /* dropmpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A910F4E75A70046698D /* dropmpq.icns */; };
+		31FE1B980F4E7ECA0046698D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A550F4E75A70046698D /* MainMenu.xib */; };
+		31FE1B990F4E7ECA0046698D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A530F4E75A70046698D /* InfoPlist.strings */; };
+		31FE1BA50F4E7EED0046698D /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
+		31FE1BBC0F4E7EF10046698D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
+		31FE1C1D0F4E7FC40046698D /* importPref.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1C0A0F4E7FC40046698D /* importPref.m */; };
+		31FE1C200F4E7FC40046698D /* miscPref.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1C100F4E7FC40046698D /* miscPref.m */; };
+		31FE1C550F4E81890046698D /* RXVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */; };
+		31FE1CB80F4E87860046698D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31FE1CB70F4E87860046698D /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +133,13 @@
 			remoteGlobalIDString = 31A8A4FA0BC14502001F583D;
 			remoteInfo = mpqfsd;
 		};
+		31FE1BC60F4E7F430046698D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3123119E0549EE5D00833907 /* MPQKit */;
+			remoteInfo = MPQKit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -132,6 +161,17 @@
 			dstSubfolderSpec = 6;
 			files = (
 				31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		31FE1BBF0F4E7F0F0046698D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				31FE1BBC0F4E7EF10046698D /* Sparkle.framework in CopyFiles */,
+				31FE1BA50F4E7EED0046698D /* MPQKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,7 +200,6 @@
 		314C61040C18B273005BBE02 /* mpqdumpsectors */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqdumpsectors; sourceTree = BUILT_PRODUCTS_DIR; };
 		314C610B0C18B43E005BBE02 /* mpqdumpsectors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mpqdumpsectors.m; sourceTree = "<group>"; };
 		3150DB8C0AF455C300CF2965 /* Public RSA Keys */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Public RSA Keys"; sourceTree = "<group>"; };
-		3150DBF60AF5266700CF2965 /* MPQKit.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MPQKit.pem; sourceTree = "<group>"; };
 		315E3DA60F4D477A00CEFCFB /* RXVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RXVersionComparator.h; path = mpqfs/RXVersionComparator.h; sourceTree = "<group>"; };
 		315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RXVersionComparator.m; path = mpqfs/RXVersionComparator.m; sourceTree = "<group>"; };
 		315FB6D30C374F9A00475D07 /* wave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = stormlib2/wave/wave.c; sourceTree = "<group>"; };
@@ -205,6 +244,45 @@
 		31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataCryptoAdditions.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		31F591D90498F32500A80102 /* mpqdebug.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = mpqdebug.h; sourceTree = "<group>"; };
 		31F78D020F4E74CD00759CD7 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		31FE1A430F4E75A70046698D /* ImageAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageAndTextCell.h; sourceTree = "<group>"; };
+		31FE1A440F4E75A70046698D /* ImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageAndTextCell.m; sourceTree = "<group>"; };
+		31FE1A450F4E75A70046698D /* NSImageAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSImageAdditions.h; sourceTree = "<group>"; };
+		31FE1A460F4E75A70046698D /* NSImageAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSImageAdditions.m; sourceTree = "<group>"; };
+		31FE1A470F4E75A70046698D /* NSString+CarbonFSSpecCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CarbonFSSpecCreation.h"; sourceTree = "<group>"; };
+		31FE1A480F4E75A70046698D /* NSString+CarbonFSSpecCreation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CarbonFSSpecCreation.m"; sourceTree = "<group>"; };
+		31FE1A490F4E75A70046698D /* NSToolbarAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSToolbarAdditions.h; sourceTree = "<group>"; };
+		31FE1A4A0F4E75A70046698D /* NSToolbarAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSToolbarAdditions.m; sourceTree = "<group>"; };
+		31FE1A4B0F4E75A70046698D /* DebugTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugTools.h; sourceTree = "<group>"; };
+		31FE1A4F0F4E75A70046698D /* DropMPQController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DropMPQController.h; sourceTree = "<group>"; };
+		31FE1A500F4E75A70046698D /* DropMPQController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DropMPQController.m; sourceTree = "<group>"; };
+		31FE1A520F4E75A70046698D /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
+		31FE1A540F4E75A70046698D /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		31FE1A560F4E75A70046698D /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		31FE1A570F4E75A70046698D /* FocusRingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FocusRingView.h; sourceTree = "<group>"; };
+		31FE1A580F4E75A70046698D /* FocusRingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FocusRingView.m; sourceTree = "<group>"; };
+		31FE1A590F4E75A70046698D /* dropmpq-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "dropmpq-Info.plist"; sourceTree = "<group>"; };
+		31FE1A660F4E75A70046698D /* PreferenceKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceKeys.h; sourceTree = "<group>"; };
+		31FE1A910F4E75A70046698D /* dropmpq.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = dropmpq.icns; sourceTree = "<group>"; };
+		31FE1A940F4E75A70046698D /* dropmpq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dropmpq.m; sourceTree = "<group>"; };
+		31FE1AAB0F4E75FF0046698D /* dropmpq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dropmpq.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		31FE1B070F4E78B70046698D /* sparkle.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sparkle.pem; sourceTree = "<group>"; };
+		31FE1B4A0F4E7CDE0046698D /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = /System/Library/Frameworks/PreferencePanes.framework; sourceTree = "<absolute>"; };
+		31FE1BF80F4E7FC40046698D /* MVPreferencePaneDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MVPreferencePaneDefaults.plist; sourceTree = "<group>"; };
+		31FE1BF90F4E7FC40046698D /* MVPreferencePaneGroups.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = MVPreferencePaneGroups.plist; sourceTree = "<group>"; };
+		31FE1BFA0F4E7FC40046698D /* MVPreferences.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MVPreferences.xib; sourceTree = "<group>"; };
+		31FE1BFB0F4E7FC40046698D /* MVPreferencesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVPreferencesController.h; sourceTree = "<group>"; };
+		31FE1BFC0F4E7FC40046698D /* MVPreferencesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVPreferencesController.m; sourceTree = "<group>"; };
+		31FE1BFD0F4E7FC40046698D /* MVPreferencesGroupedIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVPreferencesGroupedIconView.h; sourceTree = "<group>"; };
+		31FE1BFE0F4E7FC40046698D /* MVPreferencesGroupedIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVPreferencesGroupedIconView.m; sourceTree = "<group>"; };
+		31FE1BFF0F4E7FC40046698D /* MVPreferencesMultipleIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVPreferencesMultipleIconView.h; sourceTree = "<group>"; };
+		31FE1C000F4E7FC40046698D /* MVPreferencesMultipleIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVPreferencesMultipleIconView.m; sourceTree = "<group>"; };
+		31FE1C020F4E7FC40046698D /* DQImportPreferences.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DQImportPreferences.tiff; sourceTree = "<group>"; };
+		31FE1C090F4E7FC40046698D /* importPref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = importPref.h; sourceTree = "<group>"; };
+		31FE1C0A0F4E7FC40046698D /* importPref.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = importPref.m; sourceTree = "<group>"; };
+		31FE1C0C0F4E7FC40046698D /* DQMiscellaneousPreferences.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DQMiscellaneousPreferences.tiff; sourceTree = "<group>"; };
+		31FE1C0F0F4E7FC40046698D /* miscPref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = miscPref.h; sourceTree = "<group>"; };
+		31FE1C100F4E7FC40046698D /* miscPref.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = miscPref.m; sourceTree = "<group>"; };
+		31FE1CB70F4E87860046698D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F525C282035CB03701000102 /* MPQKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKit.h; sourceTree = "<group>"; };
 		F53AFA24034A8CA501000102 /* MPQArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchive.h; sourceTree = "<group>"; };
 		F568E751034FC7B001000102 /* MPQCryptography.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQCryptography.h; sourceTree = "<group>"; };
@@ -250,6 +328,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */,
+				31FE1CB80F4E87860046698D /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +339,17 @@
 				31A8A51C0BC145F6001F583D /* libfuse.dylib in Frameworks */,
 				31A8A51D0BC145F6001F583D /* Foundation.framework in Frameworks */,
 				31A8A5390BC1478B001F583D /* MPQKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		31FE1AA90F4E75FF0046698D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31FE1B4B0F4E7CDE0046698D /* PreferencePanes.framework in Frameworks */,
+				31FE1B4C0F4E7CE10046698D /* Sparkle.framework in Frameworks */,
+				31FE1B4D0F4E7CE40046698D /* Cocoa.framework in Frameworks */,
+				31FE1B510F4E7CEA0046698D /* MPQKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +364,7 @@
 				310D91840BBECE5100FEA3C5 /* mpqfs.app */,
 				31A8A4FB0BC14502001F583D /* mpqfsd */,
 				314C61040C18B273005BBE02 /* mpqdumpsectors */,
+				31FE1AAB0F4E75FF0046698D /* dropmpq.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -292,9 +383,12 @@
 				F5DEFEC803465B8001000102 /* Classes */,
 				3150DBB50AF472EE00CF2965 /* Programs */,
 				31F0CF000BB849B800E24273 /* MPQFS */,
+				31FE1A410F4E75A70046698D /* dropmpq */,
 				089C1665FE841158C02AAC07 /* Resources */,
+				31FE1B070F4E78B70046698D /* sparkle.pem */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				31FE1CB70F4E87860046698D /* Foundation.framework */,
 			);
 			name = "BZMPQ Framework";
 			sourceTree = "<group>";
@@ -302,6 +396,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				31FE1B4A0F4E7CDE0046698D /* PreferencePanes.framework */,
 				31D009FE0C34B69900F72368 /* AudioToolbox.framework */,
 				31D009FF0C34B69900F72368 /* AudioUnit.framework */,
 				310D91590BBECCC800FEA3C5 /* Cocoa.framework */,
@@ -318,7 +413,6 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3150DBF60AF5266700CF2965 /* MPQKit.pem */,
 				3150DB8C0AF455C300CF2965 /* Public RSA Keys */,
 				312311A60549EF9B00833907 /* MPQ-Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
@@ -419,6 +513,80 @@
 				31B8088D0BB84E7E001F9B73 /* mpqfsd.m */,
 			);
 			name = MPQFS;
+			sourceTree = "<group>";
+		};
+		31FE1A410F4E75A70046698D /* dropmpq */ = {
+			isa = PBXGroup;
+			children = (
+				31FE1A420F4E75A70046698D /* Cocoa Extensions */,
+				31FE1A4B0F4E75A70046698D /* DebugTools.h */,
+				31FE1A4F0F4E75A70046698D /* DropMPQController.h */,
+				31FE1A500F4E75A70046698D /* DropMPQController.m */,
+				31FE1A570F4E75A70046698D /* FocusRingView.h */,
+				31FE1A580F4E75A70046698D /* FocusRingView.m */,
+				31FE1BF30F4E7FC40046698D /* Preference */,
+				31FE1A940F4E75A70046698D /* dropmpq.m */,
+				31FE1A660F4E75A70046698D /* PreferenceKeys.h */,
+				31FE1A510F4E75A70046698D /* Credits.rtf */,
+				31FE1A910F4E75A70046698D /* dropmpq.icns */,
+				31FE1A550F4E75A70046698D /* MainMenu.xib */,
+				31FE1A590F4E75A70046698D /* dropmpq-Info.plist */,
+				31FE1A530F4E75A70046698D /* InfoPlist.strings */,
+			);
+			path = dropmpq;
+			sourceTree = "<group>";
+		};
+		31FE1A420F4E75A70046698D /* Cocoa Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				31FE1A430F4E75A70046698D /* ImageAndTextCell.h */,
+				31FE1A440F4E75A70046698D /* ImageAndTextCell.m */,
+				31FE1A450F4E75A70046698D /* NSImageAdditions.h */,
+				31FE1A460F4E75A70046698D /* NSImageAdditions.m */,
+				31FE1A470F4E75A70046698D /* NSString+CarbonFSSpecCreation.h */,
+				31FE1A480F4E75A70046698D /* NSString+CarbonFSSpecCreation.m */,
+				31FE1A490F4E75A70046698D /* NSToolbarAdditions.h */,
+				31FE1A4A0F4E75A70046698D /* NSToolbarAdditions.m */,
+			);
+			path = "Cocoa Extensions";
+			sourceTree = "<group>";
+		};
+		31FE1BF30F4E7FC40046698D /* Preference */ = {
+			isa = PBXGroup;
+			children = (
+				31FE1BF80F4E7FC40046698D /* MVPreferencePaneDefaults.plist */,
+				31FE1BF90F4E7FC40046698D /* MVPreferencePaneGroups.plist */,
+				31FE1BFA0F4E7FC40046698D /* MVPreferences.xib */,
+				31FE1BFB0F4E7FC40046698D /* MVPreferencesController.h */,
+				31FE1BFC0F4E7FC40046698D /* MVPreferencesController.m */,
+				31FE1BFD0F4E7FC40046698D /* MVPreferencesGroupedIconView.h */,
+				31FE1BFE0F4E7FC40046698D /* MVPreferencesGroupedIconView.m */,
+				31FE1BFF0F4E7FC40046698D /* MVPreferencesMultipleIconView.h */,
+				31FE1C000F4E7FC40046698D /* MVPreferencesMultipleIconView.m */,
+				31FE1C010F4E7FC40046698D /* importPref */,
+				31FE1C0B0F4E7FC40046698D /* miscPref */,
+			);
+			path = Preference;
+			sourceTree = "<group>";
+		};
+		31FE1C010F4E7FC40046698D /* importPref */ = {
+			isa = PBXGroup;
+			children = (
+				31FE1C020F4E7FC40046698D /* DQImportPreferences.tiff */,
+				31FE1C090F4E7FC40046698D /* importPref.h */,
+				31FE1C0A0F4E7FC40046698D /* importPref.m */,
+			);
+			path = importPref;
+			sourceTree = "<group>";
+		};
+		31FE1C0B0F4E7FC40046698D /* miscPref */ = {
+			isa = PBXGroup;
+			children = (
+				31FE1C0C0F4E7FC40046698D /* DQMiscellaneousPreferences.tiff */,
+				31FE1C0F0F4E7FC40046698D /* miscPref.h */,
+				31FE1C100F4E7FC40046698D /* miscPref.m */,
+			);
+			path = miscPref;
 			sourceTree = "<group>";
 		};
 		F568E755034FC7B901000102 /* Cryptography */ = {
@@ -587,6 +755,26 @@
 			productReference = 31A8A4FB0BC14502001F583D /* mpqfsd */;
 			productType = "com.apple.product-type.tool";
 		};
+		31FE1AAA0F4E75FF0046698D /* dropmpq */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 31FE1AB00F4E75FF0046698D /* Build configuration list for PBXNativeTarget "dropmpq" */;
+			buildPhases = (
+				31FE1AA80F4E75FF0046698D /* Sources */,
+				31FE1AA90F4E75FF0046698D /* Frameworks */,
+				31FE1AA70F4E75FF0046698D /* Resources */,
+				31FE1BBF0F4E7F0F0046698D /* CopyFiles */,
+				31FE1C7D0F4E82DC0046698D /* bzrversion */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				31FE1BC70F4E7F430046698D /* PBXTargetDependency */,
+			);
+			name = dropmpq;
+			productName = dropmpq;
+			productReference = 31FE1AAB0F4E75FF0046698D /* dropmpq.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -605,6 +793,7 @@
 				314C60F90C18B273005BBE02 /* mpqdumpsectors */,
 				31A8A4FA0BC14502001F583D /* mpqfsd */,
 				310D91830BBECE5100FEA3C5 /* mpqfs */,
+				31FE1AAA0F4E75FF0046698D /* dropmpq */,
 			);
 		};
 /* End PBXProject section */
@@ -619,6 +808,7 @@
 				31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */,
 				319811340BC2EF85009C3E08 /* listfiles in Resources */,
 				3116E32E0CD7929D0090DA6B /* mpqfs.xib in Resources */,
+				31FE1B090F4E78B70046698D /* sparkle.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,7 +817,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */,
-				3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		31FE1AA70F4E75FF0046698D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31FE1B950F4E7ECA0046698D /* Credits.rtf in Resources */,
+				31FE1B960F4E7ECA0046698D /* dropmpq.icns in Resources */,
+				31FE1B980F4E7ECA0046698D /* MainMenu.xib in Resources */,
+				31FE1B990F4E7ECA0046698D /* InfoPlist.strings in Resources */,
+				31FE1B8C0F4E7EB60046698D /* sparkle.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -662,6 +863,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env python";
 			shellScript = "# Xcode auto-versioning script for Bazaar\n\nimport os, re, subprocess, sys\nfrom os import path\n\nif not \"BUILT_PRODUCTS_DIR\" in os.environ:\n    print \"Must be run by the Xcode build system\"\n    sys.exit(1)\n\n# MACOSX_DEPLOYMENT_TARGET plays badly with Python\nif \"MACOSX_DEPLOYMENT_TARGET\" in os.environ:\n\tdel os.environ[\"MACOSX_DEPLOYMENT_TARGET\"]\n\n# add a few common directories to PATH\npath_entries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in path_entries: path_entries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in path_entries: path_entries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in path_entries: path_entries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(path_entries)\n\n# output a build strings file\nbuild_strings_format = r'--template=\"BUILD_VERSION\" = \"{revno}\";\\n\"BUILD_DATE\" = \"{build_date}\";\\n\"BUILD_BRANCH\" = \"{branch_nick}\";\\n'\nbuild_strings_command = ['bzr', 'version-info', '--custom', build_strings_format]\np = subprocess.Popen(build_strings_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nbuild_strings = p.communicate()[0].decode('utf8')\n\nresources_path = path.join(os.environ['TARGET_BUILD_DIR'], os.environ['UNLOCALIZED_RESOURCES_FOLDER_PATH'])\nbuild_strings_file = open(path.join(resources_path, u\"build.strings\"), 'w')\nbuild_strings_file.write(build_strings.encode('utf16'))\nbuild_strings_file.close()\n\n# get the current bzr revision number and use it to set the CFBundleVersion value\nrevision_command = ['bzr', 'revno']\np = subprocess.Popen(revision_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nrevision_string = p.communicate()[0].decode('utf8')[:-1]\n\ninfo_plist_file = open(path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH']), 'r+')\ninfo_plist = info_plist_file.read().decode('utf8')\ninfo_plist_file.close()\n\ninfo_re = re.compile(u\"(?P<tag_begin>[\\t ]+<key>CFBundleVersion</key>\\n[\\t ]+<string>).*?(?P<tag_end></string>)\", re.S | re.M)\ninfo_plist = info_re.sub(r'\\g<tag_begin>bzr %s\\g<tag_end>' % revision_string, info_plist)\n\ninfo_plist_file = open(path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH']), 'w')\ninfo_plist_file.write(info_plist.encode('utf8'))\ninfo_plist_file.close()\n";
+			showEnvVarsInLog = 0;
+		};
+		31FE1C7D0F4E82DC0046698D /* bzrversion */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = bzrversion;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/usr/bin/env python";
+			shellScript = "# Xcode auto-versioning script for Bazaar\n\nimport os\nimport plistlib\nimport re\nimport subprocess\nimport sys\nfrom os import path\n\nif not \"BUILT_PRODUCTS_DIR\" in os.environ:\n    print \"Must be run by the Xcode build system\"\n    sys.exit(1)\n\n# MACOSX_DEPLOYMENT_TARGET plays badly with Python\nif \"MACOSX_DEPLOYMENT_TARGET\" in os.environ:\n\tdel os.environ[\"MACOSX_DEPLOYMENT_TARGET\"]\n\n# add a few common directories to PATH\npath_entries = os.environ['PATH'].split(':')\nif \"/usr/local/bin\" not in path_entries: path_entries.append(\"/usr/local/bin\")\nif \"/opt/local/bin\" not in path_entries: path_entries.append(\"/opt/local/bin\")\nif \"/sw/bin\" not in path_entries: path_entries.append(\"/sw/bin\")\nos.environ['PATH'] = ':'.join(path_entries)\n\n# output a build strings file\nbuild_strings_format = r'--template=\"BUILD_VERSION\" = \"{revno}\";\\n\"BUILD_DATE\" = \"{build_date}\";\\n\"BUILD_BRANCH\" = \"{branch_nick}\";\\n'\nbuild_strings_command = ['bzr', 'version-info', '--custom', build_strings_format]\np = subprocess.Popen(build_strings_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nbuild_strings = p.communicate()[0].decode('utf8')\n\nresources_path = path.join(os.environ['TARGET_BUILD_DIR'], os.environ['UNLOCALIZED_RESOURCES_FOLDER_PATH'])\nbuild_strings_file = open(path.join(resources_path, u\"build.strings\"), 'w')\nbuild_strings_file.write(build_strings.encode('utf16'))\nbuild_strings_file.close()\n\n# get the current bzr revision number and use it to set the CFBundleVersion value\nrevision_command = ['bzr', 'revno']\np = subprocess.Popen(revision_command, stdout=subprocess.PIPE, shell=False, close_fds=True)\nrevision_string = p.communicate()[0].decode('utf8')[:-1]\n\ninfo_plist_path = path.join(os.environ['TARGET_BUILD_DIR'], os.environ['INFOPLIST_PATH'])\ninfo_plist = plistlib. readPlist(info_plist_path)\n\ninfo_plist['CFBundleVersion'] = 'bzr %s' % revision_string\n\nplistlib.writePlist(info_plist, info_plist_path)\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -726,6 +942,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		31FE1AA80F4E75FF0046698D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				31FE1B3B0F4E7BF50046698D /* FocusRingView.m in Sources */,
+				31FE1B3C0F4E7BF50046698D /* DropMPQController.m in Sources */,
+				31FE1B3D0F4E7BF60046698D /* dropmpq.m in Sources */,
+				31FE1B670F4E7E670046698D /* ImageAndTextCell.m in Sources */,
+				31FE1B680F4E7E670046698D /* NSImageAdditions.m in Sources */,
+				31FE1B690F4E7E690046698D /* NSString+CarbonFSSpecCreation.m in Sources */,
+				31FE1B6A0F4E7E690046698D /* NSToolbarAdditions.m in Sources */,
+				31FE1C1D0F4E7FC40046698D /* importPref.m in Sources */,
+				31FE1C200F4E7FC40046698D /* miscPref.m in Sources */,
+				31FE1C550F4E81890046698D /* RXVersionComparator.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -754,6 +987,11 @@
 			target = 31A8A4FA0BC14502001F583D /* mpqfsd */;
 			targetProxy = 31A8A5030BC14511001F583D /* PBXContainerItemProxy */;
 		};
+		31FE1BC70F4E7F430046698D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3123119E0549EE5D00833907 /* MPQKit */;
+			targetProxy = 31FE1BC60F4E7F430046698D /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -779,6 +1017,30 @@
 				31A8A5B10BC14B43001F583D /* English */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		31FE1A510F4E75A70046698D /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				31FE1A520F4E75A70046698D /* English */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		31FE1A530F4E75A70046698D /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				31FE1A540F4E75A70046698D /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		31FE1A550F4E75A70046698D /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				31FE1A560F4E75A70046698D /* English */,
+			);
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -860,34 +1122,18 @@
 		319980180B4D8B4600D4FE4E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-lcrypto",
-				);
+				OTHER_LDFLAGS = "-lcrypto";
 				PRODUCT_NAME = mpqdump;
-				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
 		};
 		319980190B4D8B4600D4FE4E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-lcrypto",
-				);
+				OTHER_LDFLAGS = "-lcrypto";
 				PRODUCT_NAME = mpqdump;
-				WARNING_CFLAGS = "-Wall";
 			};
 			name = Release;
 		};
@@ -940,6 +1186,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"${inherited}",
 					stormlib2,
@@ -963,6 +1210,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
 					"${inherited}",
 					stormlib2,
@@ -1004,6 +1252,32 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				SDKROOT = macosx10.5;
 				STRIP_INSTALLED_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		31FE1AAE0F4E75FF0046698D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				INFOPLIST_FILE = "dropmpq/dropmpq-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = dropmpq;
+			};
+			name = Debug;
+		};
+		31FE1AAF0F4E75FF0046698D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				INFOPLIST_FILE = "dropmpq/dropmpq-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = dropmpq;
 			};
 			name = Release;
 		};
@@ -1060,6 +1334,15 @@
 			buildConfigurations = (
 				31EB3F01085CCCD800290137 /* Debug */,
 				31EB3F02085CCCD800290137 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		31FE1AB00F4E75FF0046698D /* Build configuration list for PBXNativeTarget "dropmpq" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31FE1AAE0F4E75FF0046698D /* Debug */,
+				31FE1AAF0F4E75FF0046698D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -7,30 +7,17 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mpq</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>mpq.icns</string>
-			<key>CFBundleTypeMIMETypes</key>
-			<array>
-				<string>application/mpq</string>
-			</array>
 			<key>CFBundleTypeName</key>
-			<string>MoPaQ Archive</string>
+			<string>folder</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>W!pq</string>
-				<string>MPQA</string>
-				<string>D2pq</string>
-				<string>Smpq</string>
+				<string>fold</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.blizzard.mpq</string>
+				<string>public.folder</string>
 			</array>
 			<key>LSTypeIsPackage</key>
 			<false/>
@@ -38,14 +25,18 @@
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFile</key>
+	<string>dropmpq</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.macstorm.mpqfs</string>
+	<string>org.macstorm.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>DropMPQ</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>DMPQ</string>
 	<key>CFBundleVersion</key>
 	<string></string>
 	<key>LSEnvironment</key>
@@ -54,45 +45,23 @@
 		<string>10.4</string>
 	</dict>
 	<key>NSMainNibFile</key>
-	<string>mpqfs</string>
+	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 	<key>SUExpectsDSASignature</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>http://www.devklog.net/software/mpqfs.xml</string>
+	<string>http://www.devklog.net/software/dropmpq/dropmpq.xml</string>
 	<key>SUShowReleaseNotes</key>
 	<true/>
 	<key>SUEnableSystemProfiling</key>
 	<true/>
 	<key>SUPublicDSAKeyFile</key>
 	<string>sparkle.pem</string>
-	<key>UTImportedTypeDeclarations</key>
+	<key>PreferencePanes</key>
 	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string>public.data</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>MoPaQ Archive</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.blizzard.mpq</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>com.apple.ostype</key>
-				<array>
-					<string>D2pq</string>
-					<string>W!pq</string>
-					<string>MPQA</string>
-					<string>Smpq</string>
-				</array>
-				<key>public.filename-extension</key>
-				<array>
-					<string>mpq</string>
-				</array>
-			</dict>
-		</dict>
+		<string>DQImportPreferences</string>
+		<string>DQMiscellaneousPreferences</string>
 	</array>
 </dict>
 </plist>

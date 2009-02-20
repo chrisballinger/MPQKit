@@ -17,7 +17,6 @@
     // What we are doing to do here is extract all the lines from stringData and add an entry for each of those lines
     NSMutableString* listfileString = [[NSMutableString alloc] initWithData:listfileData encoding:NSASCIIStringEncoding];
     [listfileString replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch | NSCaseInsensitiveSearch range:NSMakeRange(0, [listfileString length])];
-    [listfileString replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch | NSCaseInsensitiveSearch range:NSMakeRange(0, [listfileString length])];
     
     NSArray* listfileArray = [listfileString componentsSeparatedByString:@"\n"];
     [listfileString release];

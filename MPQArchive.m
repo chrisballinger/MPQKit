@@ -2549,7 +2549,8 @@ AbortDigest:
 	
 	// Ask the delegate if we should add that file or not
 	if ([delegate respondsToSelector:@selector(archive:shouldAddFile:)]) {
-		if (![delegate archive:self shouldAddFile:filename]) ReturnValueWithError(NO, MPQErrorDomain, errDelegateCancelled, nil, error)
+		if (![delegate archive:self shouldAddFile:filename])
+			ReturnValueWithError(NO, MPQErrorDomain, errDelegateCancelled, nil, error)
 	}
 	
 	// Debug log
@@ -2557,7 +2558,8 @@ AbortDigest:
 
 	// Convert filename to ASCII
 	char* filename_cstring = _MPQCreateASCIIFilename(filename, error);
-	if (!filename_cstring) return NO;
+	if (!filename_cstring)
+		return NO;
 	
 	// Prepare add parameters
 	uint32_t flags = MPQFileCompressed;
@@ -2567,16 +2569,22 @@ AbortDigest:
 	BOOL overwrite = NO;
 	
 	// Set the compression quality depending on the compressor
-	if (compressor == MPQZLIBCompression) compression_quality = Z_DEFAULT_COMPRESSION;
-	else if (compressor == MPQBZIP2Compression) compression_quality = 9;
-	else if ((compressor & (MPQStereoADPCMCompression | MPQMonoADPCMCompression))) compression_quality = MPQADPCMQualityHigh;
+	if (compressor == MPQZLIBCompression)
+		compression_quality = Z_DEFAULT_COMPRESSION;
+	else if (compressor == MPQBZIP2Compression)
+		compression_quality = 9;
+	else if ((compressor & (MPQStereoADPCMCompression | MPQMonoADPCMCompression)))
+		compression_quality = MPQADPCMQualityHigh;
 	
 	// If we have parameters, validate them now
 	if (parameters) {
 		NSNumber* tempNum = nil;
-		if ((tempNum = [parameters objectForKey:MPQFileFlags])) flags = [tempNum unsignedIntValue];
-		if ((tempNum = [parameters objectForKey:MPQFileLocale])) locale = [tempNum unsignedShortValue];
-		if ((tempNum = [parameters objectForKey:MPQOverwrite])) overwrite = [tempNum boolValue];
+		if ((tempNum = [parameters objectForKey:MPQFileFlags]))
+			flags = [tempNum unsignedIntValue];
+		if ((tempNum = [parameters objectForKey:MPQFileLocale]))
+			locale = [tempNum unsignedShortValue];
+		if ((tempNum = [parameters objectForKey:MPQOverwrite]))
+			overwrite = [tempNum boolValue];
 		
 		// Check the compression flags
 		if ((flags & MPQFileDiabloCompressed) && (flags & MPQFileCompressed)) {
@@ -2606,22 +2614,28 @@ AbortDigest:
 		}
 		
 		// Silently force the PKWARE compressor if the MPQFileDiabloCompressed flag is set
-		if ((flags & MPQFileDiabloCompressed)) compressor = MPQPKWARECompression;
+		if ((flags & MPQFileDiabloCompressed))
+			compressor = MPQPKWARECompression;
 		
 		// Set the compression quality depending on the compressor
-		if (compressor == MPQZLIBCompression) compression_quality = Z_DEFAULT_COMPRESSION;
-		else if (compressor == MPQBZIP2Compression) compression_quality = 9;
-		else if ((compressor & (MPQMonoADPCMCompression | MPQStereoADPCMCompression))) compression_quality = MPQADPCMQualityHigh;
+		if (compressor == MPQZLIBCompression)
+			compression_quality = Z_DEFAULT_COMPRESSION;
+		else if (compressor == MPQBZIP2Compression)
+			compression_quality = 9;
+		else if ((compressor & (MPQMonoADPCMCompression | MPQStereoADPCMCompression)))
+			compression_quality = MPQADPCMQualityHigh;
 		
 		// Compression quality
 		if ((tempNum = [parameters objectForKey:MPQCompressionQuality])) {
 			compression_quality = [tempNum intValue];
 			
 			// Silently make sure the compression quality is valid for the compressor
-			if (compressor == MPQZLIBCompression && (compression_quality < -1 || compression_quality > 9)) compression_quality = Z_DEFAULT_COMPRESSION;
+			if (compressor == MPQZLIBCompression && (compression_quality < -1 || compression_quality > 9))
+				compression_quality = Z_DEFAULT_COMPRESSION;
 			else if ((compressor & (MPQMonoADPCMCompression | MPQStereoADPCMCompression)) && (compression_quality < MPQADPCMQualityLow || compression_quality > MPQADPCMQualityHigh))
 				compression_quality = MPQADPCMQualityHigh;
-			else if (compressor == MPQBZIP2Compression && (compression_quality < 1 || compression_quality > 9)) compression_quality = 9;
+			else if (compressor == MPQBZIP2Compression && (compression_quality < 1 || compression_quality > 9))
+				compression_quality = 9;
 		}
 	}
 	
@@ -2631,7 +2645,8 @@ AbortDigest:
 		if (overwrite) {
 			// Make sure the name of the file we are about to delete is in the name table, otherwise, we won't be able to un-delete it!
 			// This would normally be done by the delete methods, but to save us a hashing we're going to call deleteFileAtPosition directly.
-			if (!filename_table[old_hash_position]) filename_table[old_hash_position] =_MPQCreateASCIIFilename(filename, (NSError**)NULL);
+			if (!filename_table[old_hash_position])
+				filename_table[old_hash_position] = _MPQCreateASCIIFilename(filename, (NSError**)NULL);
 			
 			// Delete the existing file
 			MPQDebugLog(@"deleting existing file");
@@ -2664,8 +2679,10 @@ AbortDigest:
 	
 	// The file's encryption key is the hash of the filename only
 	const char* filename_name_cstring = strrchr(filename_cstring, '\\');
-	if (filename_name_cstring) filename_name_cstring++;
-	else filename_name_cstring = filename_cstring;
+	if (filename_name_cstring)
+		filename_name_cstring++;
+	else
+		filename_name_cstring = filename_cstring;
 		
 	// Compute the encryption key
 	uint32_t encryption_key = mpq_hash_cstring(filename_name_cstring, HASH_KEY);
@@ -2729,11 +2746,11 @@ AbortDigest:
 	mpq_deferred_operation_add_context_t* context = (mpq_deferred_operation_add_context_t*)operation->context;
 	
 	MPQDebugLog(@"adding %@", operation->primary_file_context.filename);
-	MPQDebugLog(@"-------------------------");
 	
 	// Get a data source from the data source proxy
 	MPQDataSource* dataSource = [context->dataSourceProxy createActualDataSource:error];
-	if (dataSource == nil) return NO;
+	if (dataSource == nil)
+		return NO;
 	
 	uint32_t hash_position = operation->primary_file_context.hash_position;
 	uint32_t block_position = hash_table[hash_position].block_table_index;
@@ -2744,7 +2761,7 @@ AbortDigest:
 		[dataSource release];
 		return NO;
 	}
-	MPQDebugLog(@"size of input file: %llu", data_size);
+	MPQDebugLog2(@"    size of input file: %llu", data_size);
 	
 	// Check for data length overflow
 	if (data_size > UINT32_MAX) {
@@ -2758,17 +2775,19 @@ AbortDigest:
 	
 	// If we have less data than the compression threshold, compression won't be very useful, and will just slow things down
 	if (file_size < COMPRESSION_THRESHOLD) {
-		MPQDebugLog(@"less data than compression threshold");
+		MPQDebugLog2(@"    less data than compression threshold");
 		block_table[block_position].flags &= ~(MPQFileCompressed | MPQFileDiabloCompressed);
 	}
 	
 	// If we have less than 4 bytes, no encryption and no offset adjusted key
-	if (data_size < 4) block_table[block_position].flags &= ~(MPQFileOffsetAdjustedKey | MPQFileEncrypted);
+	if (data_size < 4)
+		block_table[block_position].flags &= ~(MPQFileOffsetAdjustedKey | MPQFileEncrypted);
 	
 	// Copy the file flags for easier access in this method
 	uint32_t flags = block_table[block_position].flags;
 	
-	if ((flags & MPQFileCompressed)) MPQDebugLog(@"compressor: %u, compression quality: %d", context->compressor, context->compression_quality);
+	if ((flags & MPQFileCompressed))
+		MPQDebugLog2(@"    compressor: %u, compression quality: %d", context->compressor, context->compression_quality);
 	
 	// Predicate for needing a sector table
 	BOOL needs_sector_table = ((flags & (MPQFileDiabloCompressed | MPQFileCompressed)) && !(flags & MPQFileOneSector)) ? YES : NO;
@@ -2777,11 +2796,12 @@ AbortDigest:
 	uint32_t sector_table_length = (needs_sector_table) ? _MPQComputeSectorTableLength(full_sector_size, file_size, flags) : 0;
 	// Explicit cast is OK here, sector table sizes are 32-bit
 	uint32_t sector_table_size = sector_table_length * (uint32_t)sizeof(uint32_t);
-	MPQDebugLog(@"entries in sector table: %u", sector_table_length);
+	MPQDebugLog2(@"    entries in sector table: %u", sector_table_length);
 	
 	// Allocate memory for the file's compressed sector table (if we need one)
 	uint32_t* sector_table = NULL;
-	if (needs_sector_table) sector_table = malloc(sector_table_size);
+	if (needs_sector_table)
+		sector_table = malloc(sector_table_size);
 	if (!sector_table && needs_sector_table) {
 		[dataSource release];
 		ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
@@ -2806,7 +2826,8 @@ AbortDigest:
 		
 		struct stat sb;
 		if (fstat(archive_fd, &sb) == -1) {
-			if (sector_table) free(sector_table);
+			if (sector_table)
+				free(sector_table);
 			[dataSource release];
 			ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 		}
@@ -2830,9 +2851,11 @@ AbortDigest:
 		// We only need to resize if there is not enough space for the new file
 		if (missing_space > 0) {
 			if (![self _truncateArchiveWithDelta:missing_space error:error]) {
-				if (sector_table) free(sector_table);
+				if (sector_table)
+					free(sector_table);
 				[dataSource release];
-				if (mustResetEBOTOnFailure) extended_header.extended_block_offset_table_offset = 0;
+				if (mustResetEBOTOnFailure)
+					extended_header.extended_block_offset_table_offset = 0;
 				return NO;
 			}
 		}
@@ -2851,13 +2874,14 @@ AbortDigest:
 	file_compressed_size += sector_table_size;
 	
 	// First sector table entry is the size of the sector table itself
-	if (needs_sector_table) sector_table[0] = file_compressed_size;
+	if (needs_sector_table)
+		sector_table[0] = file_compressed_size;
 	
 	// Prime the compression buffer
 	memset(compression_buffer, 0, full_sector_size + 1);
 	
 	// Add the entire file to the end of the MPQ, processing it sector by sector
-	MPQDebugLog(@"writing sectors...");
+	MPQDebugLog2(@"    writing sectors...");
 	while (remaining_data_size > 0) {
 		// Compute the size of the sector
 		current_sector_size = (flags & MPQFileOneSector) ? remaining_data_size : MIN(remaining_data_size, full_sector_size);
@@ -2866,7 +2890,8 @@ AbortDigest:
 		// Read the current sector
 		read_sector_size = [dataSource pread:read_buffer size:current_sector_size offset:data_offset error:error];
 		if ((uint32_t)read_sector_size != current_sector_size) {
-			if (sector_table) free(sector_table);
+			if (sector_table)
+				free(sector_table);
 			[dataSource release];
 			return NO;
 		}
@@ -2906,7 +2931,7 @@ AbortDigest:
 			
 			// If the compression failed or we didn't save any bytes, we reject the compressed block
 			if (!compression_error || (compressed_size >= (current_sector_size - 1))) {
-				MPQDebugLog(@"scrapping compressed sector");
+				MPQDebugLog2(@"    scrapping compressed sector");
 				compressed_size = current_sector_size;
 				memcpy(compression_buffer, read_buffer, compressed_size);
 			}
@@ -2917,11 +2942,13 @@ AbortDigest:
 		}
 
 		// Encrypt the sector if necessary
-		if ((flags & MPQFileEncrypted)) mpq_encrypt(buffer_pointer, compressed_size, encryption_key + current_sector, NO);
+		if ((flags & MPQFileEncrypted))
+			mpq_encrypt(buffer_pointer, compressed_size, encryption_key + current_sector, NO);
 
 		// Write the sector
 		if (pwrite(archive_fd, buffer_pointer, compressed_size, archive_offset + file_write_offset + file_compressed_size) == -1) {
-			if (sector_table) free(sector_table);
+			if (sector_table)
+				free(sector_table);
 			[dataSource release];
 			ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 		}
@@ -2933,23 +2960,27 @@ AbortDigest:
 		current_sector++;
 
 		// Add the sector's size to the sector table
-		if (needs_sector_table) sector_table[current_sector] = file_compressed_size;
+		if (needs_sector_table)
+			sector_table[current_sector] = file_compressed_size;
 	}
 	
 	// May have a sector table to write
 	if (needs_sector_table) {
-		MPQDebugLog(@"writing sector table...");
-		MPQDebugLog(@"size of sector table: %u", sector_table_size);
+		MPQDebugLog2(@"    writing sector table...");
+		MPQDebugLog2(@"    size of sector table: %u", sector_table_size);
 		
 		// If the file is encrypted, we need to encrypt the sector table as well. Since the sector table is just an array
 		// of uint32_t, we can disable input swapping on the encrypt function and get the encrypted sector table in
 		// little endian. If we are not encrypting, we must explicitely swap the sector table.
-		if ((flags & MPQFileEncrypted)) mpq_encrypt((char*)sector_table, sector_table_size, encryption_key - 1, YES);
-		else [[self class] swap_uint32_array:sector_table length:sector_table_length];
+		if ((flags & MPQFileEncrypted))
+			mpq_encrypt((char*)sector_table, sector_table_size, encryption_key - 1, YES);
+		else
+			[[self class] swap_uint32_array:sector_table length:sector_table_length];
 
 		// Write the sector table
 		if (pwrite(archive_fd, sector_table, sector_table_size, archive_offset + file_write_offset) == -1) {
-			if (sector_table) free(sector_table);
+			if (sector_table)
+				free(sector_table);
 			[dataSource release];
 			ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 		}
@@ -2958,15 +2989,16 @@ AbortDigest:
 	// Update the file's entry in the block table
 	block_offset_table[block_position] = file_write_offset;
 	block_table[block_position].archived_size = file_compressed_size;
-	MPQDebugLog(@"compressed size: %u", file_compressed_size);
+	MPQDebugLog2(@"    compressed size: %u", file_compressed_size);
 		
 	// Update the archive write offset if we wrote at the end of the archive
-	if (archive_write_offset == file_write_offset) archive_write_offset += file_compressed_size;
+	if (archive_write_offset == file_write_offset)
+		archive_write_offset += file_compressed_size;
 	
-	MPQDebugLog(@"done adding %@", operation->primary_file_context.filename);
-	MPQDebugLog(@"-------------------------");
+	MPQDebugLog2(@"    done adding %@", operation->primary_file_context.filename);
 	
-	if (sector_table) free(sector_table);
+	if (sector_table)
+		free(sector_table);
 	[dataSource release];
 	return YES;
 }
@@ -3366,9 +3398,16 @@ AbortDigest:
 		}
 		
 		if (operation->type == MPQDOAdd) {
-			if ([delegate respondsToSelector:@selector(archive:willAddFile:)]) [delegate archive:self willAddFile:operation->primary_file_context.filename];
-			if (![self _performFileAddOperation:operation error:error]) return NO;
-			if ([delegate respondsToSelector:@selector(archive:didAddFile:)]) [delegate archive:self didAddFile:operation->primary_file_context.filename];
+			if ([delegate respondsToSelector:@selector(archive:willAddFile:)])
+				[delegate archive:self willAddFile:operation->primary_file_context.filename];
+			
+			if (![self _performFileAddOperation:operation error:error]) {
+				[delegate archive:self failedToAddFile:operation->primary_file_context.filename error:*error];
+				return NO;
+			}
+			
+			if ([delegate respondsToSelector:@selector(archive:didAddFile:)])
+				[delegate archive:self didAddFile:operation->primary_file_context.filename];
 		}
 		
 		operation = operation->previous;

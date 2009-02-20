@@ -1118,6 +1118,17 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 - (void)archive:(MPQArchive*)archive willAddFile:(NSString*)filename;
 
 /*!
+    @method archive:failedToAddFile:
+    @abstract This method is called when MPQKit fails to add a file to an archive.
+    @discussion The application cannot alter how the framework handles the error. This method 
+		is only useful to inform the user.
+    @param archive The archive in which the file was attempted to be added.
+    @param filename The MPQ filename of the file that failed to be added.
+	@param error The internal MPQKit error associated with the failure.
+*/
+- (void)archive:(MPQArchive*)archive failedToAddFile:(NSString*)filename error:(NSError*)error;
+
+/*!
     @method archive:didAddFile:
     @abstract This method is called immediately after the framework compressed a file into an archive.
     @discussion This message is sent regardless if the file was compressed or not, encrypted or not.

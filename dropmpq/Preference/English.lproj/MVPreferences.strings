@@ -1,0 +1,8 @@
+/* preferences */
+
+"Loading %@..." = "Loading %@...";
+"%@ Preferences" = "%@ Preferences";
+"Show All" = "Show All";
+"Preferences Error" = "An error has occured.";
+"Could not load %@" = "Could not load %@";
+
