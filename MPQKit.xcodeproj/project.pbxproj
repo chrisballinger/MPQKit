@@ -43,7 +43,6 @@
 		3150DB930AF455C300CF2965 /* Public RSA Keys in Resources */ = {isa = PBXBuildFile; fileRef = 3150DB8C0AF455C300CF2965 /* Public RSA Keys */; };
 		3150DBF70AF5266700CF2965 /* MPQKit.pem in Resources */ = {isa = PBXBuildFile; fileRef = 3150DBF60AF5266700CF2965 /* MPQKit.pem */; };
 		315E3DA80F4D477A00CEFCFB /* RXVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */; };
-		315E3FED0F4D49E900CEFCFB /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */; };
 		315FB6D40C374F9A00475D07 /* wave.c in Sources */ = {isa = PBXBuildFile; fileRef = 315FB6D30C374F9A00475D07 /* wave.c */; };
 		316186EF0C3DF5830024CABB /* MPQArchivePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		316FE2750ADF74B3002BC846 /* NSArrayListfileAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -52,7 +51,6 @@
 		3173395B05B74E47003755C5 /* NSDateNTFSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 3173395905B74E47003755C5 /* NSDateNTFSAdditions.m */; };
 		31767CCC0C13A4FA0015A006 /* huff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31767CCA0C13A4FA0015A006 /* huff.cpp */; };
 		31767CCD0C13A4FA0015A006 /* huff.h in Headers */ = {isa = PBXBuildFile; fileRef = 31767CCB0C13A4FA0015A006 /* huff.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		318161250F4D4A070019E7C3 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */; };
 		319811340BC2EF85009C3E08 /* listfiles in Resources */ = {isa = PBXBuildFile; fileRef = 319811260BC2EF85009C3E08 /* listfiles */; };
 		319980140B4D8B4600D4FE4E /* NSDataCryptoAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */; };
 		319980160B4D8B4600D4FE4E /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
@@ -73,6 +71,8 @@
 		31CEEFD90C04FA3D001ACC9A /* MPQDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 31CEEFD70C04FA3D001ACC9A /* MPQDataSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */; };
 		31DD6C9A0AEAF41B002CDD2C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31DD6C990AEAF41B002CDD2C /* Security.framework */; };
+		31F78D030F4E74CD00759CD7 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
+		31F78D130F4E74ED00759CD7 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,7 +120,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				318161250F4D4A070019E7C3 /* Sparkle.framework in CopyFiles */,
+				31F78D130F4E74ED00759CD7 /* Sparkle.framework in CopyFiles */,
 				310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,7 +163,6 @@
 		3150DBF60AF5266700CF2965 /* MPQKit.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MPQKit.pem; sourceTree = "<group>"; };
 		315E3DA60F4D477A00CEFCFB /* RXVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RXVersionComparator.h; path = mpqfs/RXVersionComparator.h; sourceTree = "<group>"; };
 		315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RXVersionComparator.m; path = mpqfs/RXVersionComparator.m; sourceTree = "<group>"; };
-		315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = mpqfs/Sparkle.framework; sourceTree = "<group>"; };
 		315FB6D30C374F9A00475D07 /* wave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wave.c; path = stormlib2/wave/wave.c; sourceTree = "<group>"; };
 		316186EE0C3DF5830024CABB /* MPQArchivePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchivePrivate.h; sourceTree = "<group>"; };
 		316FE2730ADF74B3002BC846 /* NSArrayListfileAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSArrayListfileAdditions.h; sourceTree = "<group>"; };
@@ -205,6 +204,7 @@
 		31E15FAB0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSDataCryptoAdditions.h; sourceTree = "<group>"; };
 		31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataCryptoAdditions.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		31F591D90498F32500A80102 /* mpqdebug.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = mpqdebug.h; sourceTree = "<group>"; };
+		31F78D020F4E74CD00759CD7 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		F525C282035CB03701000102 /* MPQKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKit.h; sourceTree = "<group>"; };
 		F53AFA24034A8CA501000102 /* MPQArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchive.h; sourceTree = "<group>"; };
 		F568E751034FC7B001000102 /* MPQCryptography.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQCryptography.h; sourceTree = "<group>"; };
@@ -223,7 +223,7 @@
 			files = (
 				310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */,
 				310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */,
-				315E3FED0F4D49E900CEFCFB /* Sparkle.framework in Frameworks */,
+				31F78D030F4E74CD00759CD7 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,13 +293,13 @@
 				3150DBB50AF472EE00CF2965 /* Programs */,
 				31F0CF000BB849B800E24273 /* MPQFS */,
 				089C1665FE841158C02AAC07 /* Resources */,
-				0867D69AFE84028FC02AAC07 /* Libraries */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = "BZMPQ Framework";
 			sourceTree = "<group>";
 		};
-		0867D69AFE84028FC02AAC07 /* Libraries */ = {
+		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				31D009FE0C34B69900F72368 /* AudioToolbox.framework */,
@@ -309,10 +309,10 @@
 				31C2FF600B8FDA9C000C1DB5 /* CoreServices.framework */,
 				31A6B005068C07F80089D443 /* Foundation.framework */,
 				3191CA7D0BB859180004E8AA /* libfuse.dylib */,
-				315E3FEC0F4D49E900CEFCFB /* Sparkle.framework */,
 				31DD6C990AEAF41B002CDD2C /* Security.framework */,
+				31F78D020F4E74CD00759CD7 /* Sparkle.framework */,
 			);
-			name = Libraries;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		089C1665FE841158C02AAC07 /* Resources */ = {
@@ -794,6 +794,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mpqfs\"",
+					"\"$(SRCROOT)\"",
 				);
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -812,7 +813,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mpqfs\"",
+					"\"$(SRCROOT)\"",
 				);
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
