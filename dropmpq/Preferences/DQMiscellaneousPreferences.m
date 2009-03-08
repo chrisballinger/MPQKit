@@ -6,7 +6,7 @@
 //  Copyright (c) 2003 MacStorm. All rights reserved.
 //
 
-#import "miscPref.h"
+#import "DQMiscellaneousPreferences.h"
 #import "PreferenceKeys.h"
 
 #define NSPrefLocalizedString(key, comment) \

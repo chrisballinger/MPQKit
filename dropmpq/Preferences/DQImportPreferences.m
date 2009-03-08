@@ -6,7 +6,7 @@
 //  Copyright (c) 2003 MacStorm. All rights reserved.
 //
 
-#import "importPref.h"
+#import "DQImportPreferences.h"
 #import "PreferenceKeys.h"
 
 #import <MPQKit/MPQKit.h>
@@ -18,7 +18,7 @@
 @implementation DQImportPreferences
 
 - (id)initWithBundle:(NSBundle *)bundle {
-    self = [super initWithBundle:bundle];
+    self = [super init];
     if (!self)
 		return nil;
         
@@ -132,9 +132,10 @@
     [m_typeTable selectRow:0 byExtendingSelection:NO];
 }
 
-- (NSPreferencePaneUnselectReply)shouldUnselect {
-    if (m_isEditing) NSBeep();
-    return !m_isEditing;
+- (BOOL)shouldUnselect {
+    if (m_isEditing)
+		NSBeep();
+    return (m_isEditing) ? NO : YES;
 }
 
 - (BOOL)tabView:(NSTabView *)tabView shouldSelectTabViewItem:(NSTabViewItem *)tabViewItem {
@@ -147,7 +148,7 @@
 }
 
 - (void)tabView:(NSTabView *)tabView willSelectTabViewItem:(NSTabViewItem *)tabViewItem {
-    [[[self mainView] window] makeFirstResponder:[tabViewItem initialFirstResponder]];
+    [[tabView window] makeFirstResponder:[tabViewItem initialFirstResponder]];
 }
 
 - (IBAction)savePreferencesAction:(id)sender {

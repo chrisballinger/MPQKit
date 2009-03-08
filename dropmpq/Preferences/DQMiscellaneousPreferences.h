@@ -7,10 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <PreferencePanes/PreferencePanes.h>
+
+#import "DQPreferenceController.h"
 
 
-@interface DQMiscellaneousPreferences : NSPreferencePane {
+@interface DQMiscellaneousPreferences : DQPreferenceController {
     IBOutlet NSButton* m_preserveArchiveButton;
     IBOutlet NSButton* m_makeImpButton;
 }

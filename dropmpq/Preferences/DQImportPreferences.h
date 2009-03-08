@@ -7,10 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <PreferencePanes/PreferencePanes.h>
 
+#import "DQPreferenceController.h"
 
-@interface DQImportPreferences : NSPreferencePane {
+@interface DQImportPreferences : DQPreferenceController {
     IBOutlet NSTabView *m_tabView;
     
     IBOutlet NSPopUpButton *m_compressionLevelMenu;
