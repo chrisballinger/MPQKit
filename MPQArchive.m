@@ -1091,7 +1091,6 @@ AllocateFailure:
 	}
 	
 	[attributes_file release];
-	attributes_file = nil;
 	
 	mpq_attributes_header_t* attributes = (mpq_attributes_header_t*)attributes_data;
 	[[self class] swap_uint32_array:(uint32_t*)attributes length:2];
@@ -1713,7 +1712,7 @@ AllocateFailure:
 	
 	// Clean up and return
 	free(io_buffer);
-	return [[NSData alloc] initWithBytesNoCopy:digest length:MD5_DIGEST_LENGTH freeWhenDone:YES];
+	return [NSData dataWithBytesNoCopy:digest length:MD5_DIGEST_LENGTH freeWhenDone:YES];
 	
 AbortDigest:
 	MPQDebugLog(@"perr %d occured at stage %d with total_bytes_to_read at %ld in computeWeakSignatureDigest", perr, stage, total_bytes_to_read);
@@ -1736,15 +1735,16 @@ AbortDigest:
 		return NO;
 	
 	NSData* digest = [self computeWeakSignatureDigest:error];
-	if (!digest)
+	if (!digest) {
+		[signature release];
 		return NO;
+	}
 	
 	// Verify it
 	int result = mpq_verify_weak_signature(blizzard_weak_public_rsa, [signature bytes], [digest bytes]);
 	
 	// Clean up
 	[signature release];
-	[digest release];
 	
 	if (result != 1)
 		ReturnValueWithError(NO, MPQErrorDomain, errInvalidSignature, nil, error)
@@ -1819,7 +1819,7 @@ AbortDigest:
 	
 	// Clean up and return
 	free(io_buffer);
-	return [[NSData alloc] initWithBytesNoCopy:digest length:SHA_DIGEST_LENGTH freeWhenDone:YES];
+	return [NSData dataWithBytesNoCopy:digest length:SHA_DIGEST_LENGTH freeWhenDone:YES];
 	
 AbortDigest:
 	MPQDebugLog(@"perr %d occured at stage %d with total_bytes_to_read at %ld in computeStrongSignatureDigest", perr, stage, total_bytes_to_read);
@@ -1858,9 +1858,7 @@ AbortDigest:
 	if (!digest)
 		return NO;
 	
-	BOOL result = [self verifyStrongSignatureWithKey:blizzard_strong_public_rsa digest:digest error:error];
-	[digest release];
-	return result;
+	return [self verifyStrongSignatureWithKey:blizzard_strong_public_rsa digest:digest error:error];
 }
 
 - (BOOL)verifyWoWSurveySignature:(NSError**)error {
@@ -1873,9 +1871,7 @@ AbortDigest:
 	if (!digest)
 		return NO;
 	
-	BOOL result = [self verifyStrongSignatureWithKey:wow_survey_public_rsa digest:digest error:error];
-	[digest release];
-	return result;
+	return [self verifyStrongSignatureWithKey:wow_survey_public_rsa digest:digest error:error];
 }
 
 - (BOOL)verifyWoWMacPatchSignature:(NSError**)error {
@@ -1888,9 +1884,7 @@ AbortDigest:
 	if (!digest)
 		return NO;
 	
-	BOOL result = [self verifyStrongSignatureWithKey:wow_mac_patch_public_rsa digest:digest error:error];
-	[digest release];
-	return result;
+	return [self verifyStrongSignatureWithKey:wow_mac_patch_public_rsa digest:digest error:error];
 }
 
 - (BOOL)verifyWarcraft3MapSignature:(NSError**)error {
@@ -1906,9 +1900,7 @@ AbortDigest:
 	if (!digest)
 		return NO;
 	
-	BOOL result = [self verifyStrongSignatureWithKey:warcraft3_map_public_rsa digest:digest error:error];
-	[digest release];
-	return result;
+	return [self verifyStrongSignatureWithKey:warcraft3_map_public_rsa digest:digest error:error];
 }
 
 - (BOOL)verifyStarcraftMapSignature:(NSError**)error {
@@ -1924,9 +1916,7 @@ AbortDigest:
 	if (!digest)
 		return NO;
 	
-	BOOL result = [self verifyStrongSignatureWithKey:starcraft_map_public_rsa digest:digest error:error];
-	[digest release];
-	return result;
+	return [self verifyStrongSignatureWithKey:starcraft_map_public_rsa digest:digest error:error];
 }
 
 #pragma mark options

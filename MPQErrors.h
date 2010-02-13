@@ -69,7 +69,7 @@ enum {
     errInvalidSignature = 44,
 };
 
-static inline void MPQTransferErrorAndDrainPool(NSError** error, NSAutoreleasePool* p) {
+NS_INLINE void MPQTransferErrorAndDrainPool(NSError** error, NSAutoreleasePool* p) {
 	NSError* e = (error) ? *error : (NSError*)nil;
 	[e retain];
 	[p drain];
@@ -77,4 +77,5 @@ static inline void MPQTransferErrorAndDrainPool(NSError** error, NSAutoreleasePo
 }
 
 @interface MPQError : NSError
+
 @end
