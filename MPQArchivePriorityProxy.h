@@ -20,10 +20,10 @@
 - (void)addArchive:(MPQArchive*)archive withPriority:(uint32_t)priority;
 - (void)removeArchive:(MPQArchive*)archive;
 
-- (MPQFile*)openFile:(NSString*)filename;
-- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error;
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale;
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error;
+- (MPQFile*)openFile:(NSString*)filename NS_RETURNS_RETAINED;
+- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error NS_RETURNS_RETAINED;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale NS_RETURNS_RETAINED;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error NS_RETURNS_RETAINED;
 
 - (NSData*)copyDataForFile:(NSString*)filename;
 - (NSData*)copyDataForFile:(NSString*)filename error:(NSError**)error;
