@@ -24,16 +24,16 @@
     HEComputeDigest(method)                                                                     \
     return [NSData dataWithBytes:digest length:method##_DIGEST_LENGTH];
 
-#define HEComputeDigestNSString(method)                                                         \
-    static char __HEHexDigits[] = "0123456789abcdef";                                           \
-    unsigned char digestString[2*method##_DIGEST_LENGTH];                                       \
-    unsigned int i;                                                                             \
-    HEComputeDigest(method)                                                                     \
-    for(i=0; i<method##_DIGEST_LENGTH; i++) {                                                   \
-        digestString[2*i]   = __HEHexDigits[digest[i] >> 4];                                    \
-        digestString[2*i+1] = __HEHexDigits[digest[i] & 0x0f];                                  \
-    }                                                                                           \
-    return [NSString stringWithCString:(char*)digestString length:2*method##_DIGEST_LENGTH];
+#define HEComputeDigestNSString(method)                                                                                                         \
+    static char __HEHexDigits[] = "0123456789abcdef";                                                                                           \
+    unsigned char digestString[2*method##_DIGEST_LENGTH];                                                                                       \
+    unsigned int i;                                                                                                                             \
+    HEComputeDigest(method)                                                                                                                     \
+    for(i=0; i<method##_DIGEST_LENGTH; i++) {                                                                                                   \
+        digestString[2*i]   = __HEHexDigits[digest[i] >> 4];                                                                                    \
+        digestString[2*i+1] = __HEHexDigits[digest[i] & 0x0f];                                                                                  \
+    }                                                                                                                                           \
+    return [[[NSString alloc] initWithBytes:(char*)digestString length:2*method##_DIGEST_LENGTH encoding:NSASCIIStringEncoding] autorelease];   \
 
 #define SHA1_CTX                SHA_CTX
 #define SHA1_DIGEST_LENGTH      SHA_DIGEST_LENGTH
