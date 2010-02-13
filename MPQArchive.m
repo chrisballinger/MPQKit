@@ -1113,50 +1113,58 @@ AllocateFailure:
 - (BOOL)_loadWithPath:(NSString*)path ignoreHeaderSizeField:(BOOL)ignoreHeaderSizeField error:(NSError**)error {
 	// Copy the path argument
 	archive_path = [path copy];
-
+	
 	// Are we going to be read-only?
 	is_read_only = ![[NSFileManager defaultManager] isWritableFileAtPath:archive_path];
 	
 	int file_mode = 0;
-	if (is_read_only) file_mode = O_RDONLY;
-	else file_mode = O_RDWR;
-
+	if (is_read_only)
+		file_mode = O_RDONLY;
+	else
+		file_mode = O_RDWR;
+	
 	// Open the archive file
 	archive_fd = open([archive_path fileSystemRepresentation], file_mode, 0644);
-	if (archive_fd == -1) ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
-
-#if defined(__APPLE__)		
+	if (archive_fd == -1)
+		ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
+	
 	// Turn off caching
 	fcntl(archive_fd, F_NOCACHE, 1);
-#endif
-
+	
 	// This function assumes that archive_offset has been initialized
-
+	
 	ssize_t bytes_read = 0;
 	uint32_t i = 0;
 	
 	// Get the archive's size
 	struct stat sb;
-	if (fstat(archive_fd, &sb) == -1) ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
+	if (fstat(archive_fd, &sb) == -1)
+		ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 	off_t file_size = sb.st_size;
 	
 	// If the file is too small to even be an MPQ archive, bail out
-	if (file_size < 32) ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
+	if (file_size < 32)
+		ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
 	
 	// MPQ archives can be embedded in files, in which case the MPQ header must be 512 bytes aligned.
 	do {
 		bytes_read = pread(archive_fd, &header, sizeof(mpq_header_t), archive_offset);
-		if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
-		if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
-		if ((size_t)bytes_read < sizeof(mpq_header_t)) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
+		if (bytes_read == -1)
+			ReturnValueWithPOSIXError(NO, nil, error)
+		if ((size_t)bytes_read == 0)
+			ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
+		if ((size_t)bytes_read < sizeof(mpq_header_t))
+			ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 				
 		// Byte swap the header
 		[[self class] swap_mpq_header:&header];
 		
 		// Check the header
 		if (header.mpq_magic == MPQ_MAGIC) {
-			if (header.version == 0 && (header.header_size == sizeof(mpq_header_t) || ignoreHeaderSizeField)) break;
-			if (header.version == 1 && (header.header_size == sizeof(mpq_header_t) + sizeof(mpq_extended_header_t) || ignoreHeaderSizeField)) break;
+			if (header.version == 0 && (header.header_size == sizeof(mpq_header_t) || ignoreHeaderSizeField))
+				break;
+			if (header.version == 1 && (header.header_size == sizeof(mpq_header_t) + sizeof(mpq_extended_header_t) || ignoreHeaderSizeField))
+				break;
 			ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
 		}
 		
@@ -1186,9 +1194,12 @@ AllocateFailure:
 	// Version 1 archives have an extended header
 	if (header.version == 1) {
 		bytes_read = pread(archive_fd, &extended_header, sizeof(mpq_extended_header_t), archive_offset + sizeof(mpq_header_t));
-		if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
-		if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
-		if ((size_t)bytes_read < sizeof(mpq_extended_header_t)) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
+		if (bytes_read == -1)
+			ReturnValueWithPOSIXError(NO, nil, error)
+		if ((size_t)bytes_read == 0)
+			ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
+		if ((size_t)bytes_read < sizeof(mpq_extended_header_t))
+			ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 		
 		[[self class] swap_mpq_extended_header:&extended_header];
 	} else {
@@ -1202,7 +1213,8 @@ AllocateFailure:
 	full_sector_size = MPQ_BASE_SECTOR_SIZE << header.sector_size_shift;
 	
 	// We've got all the information we need to allocate our memory
-	if (![self allocateMemory]) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
+	if (![self allocateMemory])
+		ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
 	
 	// Compute the size of the hash and block tables
 	size_t hash_table_size = header.hash_table_length * sizeof(mpq_hash_table_entry_t);
@@ -1218,9 +1230,12 @@ AllocateFailure:
 	
 	// Read the hash table
 	bytes_read = pread(archive_fd, hash_table, hash_table_size, archive_offset + hash_table_offset);
-	if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
-	if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
-	if ((size_t)bytes_read < hash_table_size) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
+	if (bytes_read == -1)
+		ReturnValueWithPOSIXError(NO, nil, error)
+	if ((size_t)bytes_read == 0)
+		ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
+	if ((size_t)bytes_read < hash_table_size)
+		ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 	
 	// Decrypt the hash table
 	mpq_decrypt(hash_table, hash_table_size, mpq_hash_cstring(kHashTableEncryptionKey, HASH_KEY), NO);
@@ -1228,9 +1243,12 @@ AllocateFailure:
 	
 	// Read the block table
 	bytes_read = pread(archive_fd, block_table, block_table_size, archive_offset + block_table_offset);
-	if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
-	if ((size_t)bytes_read == 0) ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
-	if ((size_t)bytes_read < block_table_size) ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
+	if (bytes_read == -1)
+		ReturnValueWithPOSIXError(NO, nil, error)
+	if ((size_t)bytes_read == 0)
+		ReturnValueWithError(NO, MPQErrorDomain, errEndOfFile, nil, error)
+	if ((size_t)bytes_read < block_table_size)
+		ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 	
 	// Decrypt the block table. Since it's really a uint32_t array, disable output swapping
 	mpq_decrypt((char*)block_table, block_table_size, mpq_hash_cstring(kBlockTableEncryptionKey, HASH_KEY), YES);
@@ -1239,7 +1257,8 @@ AllocateFailure:
 	size_t extended_block_offset_table_size = header.block_table_length * sizeof(mpq_extended_block_offset_table_entry_t);
 	if (extended_header.extended_block_offset_table_offset != 0) {
 		mpq_extended_block_offset_table_entry_t* extended_block_offset_table = malloc(header.block_table_length * sizeof(mpq_extended_block_offset_table_entry_t));
-		if (extended_block_offset_table == NULL) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
+		if (extended_block_offset_table == NULL)
+			ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
 			
 		// Read the extended block offset table
 		bytes_read = pread(archive_fd, extended_block_offset_table, extended_block_offset_table_size, archive_offset + extended_header.extended_block_offset_table_offset);
@@ -1256,33 +1275,40 @@ AllocateFailure:
 		[self swap_extended_block_offset_table:extended_block_offset_table length:header.block_table_length];
 		
 		// Compute the block offset table
-		for (i = 0; i < header.block_table_length; i++) block_offset_table[i] = (((off_t)(extended_block_offset_table[i].offset_high)) << 32) + block_table[i].offset;
+		for (i = 0; i < header.block_table_length; i++)
+			block_offset_table[i] = (((off_t)(extended_block_offset_table[i].offset_high)) << 32) + block_table[i].offset;
 		
 		free(extended_block_offset_table);
 	} else {
 		// Simple copy of the offset field, extending it to 64 bits
-		for (i = 0; i < header.block_table_length; i++) block_offset_table[i] = block_table[i].offset;
+		for (i = 0; i < header.block_table_length; i++)
+			block_offset_table[i] = block_table[i].offset;
 	}
 	
 	// We need to compute the archive's size, since that information is no longer valid in version 1 archives
 	archive_size = 0;
-	if (hash_table_offset > block_table_offset) archive_size = hash_table_offset + hash_table_size;
-	else archive_size = block_table_offset + block_table_size;
-	if (header.version == 1 && (off_t)(extended_header.extended_block_offset_table_offset + extended_block_offset_table_size) >= archive_size) {
+	if (hash_table_offset > block_table_offset)
+		archive_size = hash_table_offset + hash_table_size;
+	else
+		archive_size = block_table_offset + block_table_size;
+	if (header.version == 1 && (off_t)(extended_header.extended_block_offset_table_offset + extended_block_offset_table_size) >= archive_size)
 		archive_size = extended_header.extended_block_offset_table_offset + extended_block_offset_table_size;
-	}
 	
 	// If there's a file beyond the structural tables, refuse the archive
-	for (i = 0; i < header.block_table_length; i++) if (block_offset_table[i] + block_table[i].archived_size >= archive_size) {
-		ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
+	for (i = 0; i < header.block_table_length; i++) {
+		if (block_offset_table[i] + block_table[i].archived_size >= archive_size)
+			ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
 	}
 		
 	// Do a consistency check on archive_size for version 0 archives
-	if (header.version == 0 && header.archive_size != archive_size) ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
+	if (header.version == 0 && header.archive_size != archive_size)
+		ReturnValueWithError(NO, MPQErrorDomain, errInvalidArchive, nil, error)
 	
 	// Position the write offset at the beginning of the first structural table
-	if (hash_table_offset < block_table_offset) archive_write_offset = hash_table_offset;
-	else archive_write_offset = block_table_offset;
+	if (hash_table_offset < block_table_offset)
+		archive_write_offset = hash_table_offset;
+	else
+		archive_write_offset = block_table_offset;
 	if (header.version == 1 && (off_t)extended_header.extended_block_offset_table_offset < archive_write_offset)
 		archive_write_offset = extended_header.extended_block_offset_table_offset;
 	
@@ -1291,14 +1317,16 @@ AllocateFailure:
 	
 	// If the archive contains a weak signature, cache its block table entry
 	uint32_t signature_hash_position = [self findHashPosition:kSignatureEncryptionKey locale:MPQNeutral error:NULL];
-	if (signature_hash_position != 0xffffffff) {
+	if (signature_hash_position != 0xffffffff)
 		weak_signature_hash_entry = hash_table + signature_hash_position;
-	} else weak_signature_hash_entry = NULL;
+	else
+		weak_signature_hash_entry = NULL;
 	
 	// Check for a strong signature and cache it if it exists
 	strong_signature = malloc(MPQ_STRONG_SIGNATURE_SIZE + 4);
 	bytes_read = pread(archive_fd, strong_signature, MPQ_STRONG_SIGNATURE_SIZE + 4, archive_offset + archive_size);
-	if (bytes_read == -1) ReturnValueWithPOSIXError(NO, nil, error)
+	if (bytes_read == -1)
+		ReturnValueWithPOSIXError(NO, nil, error)
 	if (bytes_read < MPQ_STRONG_SIGNATURE_SIZE + 4) {
 		free(strong_signature);
 		strong_signature = NULL;
@@ -1313,9 +1341,12 @@ AllocateFailure:
 	[self _loadAttributes:error];
 
 	// We add the signature and attributes files to the list if they are in the MPQ
-	if (![self _addListfileEntry:kSignatureFilename error:error]) return NO;
-	if (![self _addListfileEntry:kAttributesFilename error:error]) return NO;
-	if (![self _addListfileEntry:kListfileFilename error:error]) return NO;
+	if (![self _addListfileEntry:kSignatureFilename error:error])
+		return NO;
+	if (![self _addListfileEntry:kAttributesFilename error:error])
+		return NO;
+	if (![self _addListfileEntry:kListfileFilename error:error])
+		return NO;
 	
 	// The archive is not modified at this stage
 	is_modified = NO;
