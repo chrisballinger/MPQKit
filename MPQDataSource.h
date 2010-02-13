@@ -31,7 +31,7 @@ typedef uint8_t MPQDataSourceBackingStoreType;
 - (id)initWithData:(NSData*)data error:(NSError**)error;
 - (id)initWithPath:(NSString*)path error:(NSError**)error;
 
-- (id)createActualDataSource:(NSError**)error;
+- (id)createActualDataSource:(NSError**)error NS_RETURNS_RETAINED;
 
 @end
 
