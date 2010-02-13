@@ -912,8 +912,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param filename The filename of the MPQ file to open. Note that the path separator MUST be \. Must not be nil.
     @result An MPQFile instance on success or nil on failure. The sender is responsible for releasing the instance.
 */
-- (MPQFile*)openFile:(NSString*)filename;
-- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error;
+- (MPQFile*)openFile:(NSString*)filename NS_RETURNS_RETAINED;
+- (MPQFile*)openFile:(NSString*)filename error:(NSError**)error NS_RETURNS_RETAINED;
 
 /*! 
     @method openFile:locale:
@@ -924,10 +924,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param locale The old and new file's locale code. See the MPQLocale enum in MPQSharedConstants.h for a list of valid values.
     @result An MPQFile instance on success or nil on failure. The sender is responsible for releasing the instance.
 */
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale;
-- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale NS_RETURNS_RETAINED;
+- (MPQFile*)openFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error NS_RETURNS_RETAINED;
 
-- (MPQFile*)openFileAtPosition:(uint32_t)hash_position error:(NSError**)error;
+- (MPQFile*)openFileAtPosition:(uint32_t)hash_position error:(NSError**)error NS_RETURNS_RETAINED;
 
 #pragma mark reading
 
