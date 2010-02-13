@@ -99,9 +99,11 @@ static RSA* blizzard_weak_public_rsa		= NULL;
 
 static int _MPQMakeTempFileInDirectory(NSString* directory, NSString** tempFilePath, NSError** error) {
 	char* template = malloc(PATH_MAX + 1);
-	if (!template) ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
+	if (!template)
+		ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
 	
-	if (!directory) directory = NSTemporaryDirectory();
+	if (!directory)
+		directory = NSTemporaryDirectory();
 	[[directory stringByAppendingPathComponent:@".org.macstorm.mpqkit-XXXXXXXX"] getFileSystemRepresentation:template maxLength:PATH_MAX + 1];
 	
 	int fd = mkstemp(template);
@@ -113,63 +115,52 @@ static int _MPQMakeTempFileInDirectory(NSString* directory, NSString** tempFileP
 	if (tempFilePath) *tempFilePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:template length:strlen(template)];
 	
 	free(template);
-	ReturnValueWithNoError(fd, error)
+	return fd;
 }
 
 static inline BOOL _MPQFSCopy(NSString* destination, NSString* source, NSError** error) {
-#if defined(__APPLE__)
 	OSStatus err = FSPathCopyObjectSync([source UTF8String], 
 										[[destination stringByDeletingLastPathComponent] UTF8String], 
 										(CFStringRef)[destination lastPathComponent], 
 										NULL, 
 										kFSFileOperationOverwrite);
-	if (err != noErr) ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
-	ReturnValueWithNoError(YES, error)
-#elif defined(GNUSTEP)
-	BOOL err = [[NSFileManager defaultManager] copyPath:source toPath:destination handler:nil];
-	if (err && error) *error = [NSError _last];
-	return err;
-#else
-#  error Not implemented
-#endif
+	if (err != noErr)
+		ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
+	return YES;
 }
 
 static inline BOOL _MPQFSMove(NSString* destination, NSString* source, NSError** error) {
-#if defined(__APPLE__)
 	OSStatus err = FSPathMoveObjectSync([source UTF8String], 
 										[[destination stringByDeletingLastPathComponent] UTF8String], 
 										(CFStringRef)[destination lastPathComponent], 
 										NULL, 
 										kFSFileOperationOverwrite);
-	if (err != noErr) ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
-	ReturnValueWithNoError(YES, error)
-#elif defined(GNUSTEP)
-	BOOL err = [[NSFileManager defaultManager] movePath:source toPath:destination handler:nil];
-	if (err && error) *error = [NSError _last];
-	return err;
-#else
-#  error Not implemented
-#endif
+	if (err != noErr)
+		ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
+	return YES;
 }
 
 char* _MPQCreateASCIIFilename(NSString* filename, NSError** error) {
 	size_t filename_csize = [filename lengthOfBytesUsingEncoding:NSASCIIStringEncoding] + 1;
-	if (filename_csize > MPQ_MAX_PATH) ReturnValueWithError(NULL, MPQErrorDomain, errFilenameTooLong, nil, error)
+	if (filename_csize > MPQ_MAX_PATH)
+		ReturnValueWithError(NULL, MPQErrorDomain, errFilenameTooLong, nil, error)
 	
 	char* filename_cstring = malloc(filename_csize);
-	if (!filename_cstring) ReturnValueWithError(NULL, MPQErrorDomain, errOutOfMemory, nil, error)
+	if (!filename_cstring)
+		ReturnValueWithError(NULL, MPQErrorDomain, errOutOfMemory, nil, error)
 	
 	if (![filename getCString:filename_cstring maxLength:filename_csize encoding:NSASCIIStringEncoding]) {
 		free(filename_cstring);
 		ReturnValueWithError(NULL, MPQErrorDomain, errCouldNotConvertFilenameToASCII, nil, error)
 	}
 	
-	ReturnValueWithNoError(filename_cstring, error)
+	return filename_cstring;
 }
 
 static inline uint32_t _MPQComputeSectorTableLength(uint32_t full_sector_size, uint32_t file_size, uint32_t file_flags) {
 	uint32_t sector_table_length = ((file_size + full_sector_size - 1) / full_sector_size) + 1;
-	if ((file_flags & MPQFileHasSectorAdlers)) sector_table_length++;
+	if ((file_flags & MPQFileHasSectorAdlers))
+		sector_table_length++;
 	return sector_table_length;
 }
 
@@ -452,27 +443,32 @@ FreeData:
 
 - (BOOL)_truncateArchiveWithDelta:(off_t)delta error:(NSError**)error {
 	NSParameterAssert(archive_size + delta > 0);
-	if (archive_fd == -1) ReturnValueWithError(NO, MPQErrorDomain, errNoArchiveFile, nil, error)
+	if (archive_fd == -1)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoArchiveFile, nil, error)
 	
 	struct stat sb;
-	if (fstat(archive_fd, &sb) == -1) ReturnValueWithPOSIXError(NO, nil, error)
+	if (fstat(archive_fd, &sb) == -1)
+		ReturnValueWithPOSIXError(NO, nil, error)
 	
 	// If the extra data is exactly a strong signature, we continue
 	if (sb.st_size != archive_offset + archive_size + ((strong_signature) ? MPQ_STRONG_SIGNATURE_SIZE + 4 : 0))
 		ReturnValueWithError(NO, MPQErrorDomain, errCannotResizeArchive, nil, error)
 	
 	// We now consider a strong signature as lost, and so we must release its memory
-	if (strong_signature) free(strong_signature);
+	if (strong_signature)
+		free(strong_signature);
 	strong_signature = NULL;
 	
 	// Version 0 archives cannot be larger than UINT32_MAX
-	if (header.version == 0 && archive_size + delta > UINT32_MAX) ReturnValueWithError(NO, MPQErrorDomain, errArchiveSizeOverflow, nil, error)
+	if (header.version == 0 && archive_size + delta > UINT32_MAX)
+		ReturnValueWithError(NO, MPQErrorDomain, errArchiveSizeOverflow, nil, error)
 	
 	// Resize the archive file
-	if (ftruncate(archive_fd, archive_offset + archive_size + delta) == -1) ReturnValueWithPOSIXError(NO, nil, error)
+	if (ftruncate(archive_fd, archive_offset + archive_size + delta) == -1)
+		ReturnValueWithPOSIXError(NO, nil, error)
 	
 	archive_size += delta;
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 #pragma mark structural tables
@@ -490,10 +486,11 @@ FreeData:
 		current_position %= header.hash_table_length;
 
 		// If there aren't any free slots, we'll search through the entire hash table. Is this what happened?
-		if (current_position == initial_position) ReturnValueWithError(0xffffffff, MPQErrorDomain, errHashTableFull, nil, error)
+		if (current_position == initial_position)
+			ReturnValueWithError(0xffffffff, MPQErrorDomain, errHashTableFull, nil, error)
 	}
 	
-	ReturnValueWithNoError(current_position, error)
+	return current_position;
 }
 
 - (uint32_t)findHashPosition:(const char*)filename locale:(uint16_t)locale error:(NSError**)error {
@@ -513,7 +510,7 @@ FreeData:
 				hash_table[current_position].hash_b == hash_b && 
 				hash_table[current_position].locale == locale)
 			{
-				ReturnValueWithNoError(current_position, error)
+				return current_position;
 			}
 		}
 
@@ -521,7 +518,8 @@ FreeData:
 		current_position %= header.hash_table_length;
 
 		// It's possible that the entire hash table is full and the file we're looking for simply doesn't exist. Is this the case?
-		if (current_position == initial_position) break;
+		if (current_position == initial_position)
+			break;
 	}
 	
 	ReturnValueWithError(0xffffffff, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
@@ -534,7 +532,8 @@ FreeData:
 }
 
 - (BOOL)_growBlockTable:(NSError**)error {
-	if (header.block_table_length == UINT32_MAX) ReturnValueWithError(NO, MPQErrorDomain, errBlockTableFull, nil, error)
+	if (header.block_table_length == UINT32_MAX)
+		ReturnValueWithError(NO, MPQErrorDomain, errBlockTableFull, nil, error)
 	
 	// Save the current block table length and the corresponding structural tables size
 	uint32_t old_block_table_length = header.block_table_length;
@@ -590,7 +589,7 @@ FreeData:
 	
 	attributes_data_size += attributes_data_delta;
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 - (uint32_t)createBlockTablePosition:(uint32_t)size error:(NSError**)error {
@@ -603,7 +602,7 @@ FreeData:
 		
 		// If we find an empty block table entry, return it
 		if (block_table_entry->size == 0 && block_table_entry->archived_size == 0 && block_table_entry->flags == 0) {
-			ReturnValueWithNoError(block_entry_index, error)
+			return block_entry_index;
 		}
 		
 		// If we are given the size of the file which will be represented by the new entry, try to recycle deleted entries
@@ -616,13 +615,15 @@ FreeData:
 			
 			// If the current entry is invalid and the storage size is greater or equal to what we need
 			if (!(block_table_entry->flags & MPQFileValid) && block_table_entry->archived_size >= size && block_offset_table[block_entry_index] > 0) {
-				ReturnValueWithNoError(block_entry_index, error)
+				return block_entry_index;
 			}
 		}
 	}
 	
 	// Failed to find an empty entry, so let's try to grow the block table
-	if (![self _growBlockTable:error]) return 0xffffffff;
+	if (![self _growBlockTable:error])
+		return 0xffffffff;
+	
 	return [self createBlockTablePosition:size error:error];
 }
 
@@ -638,16 +639,18 @@ FreeData:
 	memset(sector_tables_cache, 0, header.hash_table_length * sizeof(uint32_t*));
 }
 
-- (void)_cacheSectorTableForFile:(uint32_t)hash_position key:(uint32_t)encryptionKey error:(NSError**)error {
+- (BOOL)_cacheSectorTableForFile:(uint32_t)hash_position key:(uint32_t)encryptionKey error:(NSError**)error {
 	NSParameterAssert(hash_position < header.hash_table_length);
 	
 	// Do nothing if that hash entry is empty or deleted
 	mpq_hash_table_entry_t* hash_entry = hash_table + hash_position;
-	if (hash_entry->block_table_index == HASH_TABLE_EMPTY || hash_entry->block_table_index == HASH_TABLE_DELETED) ReturnWithNoError(error)
+	if (hash_entry->block_table_index == HASH_TABLE_EMPTY || hash_entry->block_table_index == HASH_TABLE_DELETED)
+		return YES;
 	mpq_block_table_entry_t* block_entry = block_table + hash_entry->block_table_index;
 	
 	// Only compressed, multi-sector files have a sector table
-	if (!(block_entry->flags & (MPQFileCompressed | MPQFileDiabloCompressed)) || (block_entry->flags & MPQFileOneSector)) ReturnWithNoError(error)
+	if (!(block_entry->flags & (MPQFileCompressed | MPQFileDiabloCompressed)) || (block_entry->flags & MPQFileOneSector))
+		return YES;
 
 	// Calculate the number of sectors for that file and the size of the resulting sector table
 	uint32_t sector_table_length = _MPQComputeSectorTableLength(full_sector_size, block_entry->size, block_entry->flags);
@@ -656,21 +659,22 @@ FreeData:
 
 	// Either we have the sector table for that file in cache, or we don't
 	uint32_t* sectors = sector_tables_cache[hash_position];
-	if (sectors) ReturnWithNoError(error)
+	if (sectors)
+		return YES;
 	
 	// We need to read the block table. Block is allocated and therefore retained
 	sectors = malloc(sector_table_size);
-	if (!sectors) ReturnWithError(MPQErrorDomain, errOutOfMemory, nil, error)
+	if (!sectors) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
 	
 	// Read the sector table
 	ssize_t bytes_read = pread(archive_fd, sectors, sector_table_size, archive_offset + block_offset_table[hash_entry->block_table_index]);
 	if (bytes_read == -1) {
 		free(sectors);
-		ReturnWithPOSIXError(nil, error)
+		ReturnValueWithPOSIXError(NO, nil, error)
 	}
 	if ((uint32_t)bytes_read < sector_table_size) {
 		free(sectors);
-		ReturnWithError(MPQErrorDomain, errIO, nil, error)
+		ReturnValueWithError(NO, MPQErrorDomain, errIO, nil, error)
 	}
 	
 	// If the file is encrypted, decrypt the block table and disable output swapping since a block table is just an array of unsigned longs
@@ -679,7 +683,7 @@ FreeData:
 	
 	// Cache the sector table
 	sector_tables_cache[hash_position] = sectors;
-	ReturnWithNoError(error)
+	return YES;
 }
 
 - (void)cacheSectorTables {
@@ -692,7 +696,8 @@ FreeData:
 		if (hash_entry->block_table_index != HASH_TABLE_EMPTY && hash_entry->block_table_index != HASH_TABLE_DELETED) {
 			// Do we have the encryption key?
 			uint32_t encryptionKey = [self getFileEncryptionKey:hash_position];
-			if (encryptionKey) [self _cacheSectorTableForFile:hash_position key:encryptionKey error:(NSError**)NULL];
+			if (encryptionKey)
+				[self _cacheSectorTableForFile:hash_position key:encryptionKey error:NULL];
 		}
 		
 		hash_position++;
@@ -943,7 +948,8 @@ AllocateFailure:
 - (BOOL)_addListfileEntry:(NSString*)filename error:(NSError**)error {
 	NSParameterAssert(filename != NULL);
 	char* filename_cstring = _MPQCreateASCIIFilename(filename, error);
-	if (!filename_cstring) return NO;
+	if (!filename_cstring)
+		return NO;
 	size_t filename_length = strlen(filename_cstring) + 1;
 	
 	// Compute the starting point and the two verification hashes we'll use to see if the file is in the hash table
@@ -957,17 +963,19 @@ AllocateFailure:
 		// If the hash table entry matches the file we're searching for and we don't already have the filename in the name table, add it.
 		if (!filename_table[current_position] && hash_table[current_position].hash_a == hash_a && hash_table[current_position].hash_b == hash_b) {
 			filename_table[current_position] = malloc(filename_length);
-			if (filename_table[current_position]) memcpy(filename_table[current_position], filename_cstring, filename_length);
+			if (filename_table[current_position])
+				memcpy(filename_table[current_position], filename_cstring, filename_length);
 		}
 		
 		current_position++;
 		current_position %= header.hash_table_length;
 
-		if (current_position == initial_position) break;
+		if (current_position == initial_position)
+			break;
 	}
 	
 	free(filename_cstring);
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 #pragma mark private inner table access
@@ -988,20 +996,24 @@ AllocateFailure:
 
 - (BOOL)_createNewArchive:(uint32_t)hash_table_length version:(uint16_t)version offset:(off_t)offset error:(NSError**)error {
 	// If this parameter is 0, we set it to 1024 (default value)
-	if (hash_table_length == 0) hash_table_length = 1024;
+	if (hash_table_length == 0)
+		hash_table_length = 1024;
 		
 	// No hash table should be smaller than MPQ_MIN_HASH_TABLE_LENGTH
 	uint32_t final_hash_table_length = MPQ_MIN_HASH_TABLE_LENGTH;
 	
 	// Hash tables cannot be larger than MPQ_MAX_HASH_TABLE_LENGTH or MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH entries
 	if (version == MPQOriginalVersion) {
-		if (hash_table_length > MPQ_MAX_HASH_TABLE_LENGTH) hash_table_length = MPQ_MAX_HASH_TABLE_LENGTH;
+		if (hash_table_length > MPQ_MAX_HASH_TABLE_LENGTH)
+			hash_table_length = MPQ_MAX_HASH_TABLE_LENGTH;
 	} else if (version == MPQExtendedVersion) {
-		if (hash_table_length > MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH) hash_table_length = MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH;
+		if (hash_table_length > MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH)
+			hash_table_length = MPQ_MAX_EXTENDED_HASH_TABLE_LENGTH;
 	}
 	
 	// The number of entries in a hash table must be a power of 2. Find the first power of 2 that is >= the specified hash table size.
-	while (final_hash_table_length < hash_table_length) final_hash_table_length <<= 1;
+	while (final_hash_table_length < hash_table_length)
+		final_hash_table_length <<= 1;
 	
 	// Archive offset
 	archive_offset = offset;
@@ -1047,7 +1059,8 @@ AllocateFailure:
 	weak_signature_hash_entry = NULL;
 	
 	// Allocate our memory
-	if (![self allocateMemory]) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
+	if (![self allocateMemory])
+		ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
 		
 	// Since we haven't been saved yet, we are "writable"
 	is_read_only = NO;
@@ -1055,25 +1068,26 @@ AllocateFailure:
 	// Mark the instance as dirty
 	is_modified = YES;
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
-- (void)_loadAttributes:(NSError**)error {
+- (BOOL)_loadAttributes:(NSError**)error {
 	MPQFile* attributes_file = [self openFile:kAttributesFilename locale:MPQNeutral error:error];
-	if (!attributes_file) return;
+	if (!attributes_file)
+		return YES;
 	
 	attributes_data_size = [attributes_file length];
 	attributes_data = malloc(attributes_data_size);
 	if (!attributes_data) {
 		[attributes_file release];
-		ReturnWithError(MPQErrorDomain, errOutOfMemory, NULL, error)
+		ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, NULL, error)
 	}
 	
 	if ((off_t)[attributes_file read:attributes_data size:[attributes_file length] error:error] < (off_t)[attributes_file length]) {
 		free(attributes_data);
 		attributes_data = NULL;
 		[attributes_file release];
-		return;
+		return NO;
 	}
 	
 	[attributes_file release];
@@ -1085,10 +1099,10 @@ AllocateFailure:
 	if (attributes->magic != ATTRIBUTES_MAGIC) {
 		free(attributes_data);
 		attributes_data = NULL;
-		ReturnWithError(MPQErrorDomain, errInvalidAttributesFile, NULL, error)
+		ReturnValueWithError(NO, MPQErrorDomain, errInvalidAttributesFile, NULL, error)
 	}
 	
-	ReturnWithNoError(error)
+	return YES;
 }
 
 - (BOOL)_loadWithPath:(NSString*)path ignoreHeaderSizeField:(BOOL)ignoreHeaderSizeField error:(NSError**)error {
@@ -1302,7 +1316,7 @@ AllocateFailure:
 	is_modified = NO;
 	
 	// Checked up and good to go
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 #pragma mark init
@@ -1357,11 +1371,11 @@ AllocateFailure:
 
 - (id)initWithAttributes:(NSDictionary*)attributes error:(NSError**)error {
 	NSParameterAssert(attributes != nil);
-	
 	NSNumber* temp;
 	
 	self = [super init];
-	if (!self) return nil;
+	if (!self)
+		return nil;
 	
 	NSAutoreleasePool* p = [NSAutoreleasePool new];
 	[self commonInit];
@@ -1371,16 +1385,18 @@ AllocateFailure:
 		// MPQArchiveOffset
 		archive_offset = 0;
 		temp = [attributes objectForKey:MPQArchiveOffset];
-		if (temp) archive_offset = [temp longLongValue];
+		if (temp)
+			archive_offset = [temp longLongValue];
 		if (archive_offset < 0 || archive_offset % 512 != 0) {
-			[p release];
+			[p drain];
 			ReturnFromInitWithError(MPQErrorDomain, errInvalidArchiveOffset, nil, error)
 		}
 		
 		// MPQIgnoreHeaderSizeField
 		BOOL ignoreHeaderSizeField = NO;
 		temp = [attributes objectForKey:MPQIgnoreHeaderSizeField];
-		if (temp) ignoreHeaderSizeField = [temp boolValue];
+		if (temp)
+			ignoreHeaderSizeField = [temp boolValue];
 		
 		// load the archive from the provided path
 		if (![self _loadWithPath:path ignoreHeaderSizeField:ignoreHeaderSizeField error:error]) {
@@ -1392,23 +1408,26 @@ AllocateFailure:
 		// MPQArchiveVersion
 		MPQVersion version = MPQOriginalVersion;
 		temp = [attributes objectForKey:MPQArchiveVersion];
-		if (temp) version = [temp unsignedShortValue];
+		if (temp)
+			version = [temp unsignedShortValue];
 		if (version != MPQOriginalVersion && version != MPQExtendedVersion) {
-			[p release];
+			[p drain];
 			ReturnFromInitWithError(MPQErrorDomain, errInvalidArchiveVersion, nil, error)
 		}
 		
 		// MPQMaximumNumberOfFiles
 		uint32_t limit = 1024;
 		temp = [attributes objectForKey:MPQMaximumNumberOfFiles];
-		if (temp) limit = [temp unsignedIntValue];
+		if (temp)
+			limit = [temp unsignedIntValue];
 		
 		// MPQArchiveOffset
 		off_t offset = 0;
 		temp = [attributes objectForKey:MPQArchiveOffset];
-		if (temp) offset = [temp longLongValue];
+		if (temp)
+			offset = [temp longLongValue];
 		if (offset < 0 || offset % 512 != 0) {
-			[p release];
+			[p drain];
 			ReturnFromInitWithError(MPQErrorDomain, errInvalidArchiveOffset, nil, error)
 		}
 		
@@ -1420,8 +1439,8 @@ AllocateFailure:
 		}
 	}
 	
-	[p release];
-	ReturnValueWithNoError(self, error)
+	[p drain];
+	return self;
 }
 
 - (id)initWithFileLimit:(uint32_t)limit {
@@ -1531,24 +1550,30 @@ AllocateFailure:
 }
 
 - (BOOL)undoLastOperation:(NSError**)error {	 
-	if (deferred_operations_count == 0) ReturnValueWithNoError(YES, error)
+	if (deferred_operations_count == 0)
+		return YES;
 	mpq_deferred_operation_t* operation = last_operation;
 	
 	// Can't undo a file addition operation if the file is open
-	if (operation->type == MPQDOAdd && open_file_count_table[operation->primary_file_context.hash_position] != 0) ReturnValueWithError(NO, MPQErrorDomain, errFileIsOpen, nil, error)
+	if (operation->type == MPQDOAdd && open_file_count_table[operation->primary_file_context.hash_position] != 0)
+		ReturnValueWithError(NO, MPQErrorDomain, errFileIsOpen, nil, error)
 	
 	// Bail out if we need to restore a filename and we can't do the ASCII convertion
 	char* filename_cstring = NULL;
 	if (operation->primary_file_context.filename) {
 		filename_cstring = _MPQCreateASCIIFilename(operation->primary_file_context.filename, error);
-		if (!filename_cstring) return NO;
+		if (!filename_cstring)
+			return NO;
 	}
 	
 	// Invalidate the encryption key, sector table and filename caches
 	encryption_keys_cache[operation->primary_file_context.hash_position] = 0;
-	if (sector_tables_cache[operation->primary_file_context.hash_position]) free(sector_tables_cache[operation->primary_file_context.hash_position]);
+	if (sector_tables_cache[operation->primary_file_context.hash_position])
+		free(sector_tables_cache[operation->primary_file_context.hash_position]);
+	
 	sector_tables_cache[operation->primary_file_context.hash_position] = NULL;
-	if (filename_table[operation->primary_file_context.hash_position]) free(filename_table[operation->primary_file_context.hash_position]);
+	if (filename_table[operation->primary_file_context.hash_position])
+		free(filename_table[operation->primary_file_context.hash_position]);
 		
 	// Restore archive state
 	block_table[hash_table[operation->primary_file_context.hash_position].block_table_index] = operation->primary_file_context.block_entry;
@@ -1558,9 +1583,10 @@ AllocateFailure:
 	
 	// Delete the operation
 	[self _flushLastDO];
-	if (deferred_operations_count == 0 && archive_path != nil) is_modified = NO;
+	if (deferred_operations_count == 0 && archive_path != nil)
+		is_modified = NO;
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 #pragma mark digital signing
@@ -1569,18 +1595,22 @@ AllocateFailure:
 	int perr = 0;
 	int stage = 0;
 	
-	// If the archive is not weakly signed, we return NO
-	if (!weak_signature_hash_entry) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	// If the archive is not weakly signed, return nil
+	if (!weak_signature_hash_entry)
+		ReturnValueWithError(nil, MPQErrorDomain, errNoSignature, nil, error)
+	
 	mpq_block_table_entry_t* weak_signature_block_entry = block_table + weak_signature_hash_entry->block_table_index;
 	
 	// If the archive doesn't exist on disk yet, return nil
-	if (!archive_path) ReturnValueWithError(nil, MPQErrorDomain, errNoArchiveFile, nil, error)
+	if (!archive_path)
+		ReturnValueWithError(nil, MPQErrorDomain, errNoArchiveFile, nil, error)
 	
 	// Prepare the new digest context and buffer
 	MD5_CTX ctx;
 	MD5_Init(&ctx);
 	void* digest = malloc(MD5_DIGEST_LENGTH);
-	if (!digest) ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
+	if (!digest)
+		ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
 	
 	// 1024 times 4096 bytes, 2 times
 	void* io_buffer = valloc(0x800000);
@@ -1592,95 +1622,37 @@ AllocateFailure:
 	// We have to keep track of aiocb offsets manually, since the OS may change the value in the aiocbs under us
 	off_t iocb_offsets[2] = {archive_offset, archive_offset + 0x400000};
 	
-	// Prepare 2 aio control buffers
-#if defined(MPQKIT_USE_AIO)
-	struct aiocb iocb_buffer[2];
-	struct aiocb* iocbs[2] = {iocb_buffer, iocb_buffer + 1};
-	bzero(iocbs[0], sizeof(struct aiocb));
-	bzero(iocbs[1], sizeof(struct aiocb));
-	
-	iocbs[0]->aio_fildes = archive_fd;
-	iocbs[0]->aio_buf = io_buffers[0];
-	iocbs[0]->aio_offset = iocb_offsets[0];
-	iocbs[0]->aio_nbytes = 0x400000;
-	iocbs[0]->aio_lio_opcode = LIO_READ;
-	
-	iocbs[1]->aio_fildes = archive_fd;
-	iocbs[1]->aio_buf = io_buffers[1];
-	iocbs[1]->aio_offset = iocb_offsets[1];
-	iocbs[1]->aio_nbytes = 0x400000;
-	iocbs[1]->aio_lio_opcode = LIO_READ;
-	
-	// Send the aio control buffers to the kernel
-	do {
-		if (archive_offset + total_bytes_to_read <= iocb_offsets[1]) perr = aio_read(iocbs[0]);
-		else perr = lio_listio(LIO_NOWAIT, iocbs, 2, NULL);
-		if (perr == -1 && errno != EAGAIN) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
-			goto AbortDigest;
-		}
-	} while (perr == -1 && errno == EAGAIN);
-#endif
-	
 	// This will keep track of which aiocb we're going to read from (and suspend on) next
 	uint8_t current_iocb = 0;
 	
 	// Loop until we have read everything
-	while(total_bytes_to_read > 0) {
-#if defined(MPQKIT_USE_AIO)
-		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
-		
-		// Get result from iocbs[current_iocb]
-		perr = aio_error(iocbs[current_iocb]);
-		stage = 1;
-		if (perr == EINPROGRESS) continue;
-		if (perr) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
-			goto AbortDigest;
-		}
-		
-		// This completes the aio command
-		ssize_t bytes_read = aio_return(iocbs[current_iocb]);
-#else		 
+	while (total_bytes_to_read > 0) {
 		ssize_t bytes_read = pread(archive_fd, io_buffers[current_iocb], 0x400000, iocb_offsets[current_iocb]);
 		if (bytes_read == -1) {
 			perr = -1;
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
 			goto AbortDigest;
 		} else if (bytes_read == 0) {
-			if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
 			goto AbortDigest;
 		}
-#endif
 		
 		// Need to correct the amount of bytes read if we went too far
-		if ((off_t)bytes_read > total_bytes_to_read) bytes_read = (ssize_t)total_bytes_to_read;
+		if ((off_t)bytes_read > total_bytes_to_read)
+			bytes_read = (ssize_t)total_bytes_to_read;
 		
 		// Update the digest
 		MD5_Update(&ctx, (const void*)(io_buffers[current_iocb]), bytes_read);
 		
 		// Update bytes to read
 		total_bytes_to_read -= bytes_read;
-		if (total_bytes_to_read == 0) break;
+		if (total_bytes_to_read == 0)
+			break;
 		
 		// Prepare the next read
 		iocb_offsets[current_iocb] = iocb_offsets[(current_iocb + 1) % 2] + 0x400000;
-		
-#if defined(MPQKIT_USE_AIO)
-		bzero(iocbs[current_iocb], sizeof(struct aiocb));
-		iocbs[current_iocb]->aio_fildes = archive_fd;
-		iocbs[current_iocb]->aio_buf = io_buffers[current_iocb];
-		iocbs[current_iocb]->aio_nbytes = 0x400000;
-		iocbs[current_iocb]->aio_offset = iocb_offsets[current_iocb];
-		
-		perr = aio_read(iocbs[current_iocb]);
-		stage = 2;
-		if (perr) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
-			goto AbortDigest;
-		}
-#endif
 		
 		// Update current aiocb
 		current_iocb = (current_iocb + 1) % 2;
@@ -1689,8 +1661,8 @@ AllocateFailure:
 	// Inject 0s in place of (signature)
 	// TODO: use static const pre-made buffer for this instead, signature is fixed length
 	char zero = 0;
-	uint32_t i = 0;
-	for(; i < weak_signature_block_entry->archived_size; i++) MD5_Update(&ctx, &zero, 1);
+	for (uint32_t i = 0; i < weak_signature_block_entry->archived_size; i++)
+		MD5_Update(&ctx, &zero, 1);
 	
 	// Update the offsets
 	iocb_offsets[0] = archive_offset + block_offset_table[weak_signature_hash_entry->block_table_index] + weak_signature_block_entry->archived_size;
@@ -1702,150 +1674,51 @@ AllocateFailure:
 	// Cancel whatever IO may still be running
 	stage = 3;
 	
-#if defined(MPQKIT_USE_AIO)
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[0]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[0]);
-	}
-	
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[1]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[1]);
-	}
-	
-	// Prepare the 2 aiocbs for post-signature digesting
-	bzero(iocbs[0], sizeof(struct aiocb));
-	bzero(iocbs[1], sizeof(struct aiocb));
-	
-	iocbs[0]->aio_fildes = archive_fd;
-	iocbs[0]->aio_buf = io_buffers[current_iocb];
-	iocbs[0]->aio_offset = iocb_offsets[0];
-	iocbs[0]->aio_nbytes = 0x400000;
-	iocbs[0]->aio_lio_opcode = LIO_READ;
-	
-	iocbs[1]->aio_fildes = archive_fd;
-	iocbs[1]->aio_buf = io_buffers[current_iocb];
-	iocbs[1]->aio_offset = iocb_offsets[1];
-	iocbs[1]->aio_nbytes = 0x400000;
-	iocbs[1]->aio_lio_opcode = LIO_READ;
-	
-	// Send the aio control buffers to the kernel
-	stage = 4;
-	do {
-		if (archive_offset + archive_size <= iocb_offsets[1]) perr = aio_read(iocbs[0]);
-		else perr = lio_listio(LIO_NOWAIT, iocbs, 2, NULL);
-		if (perr == -1 && errno != EAGAIN) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
-			goto AbortDigest;
-		}
-	} while (perr == -1 && errno == EAGAIN);
-#endif
-	
 	// Loop until we have read everything
 	current_iocb = 0;
-	while(total_bytes_to_read > 0) {
-#if defined(MPQKIT_USE_AIO)
-		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
-		
-		// Get result from iocbs[current_iocb]
-		perr = aio_error(iocbs[current_iocb]);
-		stage = 5;
-		if (perr == EINPROGRESS) continue;
-		if (perr) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
-			goto AbortDigest;
-		}
-		
-		// This completes the aio command
-		ssize_t bytes_read = aio_return(iocbs[current_iocb]);
-#else
+	while (total_bytes_to_read > 0) {
 		ssize_t bytes_read = pread(archive_fd, io_buffers[current_iocb], 0x400000, iocb_offsets[current_iocb]);
 		if (bytes_read == -1) {
 			perr = -1;
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
 			goto AbortDigest;
 		} else if (bytes_read == 0) {
-			if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
 			goto AbortDigest;
 		}
-#endif
 		
 		// Need to correct the amount of bytes read if we went too far
-		if ((off_t)bytes_read > total_bytes_to_read) bytes_read = (ssize_t)total_bytes_to_read;
+		if ((off_t)bytes_read > total_bytes_to_read)
+			bytes_read = (ssize_t)total_bytes_to_read;
 		
 		// Update the digest
 		MD5_Update(&ctx, (const void*)io_buffers[current_iocb], bytes_read);
 		
 		// Update bytes to read
 		total_bytes_to_read -= bytes_read;
-		if (total_bytes_to_read == 0) break;
+		if (total_bytes_to_read == 0)
+			break;
 		
 		// Prepare the next read
 		iocb_offsets[current_iocb] = iocb_offsets[(current_iocb + 1) % 2] + 0x400000;
 		
-#if defined(MPQKIT_USE_AIO)
-		bzero(iocbs[current_iocb], sizeof(struct aiocb));
-		iocbs[current_iocb]->aio_fildes = archive_fd;
-		iocbs[current_iocb]->aio_buf = io_buffers[current_iocb];
-		iocbs[current_iocb]->aio_nbytes = 0x400000;
-		iocbs[current_iocb]->aio_offset = iocb_offsets[current_iocb];
-		iocbs[current_iocb]->aio_lio_opcode = LIO_READ;
-		
-		perr = aio_read(iocbs[current_iocb]);
-		stage = 6;
-		if (perr) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
-			goto AbortDigest;
-		}
-#endif
-		
 		// Update current aiocb
 		current_iocb = (current_iocb + 1) % 2;
 	}
-	
-#if defined(MPQKIT_USE_AIO)
-	// Cancel whatever IO may still be running
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[0]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[0]);
-	}
-	
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[1]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[1]);
-	}
-#endif
 	
 	// Finalize the digest
 	MD5_Final(digest, &ctx);
 	
 	// Clean up and return
 	free(io_buffer);
-	ReturnValueWithNoError([[NSData alloc] initWithBytesNoCopy:digest length:MD5_DIGEST_LENGTH freeWhenDone:YES], error)
+	return [[NSData alloc] initWithBytesNoCopy:digest length:MD5_DIGEST_LENGTH freeWhenDone:YES];
 	
 AbortDigest:
 	MPQDebugLog(@"perr %d occured at stage %d with total_bytes_to_read at %ld in computeWeakSignatureDigest", perr, stage, total_bytes_to_read);
-	if (perr == -1) MPQDebugLog(@"errno is %d", errno);
-	
-#if defined(MPQKIT_USE_AIO)
-	// Cancel whatever IO may still be running
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[0]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[0]);
-	}
-	
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[1]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[1]);
-	}
-#endif
+	if (perr == -1)
+		MPQDebugLog(@"errno is %d", errno);
 	
 	free(io_buffer);
 	free(digest);
@@ -1854,14 +1727,17 @@ AbortDigest:
 
 - (BOOL)verifyBlizzardWeakSignature:(BOOL*)isSigned error:(NSError**)error {
 	// If the archive is not weakly signed, we return NO
-	if (!weak_signature_hash_entry) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!weak_signature_hash_entry)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
 	// Get the weak signature and weak digest
 	NSData* signature = [self copyDataForFile:kSignatureFilename error:error];
-	if (!signature) return NO;
+	if (!signature)
+		return NO;
 	
 	NSData* digest = [self computeWeakSignatureDigest:error];
-	if (!digest) return NO;
+	if (!digest)
+		return NO;
 	
 	// Verify it
 	int result = mpq_verify_weak_signature(blizzard_weak_public_rsa, [signature bytes], [digest bytes]);
@@ -1870,8 +1746,9 @@ AbortDigest:
 	[signature release];
 	[digest release];
 	
-	if (result == 1) ReturnValueWithNoError(YES, error)
-	ReturnValueWithNoError(NO, error)
+	if (result != 1)
+		ReturnValueWithError(NO, MPQErrorDomain, errInvalidSignature, nil, error)
+	return YES;
 }
 
 - (NSData*)computeStrongSignatureDigestFrom:(off_t)digestOffset size:(off_t)digestSize tail:(NSData*)digestTail error:(NSError**)error {
@@ -1879,7 +1756,8 @@ AbortDigest:
 	int stage = 0;
 	
 	// If the archive doesn't exist on disk yet, return nil
-	if (!archive_path) ReturnValueWithError(nil, MPQErrorDomain, errNoArchiveFile, nil, error)
+	if (!archive_path)
+		ReturnValueWithError(nil, MPQErrorDomain, errNoArchiveFile, nil, error)
 	
 	// Prepare the new digest context and buffer
 	SHA_CTX ctx;
@@ -1896,143 +1774,57 @@ AbortDigest:
 	// We have to keep track of aiocb offsets manually, since the OS may change the value in the aiocbs under us
 	off_t iocb_offsets[2] = {digestOffset, digestOffset + 0x400000};
 	
-#if defined(MPQKIT_USE_AIO)
-	// Prepare 2 aio control buffers
-	struct aiocb iocb_buffer[2];
-	struct aiocb* iocbs[2] = {iocb_buffer, iocb_buffer + 1};
-	bzero(iocbs[0], sizeof(struct aiocb));
-	bzero(iocbs[1], sizeof(struct aiocb));
-	
-	iocbs[0]->aio_fildes = archive_fd;
-	iocbs[0]->aio_buf = io_buffers[0];
-	iocbs[0]->aio_offset = iocb_offsets[0];
-	iocbs[0]->aio_nbytes = 0x400000;
-	iocbs[0]->aio_lio_opcode = LIO_READ;
-	
-	iocbs[1]->aio_fildes = archive_fd;
-	iocbs[1]->aio_buf = io_buffers[1];
-	iocbs[1]->aio_offset = iocb_offsets[1];
-	iocbs[1]->aio_nbytes = 0x400000;
-	iocbs[1]->aio_lio_opcode = LIO_READ;
-	
-	// Send the aio control buffers to the kernel
-	do {
-		if (digestOffset + total_bytes_to_read <= iocb_offsets[1]) perr = aio_read(iocbs[0]);
-		else perr = lio_listio(LIO_NOWAIT, iocbs, 2, NULL);
-		if (perr == -1 && errno != EAGAIN) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
-			goto AbortDigest;
-		}
-	} while (perr == -1 && errno == EAGAIN);
-#endif
-	
 	// This will keep track of which aiocb we're going to read from (and suspend on) next
 	uint8_t current_iocb = 0;
 	
 	// Loop until we have read everything
 	while(total_bytes_to_read > 0) {
-#if defined(MPQKIT_USE_AIO)
-		// Suspend until current_iocb is done
-		aio_suspend((const struct aiocb**)(iocbs + current_iocb), 1, NULL);
-		
-		// Get result from iocbs[current_iocb]
-		perr = aio_error(iocbs[current_iocb]);
-		stage = 1;
-		if (perr == EINPROGRESS) continue;
-		if (perr) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
-			goto AbortDigest;
-		}
-		
-		// This completes the aio command
-		ssize_t bytes_read = aio_return(iocbs[current_iocb]);
-#else
 		ssize_t bytes_read = pread(archive_fd, io_buffers[current_iocb], 0x400000, iocb_offsets[current_iocb]);
 		if (bytes_read == -1) {
 			perr = -1;
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
 			goto AbortDigest;
 		} else if (bytes_read == 0) {
-			if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:MPQErrorDomain code:errEndOfFile userInfo:nil];
 			goto AbortDigest;
 		}
-#endif
 		
 		// Need to correct the amount of bytes read if we went too far
-		if ((off_t)bytes_read > total_bytes_to_read) bytes_read = (ssize_t)total_bytes_to_read;
+		if ((off_t)bytes_read > total_bytes_to_read)
+			bytes_read = (ssize_t)total_bytes_to_read;
 		
 		// Update the digest
 		SHA1_Update(&ctx, (const void*)io_buffers[current_iocb], bytes_read);
 		
 		// Update bytes to read
 		total_bytes_to_read -= bytes_read;
-		if (total_bytes_to_read == 0) break;
+		if (total_bytes_to_read == 0)
+			break;
 		
 		// Prepare the next read
 		iocb_offsets[current_iocb] = iocb_offsets[(current_iocb + 1) % 2] + 0x400000;
-		
-#if defined(MPQKIT_USE_AIO)
-		bzero(iocbs[current_iocb], sizeof(struct aiocb));
-		iocbs[current_iocb]->aio_fildes = archive_fd;
-		iocbs[current_iocb]->aio_buf = io_buffers[current_iocb];
-		iocbs[current_iocb]->aio_nbytes = 0x400000;
-		iocbs[current_iocb]->aio_offset = iocb_offsets[current_iocb];
-		
-		perr = aio_read(iocbs[current_iocb]);
-		stage = 2;
-		if (perr) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:perr userInfo:nil];
-			goto AbortDigest;
-		}
-#endif
 		
 		// Update current aiocb
 		current_iocb = (current_iocb + 1) % 2;
 	}
 	
-#if defined(MPQKIT_USE_AIO)
-	// Cancel whatever IO may still be running
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[0]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[0]);
-	}
-	
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[1]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[1]);
-	}
-#endif
-	
 	// Update the hash with the tail, if there is one
-	if (digestTail) SHA1_Update(&ctx, [digestTail bytes], [digestTail length]);
+	if (digestTail)
+		SHA1_Update(&ctx, [digestTail bytes], [digestTail length]);
 	
 	// Finalize the digest
 	SHA1_Final(digest, &ctx);
 	
 	// Clean up and return
 	free(io_buffer);
-	ReturnValueWithNoError([[NSData alloc] initWithBytesNoCopy:digest length:SHA_DIGEST_LENGTH freeWhenDone:YES], error)
+	return [[NSData alloc] initWithBytesNoCopy:digest length:SHA_DIGEST_LENGTH freeWhenDone:YES];
 	
 AbortDigest:
 	MPQDebugLog(@"perr %d occured at stage %d with total_bytes_to_read at %ld in computeStrongSignatureDigest", perr, stage, total_bytes_to_read);
-	if (perr == -1) MPQDebugLog(@"errno is %d", errno);
-	
-#if defined(MPQKIT_USE_AIO)
-	// Cancel whatever IO may still be running
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[0]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[0]);
-	}
-	
-	perr = AIO_NOTCANCELED;
-	while(perr == AIO_NOTCANCELED) {
-		perr = aio_cancel(archive_fd, iocbs[1]);
-		if (perr == AIO_ALLDONE) aio_return(iocbs[1]);
-	}
-#endif
+	if (perr == -1)
+		MPQDebugLog(@"errno is %d", errno);
 	
 	free(io_buffer);
 	free(digest);
@@ -2040,28 +1832,31 @@ AbortDigest:
 }
 
 - (BOOL)hasStrongSignature {
-	if (!strong_signature) return NO;
-	return YES;
+	return (strong_signature) ? YES : NO;
 }
 
 - (BOOL)verifyStrongSignatureWithKey:(RSA*)key digest:(NSData*)digest error:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
-	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!strong_signature)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
 	// Verify it
 	int result = mpq_verify_strong_signature(key, strong_signature, [digest bytes]);
 	
-	if (result == 1) ReturnValueWithNoError(YES, error)
-	ReturnValueWithNoError(NO, error)
+	if (result != 1)
+		ReturnValueWithError(NO, MPQErrorDomain, errInvalidSignature, nil, error)
+	return YES;
 }
 
 - (BOOL)verifyBlizzardStrongSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
-	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!strong_signature)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
 	// Get the strong digest
 	NSData* digest = [self computeStrongSignatureDigestFrom:archive_offset size:archive_size tail:nil error:error];
-	if (!digest) return NO;
+	if (!digest)
+		return NO;
 	
 	BOOL result = [self verifyStrongSignatureWithKey:blizzard_strong_public_rsa digest:digest error:error];
 	[digest release];
@@ -2070,11 +1865,13 @@ AbortDigest:
 
 - (BOOL)verifyWoWSurveySignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
-	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!strong_signature)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 		
 	// Get the strong digest
 	NSData* digest = [self computeStrongSignatureDigestFrom:archive_offset size:archive_size tail:[@"ARCHIVE" dataUsingEncoding:NSASCIIStringEncoding] error:error];
-	if (!digest) return NO;
+	if (!digest)
+		return NO;
 	
 	BOOL result = [self verifyStrongSignatureWithKey:wow_survey_public_rsa digest:digest error:error];
 	[digest release];
@@ -2083,11 +1880,13 @@ AbortDigest:
 
 - (BOOL)verifyWoWMacPatchSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
-	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!strong_signature)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
 	// Get the strong digest
 	NSData* digest = [self computeStrongSignatureDigestFrom:archive_offset size:archive_size tail:[@"ARCHIVE" dataUsingEncoding:NSASCIIStringEncoding] error:error];
-	if (!digest) return NO;
+	if (!digest)
+		return NO;
 	
 	BOOL result = [self verifyStrongSignatureWithKey:wow_mac_patch_public_rsa digest:digest error:error];
 	[digest release];
@@ -2096,14 +1895,16 @@ AbortDigest:
 
 - (BOOL)verifyWarcraft3MapSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
-	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!strong_signature)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
 	// The signature of a Warcraft 3 map includes at the end the map's capitalized filename
 	NSString* capitalizedFilename = [[archive_path lastPathComponent] uppercaseString];
 	
 	// Get the strong digest
 	NSData* digest = [self computeStrongSignatureDigestFrom:0 size:(archive_offset + archive_size) tail:[capitalizedFilename dataUsingEncoding:NSUTF8StringEncoding] error:error];
-	if (!digest) return NO;
+	if (!digest)
+		return NO;
 	
 	BOOL result = [self verifyStrongSignatureWithKey:warcraft3_map_public_rsa digest:digest error:error];
 	[digest release];
@@ -2112,14 +1913,16 @@ AbortDigest:
 
 - (BOOL)verifyStarcraftMapSignature:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
-	if (!strong_signature) ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
+	if (!strong_signature)
+		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)
 	
 	// The signature of a Starcraft map includes at the end the map's capitalized filename
 	NSString* capitalizedFilename = [[archive_path lastPathComponent] uppercaseString];
 	
 	// Get the strong digest
 	NSData* digest = [self computeStrongSignatureDigestFrom:0 size:(archive_offset + archive_size) tail:[capitalizedFilename dataUsingEncoding:NSUTF8StringEncoding] error:error];
-	if (!digest) return NO;
+	if (!digest)
+		return NO;
 	
 	BOOL result = [self verifyStrongSignatureWithKey:starcraft_map_public_rsa digest:digest error:error];
 	[digest release];
@@ -2173,7 +1976,7 @@ AbortDigest:
 	
 	[listfile_data release];
 	MPQTransferErrorAndDrainPool(error, p);
-	ReturnValueWithNoError(result, error)
+	return result;
 }
 
 - (BOOL)addArrayToFileList:(NSArray*)listfile {
@@ -2199,7 +2002,7 @@ AbortDigest:
 	}
 	
 	[p release];
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 - (BOOL)addContentsOfFileToFileList:(NSString*)path {
@@ -2271,11 +2074,14 @@ AbortDigest:
 	
 	// If the file is invalid, we can't delete it
 	mpq_hash_table_entry_t* hash_entry = hash_table + hash_position;
-	if (hash_entry->block_table_index == HASH_TABLE_DELETED) ReturnValueWithError(nil, MPQErrorDomain, errFileIsDeleted, nil, error)
-	if (hash_entry->block_table_index == HASH_TABLE_EMPTY) ReturnValueWithError(nil, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
+	if (hash_entry->block_table_index == HASH_TABLE_DELETED)
+		ReturnValueWithError(nil, MPQErrorDomain, errFileIsDeleted, nil, error)
+	if (hash_entry->block_table_index == HASH_TABLE_EMPTY)
+		ReturnValueWithError(nil, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
 	
 	mpq_block_table_entry_t* block_entry = block_table + hash_entry->block_table_index;
-	if (!(block_entry->flags & MPQFileValid)) ReturnValueWithError(nil, MPQErrorDomain, errFileIsInvalid, nil, error)
+	if (!(block_entry->flags & MPQFileValid))
+		ReturnValueWithError(nil, MPQErrorDomain, errFileIsInvalid, nil, error)
 	
 	// The info dictionary
 	NSMutableDictionary* tempDict = [NSMutableDictionary dictionaryWithCapacity:0x10];
@@ -2291,7 +2097,8 @@ AbortDigest:
 	
 	// Encryption key
 	uint32_t encryption_key = 0;
-	if (block_entry->flags & MPQFileEncrypted) encryption_key = [self getFileEncryptionKey:hash_position];
+	if (block_entry->flags & MPQFileEncrypted)
+		encryption_key = [self getFileEncryptionKey:hash_position];
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:encryption_key] forKey:MPQFileEncryptionKey];
 	
 	// Filename
@@ -2320,11 +2127,13 @@ AbortDigest:
 	mpq_deferred_operation_t* operation = operation_hash_table[hash_position];
 	if (operation && operation->type == MPQDOAdd) {
 		MPQDataSource* dataSource = [((mpq_deferred_operation_add_context_t*)operation->context)->dataSourceProxy createActualDataSource:error];
-		if (!dataSource) return nil;
+		if (!dataSource)
+			return nil;
 		
 		off_t source_length = [dataSource length:error];
 		[dataSource release];
-		if (source_length == -1) return nil;
+		if (source_length == -1)
+			return nil;
 		
 		// MPQ files can't be larger than uint32_t, so cast
 		file_size = (uint32_t)source_length;
@@ -2338,8 +2147,10 @@ AbortDigest:
 	
 	// compute the number of sectors based on the file size (so explicitely ignore sector adlers)
 	uint32_t sector_table_length;
-	if ((block_entry->flags & MPQFileOneSector)) sector_table_length = 2;
-	else sector_table_length = _MPQComputeSectorTableLength(full_sector_size, block_entry->size, (block_entry->flags & ~MPQFileHasSectorAdlers));
+	if ((block_entry->flags & MPQFileOneSector))
+		sector_table_length = 2;
+	else
+		sector_table_length = _MPQComputeSectorTableLength(full_sector_size, block_entry->size, (block_entry->flags & ~MPQFileHasSectorAdlers));
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:sector_table_length - 1] forKey:MPQFileNumberOfSectors];
 	
 	// Attributes
@@ -2361,11 +2172,11 @@ AbortDigest:
 		}
 	}
 	
-	ReturnValueWithNoError(tempDict, error)
+	return tempDict;
 }
 
 - (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale {
-	return [self fileInfoForFile:filename locale:locale error:(NSError**)NULL];
+	return [self fileInfoForFile:filename locale:locale error:NULL];
 }
 
 - (NSDictionary*)fileInfoForFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
@@ -2415,14 +2226,18 @@ AbortDigest:
 	
 	// If the file is invalid, we can't delete it
 	mpq_hash_table_entry_t* hash_entry = hash_table + hash_position;
-	if (hash_entry->block_table_index == HASH_TABLE_DELETED) ReturnValueWithError(NO, MPQErrorDomain, errFileIsDeleted, nil, error)
-	if (hash_entry->block_table_index == HASH_TABLE_EMPTY) ReturnValueWithError(NO, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
+	if (hash_entry->block_table_index == HASH_TABLE_DELETED)
+		ReturnValueWithError(NO, MPQErrorDomain, errFileIsDeleted, nil, error)
+	if (hash_entry->block_table_index == HASH_TABLE_EMPTY)
+		ReturnValueWithError(NO, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
 	
 	mpq_block_table_entry_t* block_entry = block_table + hash_entry->block_table_index;
-	if (!(block_entry->flags & MPQFileValid)) ReturnValueWithError(NO, MPQErrorDomain, errFileIsInvalid, nil, error)
+	if (!(block_entry->flags & MPQFileValid))
+		ReturnValueWithError(NO, MPQErrorDomain, errFileIsInvalid, nil, error)
 	
 	// We have to make sure the file isn't opened
-	if ([self openFileCountWithPosition:hash_position] > 0) ReturnValueWithError(NO, MPQErrorDomain, errFileIsOpen, nil, error)
+	if ([self openFileCountWithPosition:hash_position] > 0)
+		ReturnValueWithError(NO, MPQErrorDomain, errFileIsOpen, nil, error)
 	
 	// Dirty the archive
 	is_modified = YES;
@@ -2461,13 +2276,14 @@ AbortDigest:
 	
 	// Flush the encrytion key and sector table caches
 	encryption_keys_cache[hash_position] = 0;
-	if (sector_tables_cache[hash_position]) free(sector_tables_cache[hash_position]);
+	if (sector_tables_cache[hash_position])
+		free(sector_tables_cache[hash_position]);
 	sector_tables_cache[hash_position] = NULL;
 	
 	// mark the file count caches as dirty
 	_fileCountCachesDirty = YES;
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 - (BOOL)deleteFile:(NSString*)filename {
@@ -2485,14 +2301,18 @@ AbortDigest:
 - (BOOL)deleteFile:(NSString*)filename locale:(MPQLocale)locale error:(NSError**)error {
 	NSParameterAssert(filename != nil);
 	
-	if ([delegate respondsToSelector:@selector(archive:shouldDeleteFile:)])
-		if (![delegate archive:self shouldDeleteFile:filename]) ReturnValueWithError(NO, MPQErrorDomain, errDelegateCancelled, nil, error)
+	if ([delegate respondsToSelector:@selector(archive:shouldDeleteFile:)]) {
+		if (![delegate archive:self shouldDeleteFile:filename])
+			ReturnValueWithError(NO, MPQErrorDomain, errDelegateCancelled, nil, error)
+	}
 	
-	if ([delegate respondsToSelector:@selector(archive:willDeleteFile:)]) [delegate archive:self willDeleteFile:filename];
+	if ([delegate respondsToSelector:@selector(archive:willDeleteFile:)])
+		[delegate archive:self willDeleteFile:filename];
 	
 	// Convert the filename to ASCII
 	char* filename_cstring = _MPQCreateASCIIFilename(filename, error);
-	if (!filename_cstring) return NO;
+	if (!filename_cstring)
+		return NO;
 	
 	// See if the file exists by checking the hash table
 	uint32_t hash_position = [self findHashPosition:filename_cstring locale:locale error:error];
@@ -2502,13 +2322,18 @@ AbortDigest:
 	}
 	
 	// Make sure we have the name in the name table
-	if (!filename_table[hash_position]) filename_table[hash_position] = filename_cstring;
-	else free(filename_cstring);
+	if (!filename_table[hash_position])
+		filename_table[hash_position] = filename_cstring;
+	else
+		free(filename_cstring);
 	filename_cstring = NULL;
 
-	if (![self deleteFileAtPosition:hash_position error:error]) return NO;
-	if ([delegate respondsToSelector:@selector(archive:didDeleteFile:)]) [delegate archive:self didDeleteFile:filename];
-	ReturnValueWithNoError(YES, error)
+	if (![self deleteFileAtPosition:hash_position error:error])
+		return NO;
+	if ([delegate respondsToSelector:@selector(archive:didDeleteFile:)])
+		[delegate archive:self didDeleteFile:filename];
+	
+	return YES;
 }
 
 #pragma mark adding
@@ -2737,7 +2562,7 @@ AbortDigest:
 	// mark the file count caches as dirty
 	_fileCountCachesDirty = YES;
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 - (BOOL)_performFileAddOperation:(mpq_deferred_operation_t*)operation error:(NSError**)error {
@@ -3000,6 +2825,7 @@ AbortDigest:
 	if (sector_table)
 		free(sector_table);
 	[dataSource release];
+	
 	return YES;
 }
 
@@ -3010,11 +2836,14 @@ AbortDigest:
 	
 	// If the file is invalid, we can't open it
 	mpq_hash_table_entry_t* hash_entry = &hash_table[hash_position];
-	if (hash_entry->block_table_index == HASH_TABLE_DELETED) ReturnValueWithError(nil, MPQErrorDomain, errFileIsDeleted, nil, error)
-	if (hash_entry->block_table_index == HASH_TABLE_EMPTY) ReturnValueWithError(nil, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
+	if (hash_entry->block_table_index == HASH_TABLE_DELETED)
+		ReturnValueWithError(nil, MPQErrorDomain, errFileIsDeleted, nil, error)
+	if (hash_entry->block_table_index == HASH_TABLE_EMPTY)
+		ReturnValueWithError(nil, MPQErrorDomain, errHashTableEntryNotFound, nil, error)
 	
 	mpq_block_table_entry_t* block_entry = block_table + hash_entry->block_table_index;
-	if (!(block_entry->flags & MPQFileValid)) ReturnValueWithError(nil, MPQErrorDomain, errFileIsInvalid, nil, error)
+	if (!(block_entry->flags & MPQFileValid))
+		ReturnValueWithError(nil, MPQErrorDomain, errFileIsInvalid, nil, error)
 	
 	char* filename_cstring = filename_table[hash_position];
 	NSString* filename = nil;
@@ -3029,11 +2858,14 @@ AbortDigest:
 	}
 	
 	// Ask the delgate if we should proceed
-	if ([delegate respondsToSelector:@selector(archive:shouldOpenFile:)])
-		if (![delegate archive:self shouldOpenFile:filename]) ReturnValueWithError(nil, MPQErrorDomain, errDelegateCancelled, nil, error)
+	if ([delegate respondsToSelector:@selector(archive:shouldOpenFile:)]) {
+		if (![delegate archive:self shouldOpenFile:filename])
+			ReturnValueWithError(nil, MPQErrorDomain, errDelegateCancelled, nil, error)
+	}
 	
 	// Notify the delgate we're going ahead
-	if ([delegate respondsToSelector:@selector(archive:willOpenFile:)]) [delegate archive:self willOpenFile:filename];
+	if ([delegate respondsToSelector:@selector(archive:willOpenFile:)])
+		[delegate archive:self willOpenFile:filename];
 	
 	// We need to check the operation table to see if we hit a file that's pending for addition
 	mpq_deferred_operation_t* operation = operation_hash_table[hash_position];
@@ -3053,10 +2885,11 @@ AbortDigest:
 			MPQFile* file = [[fileClass alloc] initForFile:config error:error];
 			
 			// Notify the delegate we're done
-			if ([delegate respondsToSelector:@selector(archive:didOpenFile:)]) [delegate archive:self didOpenFile:file];
+			if ([delegate respondsToSelector:@selector(archive:didOpenFile:)])
+				[delegate archive:self didOpenFile:file];
 			
 			[config release];
-			ReturnValueWithNoError(file, error)
+			return file;
 		}
 	}
 	
@@ -3065,7 +2898,8 @@ AbortDigest:
 	if (block_entry->flags & MPQFileEncrypted) {
 		encryption_key = [self getFileEncryptionKey:hash_position];
 		// TODO: what if 0 can be a legitimate encryption key?
-		if (encryption_key == 0) ReturnValueWithError(nil, MPQErrorDomain, errFilenameRequired, nil, error)
+		if (encryption_key == 0)
+			ReturnValueWithError(nil, MPQErrorDomain, errFilenameRequired, nil, error)
 	}
 	
 	// We behave differently if the file is a one sector file
@@ -3085,10 +2919,11 @@ AbortDigest:
 		MPQFile* file = [[fileClass alloc] initForFile:config error:error];
 		
 		// Notify the delegate we're done
-		if ([delegate respondsToSelector:@selector(archive:didOpenFile:)]) [delegate archive:self didOpenFile:file];
+		if ([delegate respondsToSelector:@selector(archive:didOpenFile:)])
+			[delegate archive:self didOpenFile:file];
 		
 		[config release];
-		ReturnValueWithNoError(file, error)
+		return file;
 	}
 	
 	// Load the sector table in cache (or do nothing if we already have it)
@@ -3121,10 +2956,11 @@ AbortDigest:
 	MPQFile* file = [[fileClass alloc] initForFile:config error:error];
 	
 	// Notify the delegate we're done
-	if ([delegate respondsToSelector:@selector(archive:didOpenFile:)]) [delegate archive:self didOpenFile:file];
+	if ([delegate respondsToSelector:@selector(archive:didOpenFile:)])
+		[delegate archive:self didOpenFile:file];
 	
 	[config release];
-	ReturnValueWithNoError(file, error)
+	return file;
 }
 
 - (MPQFile*)openFile:(NSString*)filename {
@@ -3143,7 +2979,8 @@ AbortDigest:
 	NSParameterAssert(filename != nil);
 	
 	char* filename_cstring = _MPQCreateASCIIFilename(filename, error);
-	if (!filename_cstring) return nil;
+	if (!filename_cstring)
+		return nil;
 
 	// See if the requested file exists in the specified language
 	uint32_t hash_position = [self findHashPosition:filename_cstring locale:locale error:error];
@@ -3153,8 +2990,10 @@ AbortDigest:
 	}
 	
 	// Make sure we have the name in the name table
-	if (!filename_table[hash_position]) filename_table[hash_position] = filename_cstring;
-	else free(filename_cstring);
+	if (!filename_table[hash_position])
+		filename_table[hash_position] = filename_cstring;
+	else
+		free(filename_cstring);
 	filename_cstring = NULL;
 	
 	// openFileAtPosition does the rest
@@ -3193,7 +3032,8 @@ AbortDigest:
 
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError**)error {
 	MPQFile* theFile = [self openFile:filename locale:locale error:error];
-	if (!theFile) return nil;
+	if (!theFile)
+		return nil;
 	
 	NSData* returnData = nil;
 	if (dataRange.length == 0) {
@@ -3206,7 +3046,7 @@ AbortDigest:
 	}
 	
 	[theFile release];
-	ReturnValueWithNoError(returnData, error)
+	return returnData;
 }
 
 #pragma mark existence
@@ -3307,7 +3147,8 @@ AbortDigest:
 	if (header.version == 1) {
 		extended_header.hash_table_offset_high = (uint16_t)(hash_table_offset >> 32);
 		extended_header.block_table_offset_high = (uint16_t)(block_table_offset >> 32);
-		if (extended_header.extended_block_offset_table_offset == 1) extended_header.extended_block_offset_table_offset = block_table_offset + block_table_size;
+		if (extended_header.extended_block_offset_table_offset == 1)
+			extended_header.extended_block_offset_table_offset = block_table_offset + block_table_size;
 	}
 	
 	// Compute block table offset fields and the extended block offset table (if needed)
@@ -3315,21 +3156,24 @@ AbortDigest:
 	uint32_t i = 0;
 	if (extended_header.extended_block_offset_table_offset != 0) {
 		extended_block_offset_table = malloc(header.block_table_length * sizeof(mpq_extended_block_offset_table_entry_t));
-		if (extended_block_offset_table == NULL) ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
+		if (extended_block_offset_table == NULL)
+			ReturnValueWithError(NO, MPQErrorDomain, errOutOfMemory, nil, error)
 		
 		for (; i < header.block_table_length; i++) {
 			block_table[i].offset = (uint32_t)(block_offset_table[i] & 0xFFFFFFFF);
 			extended_block_offset_table[i].offset_high = (uint16_t)(block_offset_table[i] >> 32);
 		}
 	} else {
-		for (; i < header.block_table_length; i++) block_table[i].offset = (uint32_t)(block_offset_table[i]);
+		for (; i < header.block_table_length; i++)
+			block_table[i].offset = (uint32_t)(block_offset_table[i]);
 	}
 
 	// Write the header
 	[[self class] swap_mpq_header:&header];
 	bytes_written = pwrite(archive_fd, &header, sizeof(mpq_header_t), archive_offset);
 	if (bytes_written < (ssize_t)sizeof(mpq_header_t)) {
-		if (extended_block_offset_table) free(extended_block_offset_table);
+		if (extended_block_offset_table)
+			free(extended_block_offset_table);
 		ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 	}
 	[[self class] swap_mpq_header:&header];
@@ -3339,7 +3183,8 @@ AbortDigest:
 		[[self class] swap_mpq_extended_header:&extended_header];
 		bytes_written = pwrite(archive_fd, &extended_header, sizeof(mpq_extended_header_t), archive_offset + sizeof(mpq_header_t));
 		if (bytes_written < (ssize_t)sizeof(mpq_extended_header_t)) {
-			if (extended_block_offset_table) free(extended_block_offset_table);
+			if (extended_block_offset_table)
+				free(extended_block_offset_table);
 			ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 		}
 		[[self class] swap_mpq_extended_header:&extended_header];
@@ -3352,7 +3197,8 @@ AbortDigest:
 	// And write it to the archive
 	bytes_written = pwrite(archive_fd, hash_table, hash_table_size, archive_offset + archive_write_offset);
 	if (bytes_written < (ssize_t)hash_table_size) {
-		if (extended_block_offset_table) free(extended_block_offset_table);
+		if (extended_block_offset_table)
+			free(extended_block_offset_table);
 		ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 	}
 	
@@ -3362,7 +3208,8 @@ AbortDigest:
 	// Write the block table
 	bytes_written = pwrite(archive_fd, block_table, block_table_size, archive_offset + archive_write_offset + hash_table_size);
 	if (bytes_written < (ssize_t)block_table_size) {
-		if (extended_block_offset_table) free(extended_block_offset_table);
+		if (extended_block_offset_table)
+			free(extended_block_offset_table);
 		ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 	}
 
@@ -3382,10 +3229,11 @@ AbortDigest:
 							   extended_block_offset_table_size, 
 							   archive_offset + extended_header.extended_block_offset_table_offset);
 		free(extended_block_offset_table);
-		if (bytes_written < (ssize_t)extended_block_offset_table_size) ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
+		if (bytes_written < (ssize_t)extended_block_offset_table_size)
+			ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 	}
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 - (BOOL)_processOperations:(NSError**)error {
@@ -3413,7 +3261,7 @@ AbortDigest:
 		operation = operation->previous;
 	}
 	
-	ReturnValueWithNoError(YES, error)
+	return YES;
 }
 
 - (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError**)error {
@@ -3423,7 +3271,7 @@ AbortDigest:
 	// There's nothing to do if we're not modified
 	if (!is_modified && archive_path && [archive_path isEqualToString:path]) {
 		MPQDebugLog(@"not modified");
-		ReturnValueWithNoError(YES, error)
+		return YES;
 	}
 	
 	// Ask the delegate if we should save
@@ -3472,9 +3320,7 @@ AbortDigest:
 				ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 			}
 			
-#if defined(__APPLE__)		
 			fcntl(archive_fd, F_NOCACHE, 1);
-#endif
 			
 			// Close archive_fd, delete file at path
 			pFlags = 0x3;
@@ -3492,7 +3338,8 @@ AbortDigest:
 	} else if (atomically && is_modified) {		   
 		// Can we write at the new final destination?
 		if (![[NSFileManager defaultManager] isWritableFileAtPath:[path stringByDeletingLastPathComponent]]) {
-			if (error) *error = [MPQError errorWithDomain:MPQErrorDomain code:errReadOnlyDestination userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:MPQErrorDomain code:errReadOnlyDestination userInfo:nil];
 			goto WriteFailed;
 		}
 		
@@ -3502,13 +3349,15 @@ AbortDigest:
 		
 		// Create a temporary file
 		archive_fd = _MPQMakeTempFileInDirectory([path stringByDeletingLastPathComponent], &temp_path, error);
-		if (archive_fd == -1) goto WriteFailed;
+		if (archive_fd == -1)
+			goto WriteFailed;
 		
 		// Close up the file descriptor and copy the existing archive at temp_path. It someone manages to sneak in and drop a file there in-between, boo.
 		close(archive_fd);
 		
 		// Copy the archive to temp_path
-		if (!_MPQFSCopy(temp_path, archive_path, error)) goto WriteFailed;
+		if (!_MPQFSCopy(temp_path, archive_path, error))
+			goto WriteFailed;
 		
 		// Delete file at temp_path
 		pFlags |= 0x4;
@@ -3516,13 +3365,12 @@ AbortDigest:
 		// Open the work copy
 		archive_fd = open([temp_path fileSystemRepresentation], O_RDWR, 0644);
 		if (archive_fd == -1) {
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
 			goto WriteFailed;
 		}
 		
-#if defined(__APPLE__)		
 		fcntl(archive_fd, F_NOCACHE, 1);
-#endif
 		
 		// Close archive_fd
 		pFlags |= 0x1;
@@ -3549,12 +3397,11 @@ AbortDigest:
 				ReturnValueWithError(NO, NSPOSIXErrorDomain, errno, nil, error)
 			}
 			
-#if defined(__APPLE__)		
 			fcntl(archive_fd, F_NOCACHE, 1);
-#endif
 			
 			// If the archive is not modified, we're done
-			if (!is_modified) goto FinalizeWrite;
+			if (!is_modified)
+				goto FinalizeWrite;
 						
 			// Close archive_fd, delete file at path, set archive_fd to temp_fd
 			pFlags |= 0xB;
@@ -3568,22 +3415,30 @@ AbortDigest:
 	}
 	
 	// Write out the listfile
-	if (save_listfile) if (![self _addListfileToArchive:error]) goto WriteFailed;
+	if (save_listfile) {
+		if (![self _addListfileToArchive:error])
+			goto WriteFailed;
+	}
 	
 	// Delete the weak signature if there is one
 	if (weak_signature_hash_entry) {
 		uint32_t signature_hash_position = [self findHashPosition:kSignatureEncryptionKey locale:MPQNeutral error:error];
-		if (signature_hash_position == 0xFFFFFFFF) goto WriteFailed;
-		if (![self deleteFileAtPosition:signature_hash_position error:error]) goto WriteFailed;
+		if (signature_hash_position == 0xFFFFFFFF)
+			goto WriteFailed;
+		if (![self deleteFileAtPosition:signature_hash_position error:error])
+			goto WriteFailed;
 		weak_signature_hash_entry = NULL;
 	}
 	
 	// Delete the attributes file right now
-	if (![self deleteFile:kAttributesFilename locale:MPQNeutral error:error])
-		if (![[*error domain] isEqualToString:MPQErrorDomain] || ([[*error domain] isEqualToString:MPQErrorDomain] && [*error code] != errHashTableEntryNotFound)) goto WriteFailed;
+	if (![self deleteFile:kAttributesFilename locale:MPQNeutral error:error]) {
+		if (![[*error domain] isEqualToString:MPQErrorDomain] || ([[*error domain] isEqualToString:MPQErrorDomain] && [*error code] != errHashTableEntryNotFound))
+			goto WriteFailed;
+	}
 	
 	MPQDebugLog(@"processing deferred operations...");
-	if (![self _processOperations:error]) goto WriteFailed;
+	if (![self _processOperations:error])
+		goto WriteFailed;
 	
 	// Optimize the block table by removing any empty entries
 	uint32_t block_entry_index = 0;
@@ -3640,10 +3495,12 @@ AbortDigest:
 								[NSNumber numberWithUnsignedInt:MPQFileCompressed], MPQFileFlags,
 								[NSNumber numberWithBool:YES], MPQOverwrite,
 								nil];
-		if (![self addFileWithData:attributes_data_object filename:kAttributesFilename parameters:params error:error]) goto WriteFailed;
+		if (![self addFileWithData:attributes_data_object filename:kAttributesFilename parameters:params error:error])
+			goto WriteFailed;
 		
 		// Run the operations loop again, should only have one entry anyways
-		if (![self _processOperations:error]) goto WriteFailed;
+		if (![self _processOperations:error])
+			goto WriteFailed;
 	}
 	
 	// We can cut the block table at free_block_entry_index
@@ -3652,12 +3509,14 @@ AbortDigest:
 	
 	// We can now compute the exact archive size and resize the archive file
 	off_t new_archive_size = archive_write_offset + [self _computeSizeOfStructuralTables];
-	if (![self _truncateArchiveWithDelta:(new_archive_size - archive_size) error:error]) goto WriteFailed;
+	if (![self _truncateArchiveWithDelta:(new_archive_size - archive_size) error:error])
+		goto WriteFailed;
 	
 	// NOTE: if the archive had a strong signature, _truncateArchiveWithDelta:error: has blown it away
 	
 	// Write the structural tables
-	if (![self _writeStructuralTables:error]) goto WriteFailed;
+	if (![self _writeStructuralTables:error])
+		goto WriteFailed;
 	
 	// Restore the block table length as it was before the optimization process to not waste the allocated memory
 	header.block_table_length = old_block_table_length;
@@ -3684,14 +3543,16 @@ AbortDigest:
 		// Put the work file in place
 		if (!_MPQFSMove(path, temp_path, error)) {
 			// Re-open the original (hope it works...)
-			if (is_read_only) archive_fd = open([archive_path fileSystemRepresentation], O_RDONLY, 0644);
-			else archive_fd = open([archive_path fileSystemRepresentation], O_RDWR, 0644);
+			if (is_read_only)
+				archive_fd = open([archive_path fileSystemRepresentation], O_RDONLY, 0644);
+			else
+				archive_fd = open([archive_path fileSystemRepresentation], O_RDWR, 0644);
 			
 			// If we failed to re-open the original file, we're owned. Otherwise, re-apply the NOCACHE policy
-			if (archive_fd == -1) archive_path = nil;
-#if defined(__APPLE__)		
-			else fcntl(archive_fd, F_NOCACHE, 1);
-#endif
+			if (archive_fd == -1)
+				archive_path = nil;
+			else
+				fcntl(archive_fd, F_NOCACHE, 1);
 			
 			goto WriteFailed;
 		}
@@ -3703,13 +3564,12 @@ AbortDigest:
 		if (archive_fd == -1) {
 			// WE JUST GOT OWNED
 			archive_path = nil;
-			if (error) *error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
+			if (error)
+				*error = [MPQError errorWithDomain:NSPOSIXErrorDomain code:errno userInfo:nil];
 			goto WriteFailed;
 		}
 		
-#if defined(__APPLE__)		
 		fcntl(archive_fd, F_NOCACHE, 1);
-#endif
 	} else if (temp_fd != -1 && ![archive_path isEqualToString:path]) {
 		// Close the original file descriptor which has been backed in temp_fd
 		close(temp_fd);
@@ -3728,20 +3588,24 @@ FinalizeWrite:
 	is_modified = NO;
 	
 	// Page the delegate to tell it that we're done
-	if ([delegate respondsToSelector:@selector(archiveDidSave:)]) [delegate archiveDidSave:self];
+	if ([delegate respondsToSelector:@selector(archiveDidSave:)])
+		[delegate archiveDidSave:self];
 	
 	// We're done!
 	[p release];
-	ReturnValueWithNoError(YES, error)
+	return YES;
 
 WriteFailed:
 	if (pFlags & 0x1) {
 		close(archive_fd);
 		archive_fd = -1;
 	}
-	if (pFlags & 0x2) [[NSFileManager defaultManager] removeItemAtPath:path error:error];
-	if (pFlags & 0x4) [[NSFileManager defaultManager] removeItemAtPath:temp_path error:error];
-	if (pFlags & 0x8) archive_fd = temp_fd;
+	if (pFlags & 0x2)
+		[[NSFileManager defaultManager] removeItemAtPath:path error:error];
+	if (pFlags & 0x4)
+		[[NSFileManager defaultManager] removeItemAtPath:temp_path error:error];
+	if (pFlags & 0x8)
+		archive_fd = temp_fd;
 	
 	// TODO: we should attempt to re-write the structural tables if they were overwritten
 	
@@ -3760,11 +3624,14 @@ WriteFailed:
 	
 	MPQDebugLog(@"writeToFile failed");
 	
-	if (error) [*error retain];
+	if (error)
+		[*error retain];
 	[p release];
 	if (error) {
-		if (*error == nil) *error = [MPQError errorWithDomain:MPQErrorDomain code:errUnknown userInfo:NULL];
-		else [*error autorelease];
+		if (*error == nil)
+			*error = [MPQError errorWithDomain:MPQErrorDomain code:errUnknown userInfo:NULL];
+		else
+			[*error autorelease];
 	}
 	
 	return NO;

@@ -248,7 +248,8 @@ static int _archive_binary_tree_compare(const void* v1, const void* v2) {
 
 - (NSData*)copyDataForFile:(NSString*)filename range:(NSRange)dataRange locale:(MPQLocale)locale error:(NSError**)error {
     MPQFile* theFile = [self openFile:filename locale:locale error:error];
-    if (!theFile) return nil;
+    if (!theFile)
+        return nil;
     
     NSData* returnData = nil;
     if (dataRange.length == 0) {
@@ -261,7 +262,7 @@ static int _archive_binary_tree_compare(const void* v1, const void* v2) {
     }
     
     [theFile release];
-    ReturnValueWithNoError(returnData, error)
+    return returnData;
 }
 
 - (BOOL)fileExists:(NSString*)filename {

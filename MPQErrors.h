@@ -66,16 +66,13 @@ enum {
 	errOutOfBounds = 41,
 	errInvalidSectorChecksumData = 42,
 	errInvalidSectorChecksum = 43,
+    errInvalidSignature = 44,
 };
 
 static inline void MPQTransferErrorAndDrainPool(NSError** error, NSAutoreleasePool* p) {
 	NSError* e = (error) ? *error : (NSError*)nil;
 	[e retain];
-#if !defined(__APPLE__)
-	[p emptyPool];
-#else
 	[p drain];
-#endif
 	[e autorelease];
 }
 
