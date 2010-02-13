@@ -150,7 +150,7 @@ static int Decompress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, v
 /*                                                                           */
 /*****************************************************************************/
 
-static int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     THuffmanTree* ht = THuffmanTree::AllocateTree();
     TOutputStream os;
@@ -171,7 +171,7 @@ static int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuf
     return 1;
 }
 
-static int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
+int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     THuffmanTree* ht = THuffmanTree::AllocateTree();
     TInputStream is((uint8_t*)inBuffer, inBufferLength);
