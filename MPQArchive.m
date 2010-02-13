@@ -2298,7 +2298,7 @@ AbortDigest:
 	const char* filename = filename_table[hash_position];
 	if (filename) {
 		[tempDict setObject:[NSNumber numberWithBool:YES] forKey:MPQFileCanOpenWithoutFilename];
-		[tempDict setObject:[NSString stringWithCString:filename] forKey:MPQFilename];
+		[tempDict setObject:[NSString stringWithCString:filename encoding:NSASCIIStringEncoding] forKey:MPQFilename];
 		[tempDict setObject:[NSNumber numberWithBool:NO] forKey:MPQSyntheticFilename];
 	} else {
 		// synthesize a unique name and determine if we can open the file without the filename anyways
