@@ -3739,8 +3739,8 @@ WriteFailed:
 		close(archive_fd);
 		archive_fd = -1;
 	}
-	if (pFlags & 0x2) [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
-	if (pFlags & 0x4) [[NSFileManager defaultManager] removeFileAtPath:temp_path handler:nil];
+	if (pFlags & 0x2) [[NSFileManager defaultManager] removeItemAtPath:path error:error];
+	if (pFlags & 0x4) [[NSFileManager defaultManager] removeItemAtPath:temp_path error:error];
 	if (pFlags & 0x8) archive_fd = temp_fd;
 	
 	// TODO: we should attempt to re-write the structural tables if they were overwritten

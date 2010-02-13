@@ -121,25 +121,25 @@ static void WriteOutputData(uint8_t* buf, uint32_t* size, void* param)
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_adpcm_mono(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+static int Compress_adpcm_mono(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     *outBufferLength = CompressWave((unsigned char*)outBuffer, *outBufferLength, (short*)inBuffer, inBufferLength, 1, compressionLevel);
     return 1;
 }
 
-int Decompress_adpcm_mono(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
+static int Decompress_adpcm_mono(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     *outBufferLength = DecompressWave((int16_t*)outBuffer, *outBufferLength, (uint8_t*)inBuffer, inBufferLength, 1);
     return 1;
 }
 
-int Compress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+static int Compress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     *outBufferLength = CompressWave((unsigned char*)outBuffer, *outBufferLength, (short*)inBuffer, inBufferLength, 2, compressionLevel);
     return 1;
 }
 
-int Decompress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
+static int Decompress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
     *outBufferLength = DecompressWave((int16_t*)outBuffer, *outBufferLength, (uint8_t*)inBuffer, inBufferLength, 2);
     return 1;
 }
@@ -150,7 +150,7 @@ int Decompress_adpcm_stereo(void* outBuffer, uint32_t* outBufferLength, void* in
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+static int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     THuffmanTree* ht = THuffmanTree::AllocateTree();
     TOutputStream os;
@@ -171,7 +171,7 @@ int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, ui
     return 1;
 }
 
-int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
+static int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     THuffmanTree* ht = THuffmanTree::AllocateTree();
     TInputStream is((uint8_t*)inBuffer, inBufferLength);
@@ -191,7 +191,7 @@ int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, 
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+static int Compress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     z_stream z;
     int nResult;
@@ -225,7 +225,7 @@ int Compress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, ui
     return (nResult == Z_STREAM_END) ? 1 : 0;
 }
 
-int Decompress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
+static int Decompress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength)
 {
     z_stream z;
     int nResult;
@@ -265,7 +265,7 @@ int Decompress_zlib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, 
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_pklib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+static int Compress_pklib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     TDataInfo Info;                     // Data information
     uint8_t work_buf[CMP_BUFFER_SIZE];  // Pklib's work buffer
@@ -324,7 +324,7 @@ int Decompress_pklib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer,
 /*                                                                           */
 /*****************************************************************************/
 
-int Compress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
+static int Compress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel)
 {
     bz_stream s;
     int nResult;
@@ -357,7 +357,7 @@ int Compress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uin
     return (nResult == BZ_STREAM_END) ? 1 : 0;
 }
 
-int Decompress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
+static int Decompress_bz2(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength) {
 	bz_stream s;	// Stream information for bz2
     int nResult;
 	

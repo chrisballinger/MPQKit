@@ -19,9 +19,6 @@ extern "C" {
 
 int Decompress_pklib(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength);
 
-int Decompress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength);
-int Compress_huff(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, int32_t compressionType, int32_t compressionLevel);
-
 int SCompDecompress(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength);
 int SCompCompress(void* outBuffer, uint32_t* outBufferLength, void* inBuffer, uint32_t inBufferLength, MPQCompressorFlag compressors, int32_t compressionType, int32_t compressionLevel);
 

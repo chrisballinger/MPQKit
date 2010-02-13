@@ -84,7 +84,7 @@ uint32_t CompressWave(uint8_t* outBuffer, uint32_t outBufferLength, int16_t* inB
     uint32_t nIndex;
     int32_t nValue;
     
-    assert((inBufferLength % sizeof(int16_t)) == 0);
+    assert((inBufferLength % 2) == 0);
     assert(channels == 1 || channels == 2);
     
     // If less than 2 bytes remain, don't decompress anything
@@ -227,7 +227,7 @@ uint32_t DecompressWave(int16_t* outBuffer, uint32_t outBufferLength, uint8_t* i
     uint32_t dwOutLengthCopy = outBufferLength;
     uint32_t nIndex;
     
-    assert((outBufferLength % sizeof(int16_t)) == 0);
+    assert((outBufferLength % 2) == 0);
     assert(channels == 1 || channels == 2);
     
     SInt32Array1[0] = SInt32Array1[1] = 0x2C;
