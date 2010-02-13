@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -219,8 +219,6 @@
 		319980080B4D8AFF00D4FE4E /* mpqdump.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mpqdump.m; sourceTree = "<group>"; };
 		3199801A0B4D8B4600D4FE4E /* mpqdump */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqdump; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A6B005068C07F80089D443 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		31A82B290C5A87E50011E8E4 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
-		31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKitPrivate.h; sourceTree = "<group>"; };
 		31A8A4FB0BC14502001F583D /* mpqfsd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mpqfsd; sourceTree = BUILT_PRODUCTS_DIR; };
 		31A8A50D0BC1455A001F583D /* mpqfs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mpqfs.m; path = mpqfs/mpqfs.m; sourceTree = "<group>"; };
@@ -369,7 +367,6 @@
 		0867D691FE84028FC02AAC07 /* BZMPQ Framework */ = {
 			isa = PBXGroup;
 			children = (
-				31A82B280C5A87E50011E8E4 /* Configuration */,
 				F525C282035CB03701000102 /* MPQKit.h */,
 				31A82B9C0C5A8CFA0011E8E4 /* MPQKitPrivate.h */,
 				F5AA721B034908F301000102 /* MPQSharedConstants.h */,
@@ -466,15 +463,6 @@
 				31E15FAC0AE1D8E6008AB3D2 /* NSDataCryptoAdditions.m */,
 			);
 			name = Programs;
-			sourceTree = "<group>";
-		};
-		31A82B280C5A87E50011E8E4 /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				31A82B290C5A87E50011E8E4 /* Base.xcconfig */,
-				31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */,
-			);
-			path = Configuration;
 			sourceTree = "<group>";
 		};
 		31C01A610F645E88000CAEA3 /* Preferences */ = {
@@ -763,8 +751,11 @@
 /* Begin PBXProject section */
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = MacStorm;
+			};
 			buildConfigurationList = 31EB3F00085CCCD800290137 /* Build configuration list for PBXProject "MPQKit" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BZMPQ Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1226,7 +1217,6 @@
 		};
 		31EB3F01085CCCD800290137 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
@@ -1235,19 +1225,16 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.5;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Debug;
 		};
 		31EB3F02085CCCD800290137 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31A82B2A0C5A87E50011E8E4 /* DebugRelease.xcconfig */;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				SDKROOT = macosx10.5;
 				STRIP_INSTALLED_PRODUCT = YES;
 			};
 			name = Release;
