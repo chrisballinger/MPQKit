@@ -941,7 +941,13 @@ AllocateFailure:
 		result = [self addFileWithData:listdata filename:kListfileFilename parameters:params error:error];
 	}
 	
-	MPQTransferErrorAndDrainPool(error, p);
+	if (!result && error) {
+		[*error retain];
+		[p drain];
+		[*error autorelease];
+	} else
+		[p drain];
+	
 	return result;
 }
 
@@ -1399,7 +1405,12 @@ AllocateFailure:
 		
 		// load the archive from the provided path
 		if (![self _loadWithPath:path ignoreHeaderSizeField:ignoreHeaderSizeField error:error]) {
-			MPQTransferErrorAndDrainPool(error, p);
+			if (error) {
+				[*error retain];
+				[p drain];
+				[*error autorelease];
+			} else
+				[p drain];
 			[self release];
 			return nil;
 		}
@@ -1432,7 +1443,12 @@ AllocateFailure:
 		
 		// create a new archive with the provided file limit, version and offset
 		if (![self _createNewArchive:limit version:version offset:offset error:error]) {
-			MPQTransferErrorAndDrainPool(error, p);
+			if (error) {
+				[*error retain];
+				[p drain];
+				[*error autorelease];
+			} else
+				[p drain];
 			[self release];
 			return nil;
 		}
@@ -1954,7 +1970,12 @@ AbortDigest:
 	// Try to open the listfile
 	NSData* listfile_data = [self copyDataForFile:kListfileFilename locale:MPQNeutral error:error];
 	if (!listfile_data) {
-		MPQTransferErrorAndDrainPool(error, p);
+		if (error) {
+			[*error retain];
+			[p drain];
+			[*error autorelease];
+		} else
+			[p drain];
 		return NO;
 	}
 	
@@ -1965,7 +1986,14 @@ AbortDigest:
 	}
 	
 	[listfile_data release];
-	MPQTransferErrorAndDrainPool(error, p);
+	
+	if (!result && error) {
+		[*error retain];
+		[p drain];
+		[*error autorelease];
+	} else
+		[p drain];
+	
 	return result;
 }
 
@@ -1985,13 +2013,18 @@ AbortDigest:
 	  if (![listfileEntry isEqualToString:@""]) {
 		BOOL result = [self _addListfileEntry:listfileEntry error:error];
 		if (!result) {
-			MPQTransferErrorAndDrainPool(error, p);
+			if (error) {
+				[*error retain];
+				[p drain];
+				[*error autorelease];
+			} else
+				[p drain];
 			return NO;
 		}
 	  }
 	}
 	
-	[p release];
+	[p drain];
 	return YES;
 }
 
@@ -2003,22 +2036,26 @@ AbortDigest:
 	NSParameterAssert(path != nil);
 	NSAutoreleasePool* p = [NSAutoreleasePool new];
 
-#if defined(__APPLE__)
 	NSData* fileData = [NSData dataWithContentsOfFile:path options:NSUncachedRead error:error];
-#elif defined(GNUSTEP)
-	NSData* fileData = [NSData dataWithContentsOfFile:path];
-#endif
 	if (!fileData) {
-#if defined(GNUSTEP)
-		if (error) *error = [NSError _last];
-#endif
-		MPQTransferErrorAndDrainPool(error, p);
+		if (error) {
+			[*error retain];
+			[p drain];
+			[*error autorelease];
+		} else
+			[p drain];
 		return NO;
 	}
 	
 	BOOL result = [self addArrayToFileList:[NSArray arrayWithListfileData:fileData] error:error];
 	
-	MPQTransferErrorAndDrainPool(error, p);
+	if (!result && error) {
+		[*error retain];
+		[p drain];
+		[*error autorelease];
+	} else
+		[p drain];
+	
 	return result;
 }
 
@@ -3318,7 +3355,12 @@ AbortDigest:
 			// Create a temporary file
 			archive_fd = _MPQMakeTempFileInDirectory([path stringByDeletingLastPathComponent], &temp_path, error);
 			if (archive_fd == -1) {
-				MPQTransferErrorAndDrainPool(error, p);
+				if (error) {
+					[*error retain];
+					[p drain];
+					[*error autorelease];
+				} else
+					[p drain];
 				return NO;
 			}
 			
@@ -3375,7 +3417,12 @@ AbortDigest:
 			// Copy the archive to path
 			if (!_MPQFSCopy(path, archive_path, error)) {
 				archive_fd = temp_fd;
-				MPQTransferErrorAndDrainPool(error, p);
+				if (error) {
+					[*error retain];
+					[p drain];
+					[*error autorelease];
+				} else
+					[p drain];
 				return NO;
 			}
 						
