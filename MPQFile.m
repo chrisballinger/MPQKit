@@ -595,7 +595,7 @@
 	return data_offset;
 		
 ErrorExit:
-	MPQDebugLog(@"error %d occured at stage %d in readSectors", error, stage);
+	MPQDebugLog(@"%@ error occured at stage %d in readSectors", (error) ? [*error localizedDescription] : nil, stage);
 	if (perr == -1)
         MPQDebugLog(@"errno is %d", errno);
 	
