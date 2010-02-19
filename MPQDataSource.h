@@ -7,9 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#if defined(__APPLE__)
 #import <CoreServices/CoreServices.h>
-#endif
 
 enum {
     NSDataBackingStore = 1,
@@ -21,11 +19,7 @@ typedef uint8_t MPQDataSourceBackingStoreType;
 @interface MPQDataSourceProxy : NSObject {
     MPQDataSourceBackingStoreType _backingStoreType;
     NSData* _dataBackingStore;
-#if defined(__APPLE__)
     AliasHandle _fileAlias;
-#else
-    NSString* _path;
-#endif
 }
 
 - (id)initWithData:(NSData*)data error:(NSError**)error;

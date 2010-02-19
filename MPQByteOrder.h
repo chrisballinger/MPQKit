@@ -16,41 +16,12 @@
 extern "C" {
 #endif
 
-#if defined(__APPLE__)
 #include <CoreFoundation/CFByteOrder.h>
 #define MPQ_INLINE CF_INLINE
 
-MPQ_INLINE uint16_t MPQSwapInt16(uint16_t arg) {return CFSwapInt16(arg);}
-MPQ_INLINE uint32_t MPQSwapInt32(uint32_t arg) {return CFSwapInt32(arg);}
-MPQ_INLINE uint64_t MPQSwapInt64(uint64_t arg) {return CFSwapInt64(arg);}
-
-#else
-#define MPQ_INLINE static __inline__
-
-MPQ_INLINE uint16_t MPQSwapInt16(uint16_t arg) {
-    uint16_t result;
-    result = (uint16_t)(((arg << 8) & 0xFF00) | ((arg >> 8) & 0xFF));
-    return result;
-}
-
-MPQ_INLINE uint32_t MPQSwapInt32(uint32_t arg) {
-    uint32_t result;
-    result = ((arg & 0xFF) << 24) | ((arg & 0xFF00) << 8) | ((arg >> 8) & 0xFF00) | ((arg >> 24) & 0xFF);
-    return result;
-}
-
-MPQ_INLINE uint64_t MPQSwapInt64(uint64_t arg) {
-    union mpq_swap {
-        uint64_t sv;
-        uint32_t ul[2];
-    } tmp, result;
-    tmp.sv = arg;
-    result.ul[0] = MPQSwapInt32(tmp.ul[1]); 
-    result.ul[1] = MPQSwapInt32(tmp.ul[0]);
-    return result.sv;
-}
-
-#endif // __APPLE__
+#define MPQSwapInt16 CFSwapInt16
+#define MPQSwapInt32 CFSwapInt32
+#define MPQSwapInt64 CFSwapInt64
 
 MPQ_INLINE uint16_t MPQSwapInt16BigToHost(uint16_t arg) {
 #if defined(__BIG_ENDIAN__)

@@ -6,11 +6,7 @@
 //  Copyright 2007 MacStorm. All rights reserved.
 //
 
-#if !defined(__APPLE__)
-#define _XOPEN_SOURCE 500
-#endif
-
-#import <MPQKit/MPQKitPrivate.h>
+#import "MPQKitPrivate.h"
 #import "PHSErrorMacros.h"
 #import "MPQArchivePriorityProxy.h"
 
@@ -116,11 +112,7 @@ static int _archive_binary_tree_compare(const void* v1, const void* v2) {
 		_priority_count++;
 		
 		// Sort the tree
-#if defined(__APPLE__)
 		mergesort(archives, _priority_count, sizeof(struct _archive_binary_tree), _archive_binary_tree_compare);
-#else
-		qsort(archives, _priority_count, sizeof(struct _archive_binary_tree), _archive_binary_tree_compare);
-#endif
 
 	} else {
 		// Push the archive at the top

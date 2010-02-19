@@ -6,11 +6,6 @@
 //  Copyright (c) 2002-2007 MacStorm. All rights reserved.
 //
 
-#if !defined(__APPLE__)
-#define _XOPEN_SOURCE 600
-#define _FILE_OFFSET_BITS  64
-#endif
- 
 #import <fcntl.h>
 #import <unistd.h>
 #import <zlib.h>
