@@ -104,7 +104,7 @@
     hash_entry = *(mpq_hash_table_entry_t*)[[descriptor objectForKey:@"HashTableEntry"] pointerValue];
     block_entry = *(mpq_block_table_entry_t*)[[descriptor objectForKey:@"BlockTableEntry"] pointerValue];
     
-    _checkSectorAdlers = NO;
+    _checkSectorAdlers = YES;
     
     [parent increaseOpenFileCount_:hash_position];
     return self;
@@ -414,20 +414,34 @@
     
     // If live sector checksum validation is enabled, read the sector adlers (if we have them)
     if (_checkSectorAdlers && (block_entry.flags & MPQFileHasSectorAdlers) && !_sector_adlers) {
-        // Quick sanity check
-        size_t sector_adlers_size = (sector_table_length - 1) * sizeof(uint32_t);
-        if ((sector_table[sector_table_length] - sector_table[sector_table_length - 1]) != sector_adlers_size)
-            ReturnValueWithError(-1, MPQErrorDomain, errInvalidSectorChecksumData, nil, error)
-        
-        _sector_adlers = malloc(sector_adlers_size);
-        if (!_sector_adlers)
-            ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
-        
-        bytes_read = pread(archive_fd, _sector_adlers, sector_adlers_size, file_archive_offset + sector_table[sector_table_length - 1]);
-        if (bytes_read == -1)
-            ReturnValueWithPOSIXError(-1, nil, error)
-        if ((size_t)bytes_read < sector_adlers_size)
-            ReturnValueWithError(-1, MPQErrorDomain, errEndOfFile, nil, error)
+        size_t sector_adlers_size = sector_table[sector_table_length] - sector_table[sector_table_length - 1];
+        if (sector_adlers_size) {
+            void* compressed_adlers = malloc(sector_adlers_size);
+            if (!compressed_adlers)
+                ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
+            
+            bytes_read = pread(archive_fd, compressed_adlers, sector_adlers_size, file_archive_offset + sector_table[sector_table_length - 1]);
+            if (bytes_read == -1) {
+                free(compressed_adlers);
+                ReturnValueWithPOSIXError(-1, nil, error)
+            }
+            if ((size_t)bytes_read < sector_adlers_size) {
+                free(compressed_adlers);
+                ReturnValueWithError(-1, MPQErrorDomain, errEndOfFile, nil, error)
+            }
+            
+            uint32_t decompressed_adlers_size = (sector_table_length - 1) * (uint32_t)sizeof(uint32_t);
+            _sector_adlers = malloc(decompressed_adlers_size);
+            if (!compressed_adlers) {
+                free(compressed_adlers);
+                ReturnValueWithError(-1, MPQErrorDomain, errOutOfMemory, nil, error)
+            }
+            
+            perr = SCompDecompress(_sector_adlers, &decompressed_adlers_size, compressed_adlers, (uint32_t)sector_adlers_size);
+            free(compressed_adlers);
+            if (perr == 0)
+                ReturnValueWithError(-1, MPQErrorDomain, errInvalidSectorChecksumData, nil, error)
+        }
     }
     
 #if defined(MPQFILE_PREAD_CHECK)
@@ -489,17 +503,15 @@
             sector_buffer = memcmp_buffer;
             sector_buffer_offset = 0;
 #endif
-            // If we have sector adlers and live sector checksum validation is on, checksum the sector and verify
-            if (_checkSectorAdlers && (block_entry.flags & MPQFileHasSectorAdlers)) {
-                // Explicit cast is OK here, adler32 is 32-bit
-                uint32_t adler = (uint32_t)adler32(0L, Z_NULL, 0);
-                adler = (uint32_t)adler32(adler, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
-                if (adler != _sector_adlers[current_sector]) {
+            // If we have sector adlers, checksum the sector and verify
+            if (_sector_adlers) {
+                uLong adler = adler32(0L, BUFFER_OFFSET(sector_buffer, sector_buffer_offset), sector_size);
+                if (adler != (uLong)_sector_adlers[current_sector]) {
                     if (error) {
                         NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
                             [self fileInfo], MPQErrorFileInfo, 
                             [NSNumber numberWithUnsignedInt:current_sector], MPQErrorSectorIndex, 
-                            [NSNumber numberWithUnsignedInt:adler], MPQErrorComputedSectorChecksum, 
+                            [NSNumber numberWithUnsignedLong:adler], MPQErrorComputedSectorChecksum, 
                             [NSNumber numberWithUnsignedInt:_sector_adlers[current_sector]], MPQErrorExpectedSectorChecksum, 
                             nil];
                         *error = [MPQError errorWithDomain:MPQErrorDomain code:errInvalidSectorChecksum userInfo:userInfo];
