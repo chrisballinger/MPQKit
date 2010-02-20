@@ -279,9 +279,8 @@ int main(int argc, char* argv[]) {
             
             // file info
             printf("    file info: {\n");
-            NSEnumerator* keys = [fileInfo keyEnumerator];
-            id key;
-            while ((key = [keys nextObject])) {
+            NSArray* sorted_keys = [[fileInfo allKeys] sortedArrayUsingComparator:^(id lhs, id rhs) {return [lhs compare:rhs options:NSLiteralSearch];}];
+            for (NSString* key in sorted_keys) {
                 const char* valueString;
                 id value = [fileInfo objectForKey:key];
                 
