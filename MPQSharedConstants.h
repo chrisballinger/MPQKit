@@ -188,6 +188,14 @@
 #define MPQFileHashPosition				@"MPQFileHashPosition"
 
 /*!
+  @defined MPQFileIndex
+  @discussion Key for the file block position inside file information dictionaries.
+	
+	The value of this key will be a NSNumber object.
+*/
+#define MPQFileBlockPosition            @"MPQFileBlockPosition"
+
+/*!
   @defined MPQFilename
   @discussion Key for the file's MPQ filename inside file information dictionaries.
 	

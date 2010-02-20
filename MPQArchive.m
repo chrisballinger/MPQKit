@@ -2137,8 +2137,9 @@ AbortDigest:
 	// The info dictionary
 	NSMutableDictionary* tempDict = [NSMutableDictionary dictionaryWithCapacity:0x10];
 	
-	// Hash table position (aka the file's position)
+	// Hash table position (aka the file's position) and block table position
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:hash_position] forKey:MPQFileHashPosition];
+	[tempDict setObject:[NSNumber numberWithUnsignedInt:hash_entry->block_table_index] forKey:MPQFileBlockPosition];
 	
 	// Basic hash table information.
 	[tempDict setObject:[NSNumber numberWithUnsignedInt:hash_entry->hash_a] forKey:MPQFileHashA];
