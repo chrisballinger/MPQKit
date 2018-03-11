@@ -39,7 +39,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.macstorm.mpqfs</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -57,16 +57,16 @@
 	<string>mpqfs</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>SUEnableSystemProfiling</key>
+	<true/>
 	<key>SUExpectsDSASignature</key>
 	<true/>
 	<key>SUFeedURL</key>
 	<string>http://www.devklog.net/software/mpqfs.xml</string>
-	<key>SUShowReleaseNotes</key>
-	<true/>
-	<key>SUEnableSystemProfiling</key>
-	<true/>
 	<key>SUPublicDSAKeyFile</key>
 	<string>sparkle.pem</string>
+	<key>SUShowReleaseNotes</key>
+	<true/>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>

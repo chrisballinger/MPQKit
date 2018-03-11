@@ -7,15 +7,15 @@
 	<key>CFBundleExecutable</key>
 	<string>MPQKit</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.macstorm.mpqkit</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
-	<key>CFBundleSignature</key>
-	<string>MPQK</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0b5</string>
+	<key>CFBundleSignature</key>
+	<string>MPQK</string>
 	<key>CFBundleVersion</key>
 	<string></string>
 	<key>NSPrincipalClass</key>

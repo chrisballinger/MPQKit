@@ -3,13 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		310D91930BBECF6600FEA3C5 /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
 		310D91970BBECF6D00FEA3C5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
-		310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
+		310D919C0BBECF9500FEA3C5 /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		310D91F50BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 310D91F30BBED5D000FEA3C5 /* MPQFSApplicationDelegate.m */; };
 		310D92DC0BBEF7A800FEA3C5 /* Fuse.icns in Resources */ = {isa = PBXBuildFile; fileRef = 310D92DB0BBEF7A800FEA3C5 /* Fuse.icns */; };
 		3112FEE90C38A0B100992F8F /* MPQArchivePriorityProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3112FEE70C38A0B100992F8F /* MPQArchivePriorityProxy.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,7 +62,7 @@
 		31A8A51C0BC145F6001F583D /* libfuse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3191CA7D0BB859180004E8AA /* libfuse.dylib */; };
 		31A8A51D0BC145F6001F583D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31A6B005068C07F80089D443 /* Foundation.framework */; };
 		31A8A5390BC1478B001F583D /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
-		31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31A8A4FB0BC14502001F583D /* mpqfsd */; };
+		31A8A5450BC147D7001F583D /* mpqfsd in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31A8A4FB0BC14502001F583D /* mpqfsd */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		31A8A5B70BC14B72001F583D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5B60BC14B72001F583D /* InfoPlist.strings */; };
 		31A8A5CD0BC14CC7001F583D /* mpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31A8A5CC0BC14CC7001F583D /* mpq.icns */; };
 		31C01A410F64584B000CAEA3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31A6B005068C07F80089D443 /* Foundation.framework */; };
@@ -79,7 +79,7 @@
 		31CEEFDA0C04FA3D001ACC9A /* MPQDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 31CEEFD80C04FA3D001ACC9A /* MPQDataSource.m */; };
 		31DD6C9A0AEAF41B002CDD2C /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31DD6C990AEAF41B002CDD2C /* Security.framework */; };
 		31F78D030F4E74CD00759CD7 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
-		31F78D130F4E74ED00759CD7 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
+		31F78D130F4E74ED00759CD7 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		31FE1B090F4E78B70046698D /* sparkle.pem in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1B070F4E78B70046698D /* sparkle.pem */; };
 		31FE1B3B0F4E7BF50046698D /* FocusRingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A580F4E75A70046698D /* FocusRingView.m */; };
 		31FE1B3C0F4E7BF50046698D /* DropMPQController.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A500F4E75A70046698D /* DropMPQController.m */; };
@@ -96,8 +96,8 @@
 		31FE1B960F4E7ECA0046698D /* dropmpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A910F4E75A70046698D /* dropmpq.icns */; };
 		31FE1B980F4E7ECA0046698D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A550F4E75A70046698D /* MainMenu.xib */; };
 		31FE1B990F4E7ECA0046698D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A530F4E75A70046698D /* InfoPlist.strings */; };
-		31FE1BA50F4E7EED0046698D /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
-		31FE1BBC0F4E7EF10046698D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
+		31FE1BA50F4E7EED0046698D /* MPQKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		31FE1BBC0F4E7EF10046698D /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		31FE1C550F4E81890046698D /* RXVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 315E3DA70F4D477A00CEFCFB /* RXVersionComparator.m */; };
 /* End PBXBuildFile section */
 
@@ -279,6 +279,7 @@
 		31FE1A940F4E75A70046698D /* dropmpq.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dropmpq.m; sourceTree = "<group>"; };
 		31FE1AAB0F4E75FF0046698D /* dropmpq.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = dropmpq.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		31FE1B070F4E78B70046698D /* sparkle.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sparkle.pem; sourceTree = "<group>"; };
+		D93F7AC32055B6550047A2A7 /* libboringssl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libboringssl.tbd; path = usr/lib/libboringssl.tbd; sourceTree = SDKROOT; };
 		F525C282035CB03701000102 /* MPQKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQKit.h; sourceTree = "<group>"; };
 		F53AFA24034A8CA501000102 /* MPQArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQArchive.h; sourceTree = "<group>"; };
 		F568E751034FC7B001000102 /* MPQCryptography.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPQCryptography.h; sourceTree = "<group>"; };
@@ -389,6 +390,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D93F7AC32055B6550047A2A7 /* libboringssl.tbd */,
 				31D009FE0C34B69900F72368 /* AudioToolbox.framework */,
 				31D009FF0C34B69900F72368 /* AudioUnit.framework */,
 				310D91590BBECCC800FEA3C5 /* Cocoa.framework */,
@@ -752,11 +754,16 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = MacStorm;
 			};
 			buildConfigurationList = 31EB3F00085CCCD800290137 /* Build configuration list for PBXProject "MPQKit" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* BZMPQ Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
@@ -1037,18 +1044,16 @@
 		310D91880BBECE5100FEA3C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/mpqfs\"",
 					"\"$(SRCROOT)\"",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.macstorm.mpqfs;
 				PRODUCT_NAME = mpqfs;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1057,17 +1062,15 @@
 		310D91890BBECE5100FEA3C5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PREBINDING = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = org.macstorm.mpqfs;
 				PRODUCT_NAME = mpqfs;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1080,6 +1083,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1096,6 +1100,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1110,6 +1115,7 @@
 		319980180B4D8B4600D4FE4E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_LDFLAGS = "-lcrypto";
 				PRODUCT_NAME = mpqdump;
@@ -1119,6 +1125,7 @@
 		319980190B4D8B4600D4FE4E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
 				OTHER_LDFLAGS = "-lcrypto";
 				PRODUCT_NAME = mpqdump;
@@ -1128,10 +1135,7 @@
 		31A8A5090BC14526001F583D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/include/fuse,
@@ -1149,10 +1153,7 @@
 		31A8A50A0BC14526001F583D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/include/fuse,
@@ -1175,9 +1176,11 @@
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"${inherited}",
 					stormlib2,
+					/usr/local/opt/openssl/include,
 				);
 				INFOPLIST_FILE = "MPQ-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -1185,7 +1188,9 @@
 					"-lz",
 					"-lbz2",
 					"-lcrypto",
+					"-L/usr/local/opt/openssl/lib",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.macstorm.mpqkit;
 				PRODUCT_NAME = MPQKit;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -1199,9 +1204,11 @@
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"${inherited}",
 					stormlib2,
+					/usr/local/opt/openssl/include,
 				);
 				INFOPLIST_FILE = "MPQ-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -1209,7 +1216,9 @@
 					"-lz",
 					"-lbz2",
 					"-lcrypto",
+					"-L/usr/local/opt/openssl/lib",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.macstorm.mpqkit;
 				PRODUCT_NAME = MPQKit;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -1219,8 +1228,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1235,7 +1244,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1243,7 +1252,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1256,7 +1264,7 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -1267,8 +1275,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "dropmpq/dropmpq-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.macstorm.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = dropmpq;
 			};
 			name = Debug;
@@ -1280,8 +1290,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "dropmpq/dropmpq-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.macstorm.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = dropmpq;
 			};
 			name = Release;

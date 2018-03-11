@@ -41,16 +41,13 @@
     if (fileURLRef == NULL)
         ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertPathToURL, nil, error)
     
-    FSRef pathRef;
-    Boolean ok = CFURLGetFSRef(fileURLRef, &pathRef);
+    _fileAlias = CFURLCreateBookmarkDataFromFile(NULL, fileURLRef, NULL);
     CFRelease(fileURLRef);
-    if (ok == false)
-        ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertURLToFSRef, nil, error)
     
-    OSErr oerr = FSNewAliasMinimal(&pathRef, &_fileAlias);
-    if (oerr != noErr)
-        ReturnFromInitWithError(NSOSStatusErrorDomain, oerr, nil, error)
-    
+    if (!_fileAlias) {
+        ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertURLToFSRef, nil, error);
+    }
+
     return self;
 }
 
@@ -62,7 +59,7 @@
             break;
         case FileDescriptorBackingStore:
             if (_fileAlias != NULL)
-                DisposeHandle((Handle)_fileAlias);
+                CFRelease(_fileAlias);
             _fileAlias = NULL;
             break;
         default:
@@ -73,9 +70,6 @@
 }
 
 - (id)createActualDataSource:(NSError**)error {
-    OSErr oerr;
-    Boolean wasChanged;
-    FSRef fileRef;
     CFURLRef urlRef;
     id dataSource;
     
@@ -83,10 +77,7 @@
         case NSDataBackingStore:
             return [[MPQDataSource alloc] initWithData:_dataBackingStore error:error];
         case FileDescriptorBackingStore:
-            oerr = FSResolveAliasWithMountFlags(NULL, _fileAlias, &fileRef, &wasChanged, kResolveAliasFileNoUI);
-            if (oerr != noErr)
-                ReturnValueWithError(nil, NSOSStatusErrorDomain, oerr, nil, error)
-            urlRef = CFURLCreateFromFSRef(NULL, &fileRef);
+            urlRef = CFURLCreateByResolvingBookmarkData(NULL, _fileAlias, NULL, NULL, NULL, NULL, NULL);
             if (urlRef == NULL)
                 ReturnValueWithError(nil, MPQErrorDomain, errCouldNotConvertFSRefToURL, nil, error)
             dataSource = [[MPQDataSource alloc] initWithURL:(NSURL*)urlRef error:error];

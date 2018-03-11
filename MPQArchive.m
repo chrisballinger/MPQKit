@@ -114,25 +114,12 @@ static int _MPQMakeTempFileInDirectory(NSString* directory, NSString** tempFileP
 }
 
 static inline BOOL _MPQFSCopy(NSString* destination, NSString* source, NSError** error) {
-	OSStatus err = FSPathCopyObjectSync([source UTF8String], 
-										[[destination stringByDeletingLastPathComponent] UTF8String], 
-										(CFStringRef)[destination lastPathComponent], 
-										NULL, 
-										kFSFileOperationOverwrite);
-	if (err != noErr)
-		ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
+	return [NSFileManager.defaultManager copyItemAtPath:source toPath:destination error:error];
 	return YES;
 }
 
 static inline BOOL _MPQFSMove(NSString* destination, NSString* source, NSError** error) {
-	OSStatus err = FSPathMoveObjectSync([source UTF8String], 
-										[[destination stringByDeletingLastPathComponent] UTF8String], 
-										(CFStringRef)[destination lastPathComponent], 
-										NULL, 
-										kFSFileOperationOverwrite);
-	if (err != noErr)
-		ReturnValueWithError(NO, NSOSStatusErrorDomain, err, nil, error)
-	return YES;
+	return [NSFileManager.defaultManager moveItemAtPath:source toPath:destination error:error];
 }
 
 char* _MPQCreateASCIIFilename(NSString* filename, NSError** error) {

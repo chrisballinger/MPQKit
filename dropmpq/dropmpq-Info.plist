@@ -28,7 +28,7 @@
 	<key>CFBundleIconFile</key>
 	<string>dropmpq</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.macstorm.${PRODUCT_NAME:identifier}</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -48,20 +48,20 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>SUExpectsDSASignature</key>
-	<true/>
-	<key>SUFeedURL</key>
-	<string>http://www.devklog.net/software/dropmpq/dropmpq.xml</string>
-	<key>SUShowReleaseNotes</key>
-	<true/>
-	<key>SUEnableSystemProfiling</key>
-	<true/>
-	<key>SUPublicDSAKeyFile</key>
-	<string>sparkle.pem</string>
 	<key>PreferencePanes</key>
 	<array>
 		<string>DQImportPreferences</string>
 		<string>DQMiscellaneousPreferences</string>
 	</array>
+	<key>SUEnableSystemProfiling</key>
+	<true/>
+	<key>SUExpectsDSASignature</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>http://www.devklog.net/software/dropmpq/dropmpq.xml</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>sparkle.pem</string>
+	<key>SUShowReleaseNotes</key>
+	<true/>
 </dict>
 </plist>

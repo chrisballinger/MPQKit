@@ -19,7 +19,7 @@ typedef uint8_t MPQDataSourceBackingStoreType;
 @interface MPQDataSourceProxy : NSObject {
     MPQDataSourceBackingStoreType _backingStoreType;
     NSData* _dataBackingStore;
-    AliasHandle _fileAlias;
+    CFDataRef _fileAlias;
 }
 
 - (id)initWithData:(NSData*)data error:(NSError**)error;
