@@ -46,12 +46,10 @@ static void analyse_sectors(MPQFile* file, NSDictionary* fileInfo, uint32_t flag
             printf("    %s\n", [[error description] UTF8String]);
         } else if ((sector_count == 1 && [raw_sector_data length] == file_size) || [raw_sector_data length] == full_sector_size) {
             printf("    **** sector 0 is uncompressed ****\n");
-            [raw_sector_data release];
         } else {
             if ((flags & MPQFileEncrypted)) {
                 NSMutableData* mutable_sector_data = [raw_sector_data mutableCopy];
                 mpq_decrypt([mutable_sector_data mutableBytes], [mutable_sector_data length], encryption_key, NO);
-                [raw_sector_data release];
                 raw_sector_data = mutable_sector_data;
             }
             
@@ -73,9 +71,6 @@ static void analyse_sectors(MPQFile* file, NSDictionary* fileInfo, uint32_t flag
             else value = [NSString stringWithFormat:@"0x%02x: %@", *raw_sector, [stringCompressors componentsJoinedByString:@" | "]];
             
             printf("    sector 0 compressors: %s\n", [value UTF8String]);
-            
-            [stringCompressors release];
-            [raw_sector_data release];
         }
         
         if (sector_count > 1) {
@@ -85,12 +80,10 @@ static void analyse_sectors(MPQFile* file, NSDictionary* fileInfo, uint32_t flag
                 printf("    %s\n", [[error description] UTF8String]);
             } else if ((sector_count == 2 && [raw_sector_data length] == file_size - full_sector_size) || [raw_sector_data length] == full_sector_size) {
                 printf("    **** sector 1 is uncompressed ****\n");
-                [raw_sector_data release];
             } else {
                 if ((flags & MPQFileEncrypted)) {
                     NSMutableData* mutable_sector_data = [raw_sector_data mutableCopy];
                     mpq_decrypt([mutable_sector_data mutableBytes], [mutable_sector_data length], encryption_key + 1, NO);
-                    [raw_sector_data release];
                     raw_sector_data = mutable_sector_data;
                 }
                 
@@ -112,9 +105,6 @@ static void analyse_sectors(MPQFile* file, NSDictionary* fileInfo, uint32_t flag
                 else value = [NSString stringWithFormat:@"0x%02x: %@", *raw_sector, [stringCompressors componentsJoinedByString:@" | "]];
                 
                 printf("    sector 1 compressors: %s\n", [value UTF8String]);
-                
-                [stringCompressors release];
-                [raw_sector_data release];
             }
         } else printf("    **** file only has 1 sector ****\n");
     }
@@ -149,202 +139,189 @@ static void checksum_analysis(MPQFile* file, NSDictionary* fileInfo) {
         if ([storedMD5 isEqualToData:md5]) printf("    computed MD5: %s (VALID)\n", [[md5 description] UTF8String]);
         else printf("    computed MD5: %s (INVALID)\n", [[md5 description] UTF8String]);
     } else printf("    computed MD5: %s (CANNOT COMPARE)\n", [[md5 description] UTF8String]);
-    
-    // done with this file's data
-    [fileData release];
 }
 
 int main(int argc, char* argv[]) {
-    NSAutoreleasePool* p = [NSAutoreleasePool new];
-    NSError* error = nil;
-    
-    BOOL computeChecksums = NO;
-    BOOL sectorAnalysis = NO;
-    BOOL ignoreHeaderSizeField = NO;
-    NSMutableArray* listfiles = [NSMutableArray arrayWithCapacity:0x10];
-    
-    // Parse options
-    int longIndex;
-    int opt = getopt_long(argc, argv, optString, longOpts, &longIndex);
-    while (opt != -1) {
-        switch (opt) {
-            case 'c':
-                computeChecksums = YES;
-                break;
-                
-            case 's':
-                sectorAnalysis = YES;
-                break;
-                
-            case 'i':
-                ignoreHeaderSizeField = YES;
-                break;
-                
-            case 0:
-                if( strcmp( "listfile", longOpts[longIndex].name ) == 0 ) {
-                    [listfiles addObject:[[NSString stringWithCString:optarg encoding:NSUTF8StringEncoding] stringByStandardizingPath]];
-                }
-                break;
+    @autoreleasepool {
+        NSError* error = nil;
+        
+        BOOL computeChecksums = NO;
+        BOOL sectorAnalysis = NO;
+        BOOL ignoreHeaderSizeField = NO;
+        NSMutableArray* listfiles = [NSMutableArray arrayWithCapacity:0x10];
+        
+        // Parse options
+        int longIndex;
+        int opt = getopt_long(argc, argv, optString, longOpts, &longIndex);
+        while (opt != -1) {
+            switch (opt) {
+                case 'c':
+                    computeChecksums = YES;
+                    break;
+                    
+                case 's':
+                    sectorAnalysis = YES;
+                    break;
+                    
+                case 'i':
+                    ignoreHeaderSizeField = YES;
+                    break;
+                    
+                case 0:
+                    if( strcmp( "listfile", longOpts[longIndex].name ) == 0 ) {
+                        [listfiles addObject:[[NSString stringWithCString:optarg encoding:NSUTF8StringEncoding] stringByStandardizingPath]];
+                    }
+                    break;
+            }
+            
+            opt = getopt_long(argc, argv, optString, longOpts, &longIndex);
         }
         
-        opt = getopt_long(argc, argv, optString, longOpts, &longIndex);
-    }
-    
-    int i = optind;
-    for (; i < argc; i++) {
-        if (i > optind) printf("\n");
-        
-        NSAutoreleasePool* ap = [NSAutoreleasePool new];
-        
+        int i = optind;
+        for (; i < argc; i++) {
+            if (i > optind) printf("\n");
+            
+            @autoreleasepool {
 #if defined(__APPLE__)
-        NSString* archivePath = [NSString stringWithCString:argv[i] encoding:CFStringConvertEncodingToNSStringEncoding(CFStringFileSystemEncoding())];
-#else 
-        NSString* archivePath = [NSString stringWithCString:argv[i]];
-#endif
-        MPQArchive* archive = [[MPQArchive alloc] initWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:archivePath, MPQArchivePath, [NSNumber numberWithBool:ignoreHeaderSizeField], MPQIgnoreHeaderSizeField, nil] error:&error];
-        if (!archive) {
-            printf("INVALID ARCHIVE\n");
-            printf("    %s\n", [[error description] UTF8String]);
-            [ap release];
-            continue;
-        }
-        
-        if ([listfiles count] > 0) {
-            NSEnumerator* listfileEnum = [listfiles objectEnumerator];
-            NSString* listfile;
-            while ((listfile = [listfileEnum nextObject])) [archive addContentsOfFileToFileList:listfile];
-        }
-        
-        printf("-- archive information --\n\n");
-        printf("%s\n\n", [[[archive archiveInfo] description] UTF8String]);
-        
-        uint32_t full_sector_size = MPQ_BASE_SECTOR_SIZE << [[[archive archiveInfo] objectForKey:MPQSectorSizeShift] unsignedIntValue];
-        
-        // signatures
-        BOOL isSigned;
-        BOOL valid = [archive verifyBlizzardWeakSignature:&isSigned error:&error];
-        if (valid) printf("Blizzard weak signature: VALID\n");
-        else if (isSigned && !error) printf("Blizzard weak signature: INVALID\n");
-        else if (isSigned && [error code] != errNoSignature) printf("Blizzard weak signature: ERROR: %s\n", [[error description] UTF8String]);
-        else printf("No weak signature\n");
-        
-        isSigned = [archive hasStrongSignature];
-        if (isSigned) {
-            valid = [archive verifyBlizzardStrongSignature:&error];
-            if (valid) printf("Blizzard strong signature: VALID");
-            else if (!error) printf("Blizzard strong signature: INVALID");
-            else printf("Blizzard strong signature: ERROR: %s", [[error description] UTF8String]);
-            printf("\n");
-            
-            valid = [archive verifyWoWSurveySignature:&error];
-            if (valid) printf("WoW survey signature: VALID");
-            else if (!error) printf("WoW survey signature: INVALID");
-            else printf("WoW survey signature: ERROR: %s", [[error description] UTF8String]);
-            printf("\n");
-            
-            valid = [archive verifyWoWMacPatchSignature:&error];
-            if (valid) printf("WoW Macintosh patch signature: VALID");
-            else if (!error) printf("WoW Macintosh patch signature: INVALID");
-            else printf("WoW Macintosh patch signature: ERROR: %s", [[error description] UTF8String]);
-            printf("\n");
-            
-            valid = [archive verifyWarcraft3MapSignature:&error];
-            if (valid) printf("Warcraft 3 map signature: VALID");
-            else if (!error) printf("Warcraft 3 map signature: INVALID");
-            else printf("Warcraft 3 map signature: ERROR: %s", [[error description] UTF8String]);
-            printf("\n");
-            
-            valid = [archive verifyStarcraftMapSignature:&error];
-            if (valid) printf("Starcraft map signature: VALID");
-            else if (!error) printf("Starcraft map signature: INVALID");
-            else printf("Starcraft map signature: ERROR: %s", [[error description] UTF8String]);
-            printf("\n");
-        } else printf("No strong signature\n");
-        
-        // files
-        printf("\n-- file information --\n");
-        [archive loadInternalListfile:NULL];
-        
-        NSEnumerator* fileEnum = [archive fileInfoEnumerator];
-        NSDictionary* fileInfo;
-        while ((fileInfo = [fileEnum nextObject])) {
-            uint32_t hash_position = [[fileInfo objectForKey:MPQFileHashPosition] unsignedIntValue];
-            const char* utf8_filename = [[fileInfo objectForKey:MPQFilename] UTF8String];
-            BOOL can_open = [[fileInfo objectForKey:MPQFileCanOpenWithoutFilename] boolValue];
-            
-            // file hash position and filename
-            printf("\n%08x \"%s\"\n", hash_position, utf8_filename);
-            
-            uint32_t flags = [[fileInfo objectForKey:MPQFileFlags] unsignedIntValue];
-            
-            // file info
-            printf("    file info: {\n");
-            NSArray* sorted_keys = [[fileInfo allKeys] sortedArrayUsingComparator:^(id lhs, id rhs) {return [lhs compare:rhs options:NSLiteralSearch];}];
-            for (NSString* key in sorted_keys) {
-                const char* valueString;
-                id value = [fileInfo objectForKey:key];
-                
-                if ([key isEqualToString:MPQFileFlags]) {
-                    NSMutableArray* stringFlags = [[NSMutableArray alloc] init];
-                    
-                    // Known flags
-                    if (flags & MPQFileValid) [stringFlags addObject:@"MPQFileValid"];
-                    if (flags & MPQFileHasSectorAdlers) [stringFlags addObject:@"MPQFileHasSectorAdlers"];
-                    if (flags & MPQFileStopSearchMarker) [stringFlags addObject:@"MPQFileStopSearchMarker"];
-                    if (flags & MPQFileOneSector) [stringFlags addObject:@"MPQFileOneSector"];
-                    if (flags & MPQFileOffsetAdjustedKey) [stringFlags addObject:@"MPQFileOffsetAdjustedKey"];
-                    if (flags & MPQFileEncrypted) [stringFlags addObject:@"MPQFileEncrypted"];
-                    if (flags & MPQFileCompressed) [stringFlags addObject:@"MPQFileCompressed"];
-                    if (flags & MPQFileDiabloCompressed) [stringFlags addObject:@"MPQFileDiabloCompressed"];
-                    
-                    // Mask out known flags to reveal unknown flags
-                    uint32_t unknownFlags = flags & (~MPQFileFlagsMask);
-                    
-                    if (unknownFlags != 0) value = [NSString stringWithFormat:@"0x%08x: %@, UNKNOWN FLAGS: 0x%08x", flags, [stringFlags componentsJoinedByString:@" | "], unknownFlags];
-                    else value = [NSString stringWithFormat:@"0x%08x: %@", flags, [stringFlags componentsJoinedByString:@" | "]];
-                    
-                    valueString = [[value description] UTF8String];
-                    [stringFlags release];
-                }
-#ifdef __APPLE__
-                else if ([key isEqualToString:MPQFileLocale]) valueString = [[[MPQArchive localeForMPQLocale:[value unsignedShortValue]] localeIdentifier] UTF8String];
+                NSString* archivePath = [NSString stringWithCString:argv[i] encoding:CFStringConvertEncodingToNSStringEncoding(CFStringFileSystemEncoding())];
 #else
-                else if ([key isEqualToString:MPQFileLocale]) valueString = [[MPQArchive localeName:[value unsignedShortValue]] UTF8String];
+                NSString* archivePath = [NSString stringWithCString:argv[i]];
 #endif
-                else if ([key isEqualToString:MPQFileCanOpenWithoutFilename]) valueString = ([value boolValue]) ? "YES" : "NO";
-                else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%016qx", [value unsignedLongLongValue]] UTF8String];
-                else valueString = [[value description] UTF8String];
+                MPQArchive* archive = [[MPQArchive alloc] initWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:archivePath, MPQArchivePath, [NSNumber numberWithBool:ignoreHeaderSizeField], MPQIgnoreHeaderSizeField, nil] error:&error];
+                if (!archive) {
+                    printf("INVALID ARCHIVE\n");
+                    printf("    %s\n", [[error description] UTF8String]);
+                    continue;
+                }
                 
-                printf("        %s: %s\n", [[key description] UTF8String], valueString);
+                if ([listfiles count] > 0) {
+                    NSEnumerator* listfileEnum = [listfiles objectEnumerator];
+                    NSString* listfile;
+                    while ((listfile = [listfileEnum nextObject])) [archive addContentsOfFileToFileList:listfile];
+                }
+                
+                printf("-- archive information --\n\n");
+                printf("%s\n\n", [[[archive archiveInfo] description] UTF8String]);
+                
+                uint32_t full_sector_size = MPQ_BASE_SECTOR_SIZE << [[[archive archiveInfo] objectForKey:MPQSectorSizeShift] unsignedIntValue];
+                
+                // signatures
+                BOOL isSigned;
+                BOOL valid = [archive verifyBlizzardWeakSignature:&isSigned error:&error];
+                if (valid) printf("Blizzard weak signature: VALID\n");
+                else if (isSigned && !error) printf("Blizzard weak signature: INVALID\n");
+                else if (isSigned && [error code] != errNoSignature) printf("Blizzard weak signature: ERROR: %s\n", [[error description] UTF8String]);
+                else printf("No weak signature\n");
+                
+                isSigned = [archive hasStrongSignature];
+                if (isSigned) {
+                    valid = [archive verifyBlizzardStrongSignature:&error];
+                    if (valid) printf("Blizzard strong signature: VALID");
+                    else if (!error) printf("Blizzard strong signature: INVALID");
+                    else printf("Blizzard strong signature: ERROR: %s", [[error description] UTF8String]);
+                    printf("\n");
+                    
+                    valid = [archive verifyWoWSurveySignature:&error];
+                    if (valid) printf("WoW survey signature: VALID");
+                    else if (!error) printf("WoW survey signature: INVALID");
+                    else printf("WoW survey signature: ERROR: %s", [[error description] UTF8String]);
+                    printf("\n");
+                    
+                    valid = [archive verifyWoWMacPatchSignature:&error];
+                    if (valid) printf("WoW Macintosh patch signature: VALID");
+                    else if (!error) printf("WoW Macintosh patch signature: INVALID");
+                    else printf("WoW Macintosh patch signature: ERROR: %s", [[error description] UTF8String]);
+                    printf("\n");
+                    
+                    valid = [archive verifyWarcraft3MapSignature:&error];
+                    if (valid) printf("Warcraft 3 map signature: VALID");
+                    else if (!error) printf("Warcraft 3 map signature: INVALID");
+                    else printf("Warcraft 3 map signature: ERROR: %s", [[error description] UTF8String]);
+                    printf("\n");
+                    
+                    valid = [archive verifyStarcraftMapSignature:&error];
+                    if (valid) printf("Starcraft map signature: VALID");
+                    else if (!error) printf("Starcraft map signature: INVALID");
+                    else printf("Starcraft map signature: ERROR: %s", [[error description] UTF8String]);
+                    printf("\n");
+                } else printf("No strong signature\n");
+                
+                // files
+                printf("\n-- file information --\n");
+                [archive loadInternalListfile:NULL];
+                
+                NSEnumerator* fileEnum = [archive fileInfoEnumerator];
+                NSDictionary* fileInfo;
+                while ((fileInfo = [fileEnum nextObject])) {
+                    uint32_t hash_position = [[fileInfo objectForKey:MPQFileHashPosition] unsignedIntValue];
+                    const char* utf8_filename = [[fileInfo objectForKey:MPQFilename] UTF8String];
+                    BOOL can_open = [[fileInfo objectForKey:MPQFileCanOpenWithoutFilename] boolValue];
+                    
+                    // file hash position and filename
+                    printf("\n%08x \"%s\"\n", hash_position, utf8_filename);
+                    
+                    uint32_t flags = [[fileInfo objectForKey:MPQFileFlags] unsignedIntValue];
+                    
+                    // file info
+                    printf("    file info: {\n");
+                    NSArray* sorted_keys = [[fileInfo allKeys] sortedArrayUsingComparator:^(id lhs, id rhs) {return [lhs compare:rhs options:NSLiteralSearch];}];
+                    for (NSString* key in sorted_keys) {
+                        const char* valueString;
+                        id value = [fileInfo objectForKey:key];
+                        
+                        if ([key isEqualToString:MPQFileFlags]) {
+                            NSMutableArray* stringFlags = [[NSMutableArray alloc] init];
+                            
+                            // Known flags
+                            if (flags & MPQFileValid) [stringFlags addObject:@"MPQFileValid"];
+                            if (flags & MPQFileHasSectorAdlers) [stringFlags addObject:@"MPQFileHasSectorAdlers"];
+                            if (flags & MPQFileStopSearchMarker) [stringFlags addObject:@"MPQFileStopSearchMarker"];
+                            if (flags & MPQFileOneSector) [stringFlags addObject:@"MPQFileOneSector"];
+                            if (flags & MPQFileOffsetAdjustedKey) [stringFlags addObject:@"MPQFileOffsetAdjustedKey"];
+                            if (flags & MPQFileEncrypted) [stringFlags addObject:@"MPQFileEncrypted"];
+                            if (flags & MPQFileCompressed) [stringFlags addObject:@"MPQFileCompressed"];
+                            if (flags & MPQFileDiabloCompressed) [stringFlags addObject:@"MPQFileDiabloCompressed"];
+                            
+                            // Mask out known flags to reveal unknown flags
+                            uint32_t unknownFlags = flags & (~MPQFileFlagsMask);
+                            
+                            if (unknownFlags != 0) value = [NSString stringWithFormat:@"0x%08x: %@, UNKNOWN FLAGS: 0x%08x", flags, [stringFlags componentsJoinedByString:@" | "], unknownFlags];
+                            else value = [NSString stringWithFormat:@"0x%08x: %@", flags, [stringFlags componentsJoinedByString:@" | "]];
+                            
+                            valueString = [[value description] UTF8String];
+                        }
+#ifdef __APPLE__
+                        else if ([key isEqualToString:MPQFileLocale]) valueString = [[[MPQArchive localeForMPQLocale:[value unsignedShortValue]] localeIdentifier] UTF8String];
+#else
+                        else if ([key isEqualToString:MPQFileLocale]) valueString = [[MPQArchive localeName:[value unsignedShortValue]] UTF8String];
+#endif
+                        else if ([key isEqualToString:MPQFileCanOpenWithoutFilename]) valueString = ([value boolValue]) ? "YES" : "NO";
+                        else if ([value isKindOfClass:[NSNumber class]]) valueString = [[NSString stringWithFormat:@"0x%016qx", [value unsignedLongLongValue]] UTF8String];
+                        else valueString = [[value description] UTF8String];
+                        
+                        printf("        %s: %s\n", [[key description] UTF8String], valueString);
+                    }
+                    printf("    }\n");
+                    
+                    // can open bail
+                    if (!can_open) {
+                        printf("\n    **** cannot open this file ****\n");
+                        continue;
+                    }
+                    
+                    // open file
+                    MPQFile* file = [archive openFileAtPosition:[[fileInfo objectForKey:MPQFileHashPosition] unsignedIntValue] error:&error];
+                    if (!file && can_open) {
+                        printf("\n    **** could not open the file ****\n");
+                        printf("    %s\n", [[error description] UTF8String]);
+                        continue;
+                    }
+                    
+                    if (sectorAnalysis) analyse_sectors(file, fileInfo, flags, full_sector_size);
+                    if (computeChecksums) checksum_analysis(file, fileInfo);
+                }
             }
-            printf("    }\n");
-            
-            // can open bail
-            if (!can_open) {
-                printf("\n    **** cannot open this file ****\n");
-                continue;
-            }
-            
-            // open file
-            MPQFile* file = [archive openFileAtPosition:[[fileInfo objectForKey:MPQFileHashPosition] unsignedIntValue] error:&error];
-            if (!file && can_open) {
-                printf("\n    **** could not open the file ****\n");
-                printf("    %s\n", [[error description] UTF8String]);
-                continue;
-            }
-            
-            if (sectorAnalysis) analyse_sectors(file, fileInfo, flags, full_sector_size);
-            if (computeChecksums) checksum_analysis(file, fileInfo);
-            
-            // done with file
-            [file release];
         }
-        
-        // We're done with this archive
-        [archive release];
-        [ap release];
     }
-    
-    [p release];
     return 0;
 }

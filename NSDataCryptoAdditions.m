@@ -33,7 +33,7 @@
         digestString[2*i]   = __HEHexDigits[digest[i] >> 4];                                                                                    \
         digestString[2*i+1] = __HEHexDigits[digest[i] & 0x0f];                                                                                  \
     }                                                                                                                                           \
-    return [[[NSString alloc] initWithBytes:(char*)digestString length:2*method##_DIGEST_LENGTH encoding:NSASCIIStringEncoding] autorelease];   \
+    return [[NSString alloc] initWithBytes:(char*)digestString length:2*method##_DIGEST_LENGTH encoding:NSASCIIStringEncoding];   \
 
 #define SHA1_CTX                SHA_CTX
 #define SHA1_DIGEST_LENGTH      SHA_DIGEST_LENGTH
