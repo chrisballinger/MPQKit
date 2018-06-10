@@ -17,7 +17,7 @@
 @implementation _MPQFileInfoEnumerator
 
 + (id)enumeratorWithArchive:(MPQArchive*)archive {
-    return [[[_MPQFileInfoEnumerator alloc] initWithArchive:archive] autorelease];
+    return [[_MPQFileInfoEnumerator alloc] initWithArchive:archive];
 }
 
 - (id)initWithArchive:(MPQArchive*)archive {
@@ -26,13 +26,7 @@
     
     _position = 0;
     _archive = archive;
-    [_archive retain];
     return self;
-}
-
-- (void)dealloc {
-    [_archive release];
-    [super dealloc];
 }
 
 - (id)nextObject {

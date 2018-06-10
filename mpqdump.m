@@ -263,7 +263,7 @@ int main(int argc, char* argv[]) {
         
         // files
         printf("\n-- file information --\n");
-        [archive loadInternalListfile:(NSError**)NULL];
+        [archive loadInternalListfile:NULL];
         
         NSEnumerator* fileEnum = [archive fileInfoEnumerator];
         NSDictionary* fileInfo;

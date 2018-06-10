@@ -424,7 +424,7 @@ static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
     BOOL isDirectory = ([node subtrees].count == 0) ? NO : YES;
     if (isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, EISDIR, nil, error)
     
-    MPQFile* file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:(NSError**)NULL];
+    MPQFile* file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:NULL];
     if (!file) {
         ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
     }
@@ -457,7 +457,7 @@ static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
 
 - (int)readFileAtPath:(NSString*)path handle:(MPQFile*)handle buffer:(char*)buffer size:(size_t)size offset:(off_t)offset {
     [handle seekToFileOffset:offset];
-    ssize_t bytes_read = [handle read:buffer size:size error:(NSError**)NULL];
+    ssize_t bytes_read = [handle read:buffer size:size error:NULL];
     if (bytes_read == -1) return -EIO;
     return bytes_read;
 }

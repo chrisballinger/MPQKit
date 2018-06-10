@@ -19,7 +19,6 @@
     [listfileString replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch | NSCaseInsensitiveSearch range:NSMakeRange(0, listfileString.length)];
     
     NSArray* listfileArray = [listfileString componentsSeparatedByString:@"\n"];
-    [listfileString release];
     return listfileArray;
 }
 
@@ -28,7 +27,7 @@
 @implementation NSMutableArray (ListfileAdditions)
 
 + (instancetype)arrayWithListfileData:(NSData*)listfileData {
-    return [[[[self class] alloc] initWithListfileData:listfileData] autorelease];
+    return [[[self class] alloc] initWithListfileData:listfileData];
 }
 
 - (instancetype)initWithListfileData:(NSData*)listfileData {

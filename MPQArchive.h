@@ -99,7 +99,7 @@ struct mpq_deferred_operation_file_context {
     mpq_block_table_entry_t block_entry;
     off_t block_offset;
     uint32_t encryption_key;
-    NSString* filename;
+    CFStringRef filename;
 };
 typedef struct mpq_deferred_operation_file_context mpq_deferred_operation_file_context_t;
 
@@ -112,7 +112,8 @@ struct mpq_deferred_operation {
 typedef struct mpq_deferred_operation mpq_deferred_operation_t;
 
 struct mpq_deferred_operation_add_context {
-    MPQDataSourceProxy* dataSourceProxy;
+    // MPQDataSourceProxy
+    CFTypeRef dataSourceProxy;
     uint32_t compressor;
     int32_t compression_quality;
 };
@@ -174,7 +175,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     
     off_t* block_offset_table;
     char** filename_table;
-    NSDictionary** file_info_cache;
+    __strong NSArray<NSDictionary*>* file_info_cache;
     
     void* attributes_data;
     uint32_t attributes_data_size;
@@ -197,7 +198,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     
     uint32_t default_compressor;
     
-    id delegate;
+    __weak id delegate;
 }
 
 /*! 
@@ -211,6 +212,9 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
 + (NSLocale*)localeForMPQLocale:(MPQLocale)locale;
 
 #pragma mark initialization
+
+- (instancetype) init NS_UNAVAILABLE;
++ (instancetype) new NS_UNAVAILABLE;
 
 /*! 
     @method archiveWithFileLimit:
