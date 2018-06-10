@@ -4,7 +4,6 @@
 #import <Sparkle/SUUpdater.h>
 
 #import "DropMPQController.h"
-#import "MVPreferencesController.h"
 #import "PreferenceKeys.h"
 
 #define NSInt(a) ([NSNumber numberWithInt:a])

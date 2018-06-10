@@ -87,10 +87,6 @@
 		31FE1B4C0F4E7CE10046698D /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31F78D020F4E74CD00759CD7 /* Sparkle.framework */; };
 		31FE1B4D0F4E7CE40046698D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 310D91590BBECCC800FEA3C5 /* Cocoa.framework */; };
 		31FE1B510F4E7CEA0046698D /* MPQKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3123119F0549EE5D00833907 /* MPQKit.framework */; };
-		31FE1B670F4E7E670046698D /* ImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A440F4E75A70046698D /* ImageAndTextCell.m */; };
-		31FE1B680F4E7E670046698D /* NSImageAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A460F4E75A70046698D /* NSImageAdditions.m */; };
-		31FE1B690F4E7E690046698D /* NSString+CarbonFSSpecCreation.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A480F4E75A70046698D /* NSString+CarbonFSSpecCreation.m */; };
-		31FE1B6A0F4E7E690046698D /* NSToolbarAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 31FE1A4A0F4E75A70046698D /* NSToolbarAdditions.m */; };
 		31FE1B8C0F4E7EB60046698D /* sparkle.pem in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1B070F4E78B70046698D /* sparkle.pem */; };
 		31FE1B950F4E7ECA0046698D /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A510F4E75A70046698D /* Credits.rtf */; };
 		31FE1B960F4E7ECA0046698D /* dropmpq.icns in Resources */ = {isa = PBXBuildFile; fileRef = 31FE1A910F4E75A70046698D /* dropmpq.icns */; };
@@ -933,10 +929,6 @@
 				31FE1B3B0F4E7BF50046698D /* FocusRingView.m in Sources */,
 				31FE1B3C0F4E7BF50046698D /* DropMPQController.m in Sources */,
 				31FE1B3D0F4E7BF60046698D /* dropmpq.m in Sources */,
-				31FE1B670F4E7E670046698D /* ImageAndTextCell.m in Sources */,
-				31FE1B680F4E7E670046698D /* NSImageAdditions.m in Sources */,
-				31FE1B690F4E7E690046698D /* NSString+CarbonFSSpecCreation.m in Sources */,
-				31FE1B6A0F4E7E690046698D /* NSToolbarAdditions.m in Sources */,
 				31FE1C550F4E81890046698D /* RXVersionComparator.m in Sources */,
 				31C01A680F645E88000CAEA3 /* DQImportPreferences.m in Sources */,
 				31C01A6A0F645E88000CAEA3 /* DQMiscellaneousPreferences.m in Sources */,
@@ -1049,7 +1041,6 @@
 					"\"$(SRCROOT)/mpqfs\"",
 					"\"$(SRCROOT)\"",
 				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PREBINDING = NO;
@@ -1066,7 +1057,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "mpqfs/mpqfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PREBINDING = NO;
@@ -1083,8 +1073,8 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = /usr/local/opt/openssl/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1100,8 +1090,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = /usr/local/opt/openssl/lib;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1115,8 +1105,8 @@
 		319980180B4D8B4600D4FE4E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = /usr/local/opt/openssl/lib;
 				OTHER_LDFLAGS = "-lcrypto";
 				PRODUCT_NAME = mpqdump;
 			};
@@ -1125,8 +1115,8 @@
 		319980190B4D8B4600D4FE4E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INSTALL_PATH = "$(HOME)/bin";
+				LIBRARY_SEARCH_PATHS = /usr/local/opt/openssl/lib;
 				OTHER_LDFLAGS = "-lcrypto";
 				PRODUCT_NAME = mpqdump;
 			};
@@ -1135,7 +1125,6 @@
 		31A8A5090BC14526001F583D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/include/fuse,
@@ -1153,7 +1142,6 @@
 		31A8A50A0BC14526001F583D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/include/fuse,
@@ -1176,11 +1164,9 @@
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"${inherited}",
 					stormlib2,
-					/usr/local/opt/openssl/include,
 				);
 				INFOPLIST_FILE = "MPQ-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -1204,11 +1190,9 @@
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					"${inherited}",
 					stormlib2,
-					/usr/local/opt/openssl/include,
 				);
 				INFOPLIST_FILE = "MPQ-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -1228,21 +1212,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/opt/openssl/include;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -1254,16 +1238,16 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/opt/openssl/include;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -1275,7 +1259,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "dropmpq/dropmpq-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.macstorm.${PRODUCT_NAME:identifier}";
@@ -1290,7 +1273,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
-				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = "dropmpq/dropmpq-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.macstorm.${PRODUCT_NAME:identifier}";

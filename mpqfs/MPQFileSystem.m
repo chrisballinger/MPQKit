@@ -222,7 +222,7 @@ static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
     }
     
     [p release];
-    ReturnValueWithNoError(YES, error)
+    return YES;
 }
 
 - (id)initWithArchive:(MPQArchive*)archive mountPoint:(NSString*)mnt arguments:(struct fuse_args*)arguments error:(NSError**)error {
@@ -257,7 +257,7 @@ static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
 	// FIXME: add support for iosize option
 	// FIXME: use kill_on_unmount on 10.4
     
-    ReturnValueWithNoError(self, error)
+    return self;
 }
 
 - (void)dealloc {
@@ -425,8 +425,11 @@ static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
     if (isDirectory) ReturnValueWithError(nil, NSPOSIXErrorDomain, EISDIR, nil, error)
     
     MPQFile* file = [archive_ openFileAtPosition:[[node valueForKeyPath:@"attributes.position"] unsignedIntValue] error:(NSError**)NULL];
-    if (!file) ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
-    ReturnValueWithNoError(file, error)
+    if (!file) {
+        ReturnValueWithError(nil, NSPOSIXErrorDomain, ENOENT, nil, error)
+    }
+    
+    return file;
 }
 
 - (void)releaseFileAtPath:(NSString*)path handle:(MPQFile*)handle {
@@ -449,7 +452,7 @@ static void mpqfs_dupargs(struct fuse_args* dest, struct fuse_args* src) {
         [fullContents addObject:[node name]];
     }
     
-    ReturnValueWithNoError(fullContents, error)
+    return fullContents;
 }
 
 - (int)readFileAtPath:(NSString*)path handle:(MPQFile*)handle buffer:(char*)buffer size:(size_t)size offset:(off_t)offset {
