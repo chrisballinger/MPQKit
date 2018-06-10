@@ -11,8 +11,6 @@
 #import <MPQKit/MPQSharedConstants.h>
 #import <MPQKit/MPQDataSource.h>
 
-#import <openssl/rsa.h>
-
 /*!
   @header MPQArchive.h
   This header is automatically included by MPQKit.h and provides the definition of the class 
@@ -503,7 +501,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
     @result Returns YES if the archive was signed with the provided public key's associated private key, NO otherwise.
 */
-- (BOOL)verifyStrongSignatureWithKey:(RSA*)key digest:(NSData*)digest error:(NSError**)error;
+- (BOOL)verifyStrongSignatureWithKey:(MPQRSA*)key digest:(NSData*)digest error:(NSError**)error;
 
 - (BOOL)verifyBlizzardStrongSignature:(NSError**)error;
 - (BOOL)verifyWoWSurveySignature:(NSError**)error;

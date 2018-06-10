@@ -9,7 +9,8 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <openssl/rsa.h>
+
+#import <MPQKit/MPQSharedConstants.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -38,9 +39,11 @@ extern uint32_t mpq_hash_data(const void* data, size_t length, uint32_t type);
 #define MPQ_CRC_FINALIZE 0x4
 extern void mpq_crc32(const void* buffer, size_t length, uint32_t* crc, uint32_t flags);
 
+#if defined(USE_OPENSSL)
 int mpq_verify_weak_signature(RSA* public_key, const void* signature, const void* digest);
 int mpq_verify_strong_signature(RSA* public_key, const void* signature, const void* digest);
-
+#endif
+    
 #if defined(__cplusplus)
 }
 #endif

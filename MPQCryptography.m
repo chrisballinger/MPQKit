@@ -11,11 +11,13 @@
 #include <string.h>
 #include <zlib.h>
 
+#if defined(USE_OPENSSL)
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
 #include <openssl/obj_mac.h>
 #include <openssl/sha.h>
+#endif
 
 #include "MPQByteOrder.h"
 #include "MPQCryptography.h"
@@ -32,6 +34,7 @@ static Boolean crypt_table_initialized = FALSE;
 static uint32_t crypt_table[0x500];
 static const uLongf* crc_table;
 
+#if defined(USE_OPENSSL)
 static void memrev(unsigned char* buf, size_t count) {
     unsigned char* r;
     for (r = buf + count - 1; buf < r; buf++, r--) {
@@ -40,6 +43,7 @@ static void memrev(unsigned char* buf, size_t count) {
         *buf ^= *r;
     }
 }
+#endif
 
 const uint32_t* mpq_get_cryptography_table() {
     assert(crypt_table_initialized);
@@ -70,12 +74,14 @@ void mpq_init_cryptography() {
               }
          }
     }
-    
+	
+#if defined(USE_OPENSSL)
     // load up OpenSSL
     OpenSSL_add_all_digests();
     OpenSSL_add_all_algorithms();
     OpenSSL_add_all_ciphers();
     ERR_load_crypto_strings();
+#endif
 	
 	crc_table = get_crc_table();
 }
@@ -219,6 +225,7 @@ void mpq_crc32(const void* buffer, size_t length, uint32_t* crc, uint32_t flags)
     if (crc) *crc = local_crc;
 }
 
+#if defined(USE_OPENSSL)
 int mpq_verify_weak_signature(RSA* public_key, const void* signature, const void* digest) {
     unsigned char reversed_signature[MPQ_WEAK_SIGNATURE_SIZE];
     memcpy(reversed_signature, BUFFER_OFFSET(signature, 8), MPQ_WEAK_SIGNATURE_SIZE);
@@ -245,3 +252,4 @@ int mpq_verify_strong_signature(RSA* public_key, const void* signature, const vo
 
     return (!error && memcmp(reversed_signature, real_digest, MPQ_STRONG_SIGNATURE_SIZE) == 0);
 }
+#endif

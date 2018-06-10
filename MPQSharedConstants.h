@@ -450,4 +450,12 @@ enum {
 };
 typedef uint8_t MPQFileDisplacementMode;
 
+#if defined(USE_OPENSSL)
+#import <openssl/rsa.h>
+typedef RSA MPQRSA;
+#elif defined(USE_CCM)
+#import <CocoaCryptoMac/CocoaCryptoMac.h>
+typedef CCMPublicKey MPQRSA;
+#endif
+
 #endif

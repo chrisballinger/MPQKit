@@ -14,10 +14,12 @@
 #import <sys/stat.h>
 #import <sys/types.h>
 
+#if defined(USE_OPENSSL)
 #import <openssl/bio.h>
 #import <openssl/md5.h>
 #import <openssl/pem.h>
 #import <openssl/sha.h>
+#endif
 
 #import "SCompression.h"
 
@@ -84,13 +86,13 @@ static mpq_file_attribute_t mpq_file_attributes[] = {
 };
 
 // Bundled RSA keys
-static RSA* blizzard_strong_public_rsa		= NULL;
-static RSA* warcraft3_map_public_rsa		= NULL;
-static RSA* wow_survey_public_rsa			= NULL;
-static RSA* wow_mac_patch_public_rsa		= NULL;
-static RSA* starcraft_map_public_rsa		= NULL;
+static MPQRSA* blizzard_strong_public_rsa		= NULL;
+static MPQRSA* warcraft3_map_public_rsa		= NULL;
+static MPQRSA* wow_survey_public_rsa			= NULL;
+static MPQRSA* wow_mac_patch_public_rsa		= NULL;
+static MPQRSA* starcraft_map_public_rsa		= NULL;
 
-static RSA* blizzard_weak_public_rsa		= NULL;
+static MPQRSA* blizzard_weak_public_rsa		= NULL;
 
 static int _MPQMakeTempFileInDirectory(NSString* directory, NSString** tempFilePath, NSError** error) {
 	char* template = malloc(PATH_MAX + 1);
@@ -154,7 +156,8 @@ static inline uint32_t _MPQComputeSectorTableLength(uint32_t full_sector_size, u
 
 @implementation MPQArchive
 
-+ (RSA*)RSAWithContentsOfPublicKeyPEMFile:(NSString*)path {
++ (MPQRSA*)RSAWithContentsOfPublicKeyPEMFile:(NSString*)path {
+#if defined(USE_OPENSSL)
 	RSA* key = NULL;
 	
 	NSData* keyData = [[NSData alloc] initWithContentsOfFile:path];
@@ -166,10 +169,14 @@ static inline uint32_t _MPQComputeSectorTableLength(uint32_t full_sector_size, u
 	
 	key = PEM_read_bio_RSA_PUBKEY(keyBIO, &key, NULL, NULL);
 	BIO_free(keyBIO);
-
+	
 FreeData:
 	[keyData release];
 	return key;
+#elif defined(USE_CCM)
+	CCMKeyLoader *loader = [[CCMKeyLoader alloc] init];
+	return [loader loadRSAPEMPublicKey:path];
+#endif
 }
 
 + (void)initialize {
@@ -1862,7 +1869,7 @@ AbortDigest:
 	return (strong_signature) ? YES : NO;
 }
 
-- (BOOL)verifyStrongSignatureWithKey:(RSA*)key digest:(NSData*)digest error:(NSError**)error {
+- (BOOL)verifyStrongSignatureWithKey:(MPQRSA*)key digest:(NSData*)digest error:(NSError**)error {
 	// If the archive is not strongly signed, we return NO
 	if (!strong_signature)
 		ReturnValueWithError(NO, MPQErrorDomain, errNoSignature, nil, error)

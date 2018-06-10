@@ -1,0 +1,3 @@
+[submodule "Submodules/CocoaCryptoMac"]
+	path = Submodules/CocoaCryptoMac
+	url = git@github.com:chrisballinger/CocoaCryptoMac.git
