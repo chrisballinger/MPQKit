@@ -18,7 +18,7 @@ static const uint64_t EPOCH_BIAS = 116444736000000000ULL;
 
 @implementation NSDate (NTFSAdditions)
 
-+ (id)dateWithNTFSFiletime:(int64_t)filetime {
++ (instancetype)dateWithNTFSFiletime:(int64_t)filetime {
     // We bring the filetime up to 1970
     filetime -= EPOCH_BIAS;
     
@@ -30,7 +30,7 @@ static const uint64_t EPOCH_BIAS = 116444736000000000ULL;
 
 - (int64_t)ntfsFiletime {
     // Number of seconds between self and 1970
-    NSTimeInterval secondsSince1970 = [self timeIntervalSince1970];
+    NSTimeInterval secondsSince1970 = self.timeIntervalSince1970;
     
     // Now convert seconds to 100 ns units
     int64_t filetime = (int64_t)(secondsSince1970 / 0.0000001);

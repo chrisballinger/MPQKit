@@ -72,9 +72,9 @@ typedef struct mpq_attributes_header mpq_attributes_header_t;
 
 #define MPQ_OLD_SIGNATURE_KEY_SIZE 512
 struct mpq_old_signature {
-	uint32_t unknown0;
-	uint32_t unknown4;
-	uint8_t signature[MPQ_OLD_SIGNATURE_KEY_SIZE / 8];
+    uint32_t unknown0;
+    uint32_t unknown4;
+    uint8_t signature[MPQ_OLD_SIGNATURE_KEY_SIZE / 8];
 };
 typedef struct mpq_old_signature mpq_old_signature_t;
 
@@ -87,11 +87,11 @@ typedef struct mpq_shunt mpq_shunt_t;
 #pragma options align=reset
 
 // Internal types and structures for defered operations
-typedef enum {
+typedef NS_ENUM(unsigned int, MPQDeferredOperationType) {
     MPQDOAdd = 1,
     MPQDODelete,
     MPQDORename,
-} MPQDeferredOperationType;
+};
 
 struct mpq_deferred_operation_file_context {
     uint32_t hash_position;
@@ -167,10 +167,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     
     mpq_hash_table_entry_t* hash_table;
     mpq_block_table_entry_t* block_table;
-	
-	uint32_t _fileCountCache;
-	uint32_t _validFileCountCache;
-	BOOL _fileCountCachesDirty;
+    
+    uint32_t _fileCountCache;
+    uint32_t _validFileCountCache;
+    BOOL _fileCountCachesDirty;
     
     off_t* block_offset_table;
     char** filename_table;
@@ -223,8 +223,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         low or too high, MPQKit will adjust upward or downward as needed.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-+ (id)archiveWithFileLimit:(uint32_t)limit;
-+ (id)archiveWithFileLimit:(uint32_t)limit error:(NSError**)error;
++ (instancetype)archiveWithFileLimit:(uint32_t)limit;
++ (instancetype)archiveWithFileLimit:(uint32_t)limit error:(NSError**)error;
 
 /*! 
     @method archiveWithPath:
@@ -233,8 +233,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param path The POSIX path to the archive. Must be a fully expanded path. Must not be nil.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-+ (id)archiveWithPath:(NSString*)path;
-+ (id)archiveWithPath:(NSString*)path error:(NSError**)error;
++ (instancetype)archiveWithPath:(NSString*)path;
++ (instancetype)archiveWithPath:(NSString*)path error:(NSError**)error;
 
 /*!
     @method archiveWithAttributes:error:
@@ -244,7 +244,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-+ (id)archiveWithAttributes:(NSDictionary*)attributes error:(NSError**)error;
++ (instancetype)archiveWithAttributes:(NSDictionary*)attributes error:(NSError**)error;
 
 /*!
     @method initWithAttributes:error:
@@ -273,14 +273,14 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param error Optional pointer to a NSError *.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-- (id)initWithAttributes:(NSDictionary*)attributes error:(NSError**)error;
+- (instancetype)initWithAttributes:(NSDictionary*)attributes error:(NSError**)error NS_DESIGNATED_INITIALIZER;
 
 /*! 
     @method initWithFileLimit:
     @abstract Creates and returns a new MPQArchive instance initialized with the given
         file limit. No file is created on disk.
     @discussion Some operations that require an archive file to exist may fail until the instance's 
-		writeToFile:atomically: method is used. For compatibility reasons, this method creates 
+        writeToFile:atomically: method is used. For compatibility reasons, this method creates 
         version 0 archives. Calls initWithAttributes:error: with suitable attributes.
     @param limit An integer indicating the maximum number of files the new archive may contain. If you pass 0, 
         MPQArchive will set this parameter to a default value of 0x400. The file limit must be a power of 2 and will 
@@ -288,8 +288,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         low or too high, MPQKit will adjust upward or downward as needed.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-- (id)initWithFileLimit:(uint32_t)limit;
-- (id)initWithFileLimit:(uint32_t)limit error:(NSError**)error;
+- (instancetype)initWithFileLimit:(uint32_t)limit;
+- (instancetype)initWithFileLimit:(uint32_t)limit error:(NSError**)error;
 
 /*! 
     @method initWithPath:
@@ -299,8 +299,8 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @param path The POSIX path to the archive. Must be a fully expanded path. Must not be nil.
     @result Returns the newly initialized MPQArchive object or nil on error.
 */
-- (id)initWithPath:(NSString*)path;
-- (id)initWithPath:(NSString*)path error:(NSError**)error;
+- (instancetype)initWithPath:(NSString*)path;
+- (instancetype)initWithPath:(NSString*)path error:(NSError**)error;
 
 #pragma mark delegate
 
@@ -311,14 +311,13 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         that finished performing, and also to control operations (allow or disallow).
     @result The delegate or nil.
 */
-- (id)delegate;
+@property (nonatomic, assign) id delegate;
 
 /*!
     @method setDelegate:
     @abstract Set the archive's delegate.
     @discussion The delegate is not retained.
 */
-- (void)setDelegate:(id)anObject;
 
 #pragma mark archive information
 
@@ -337,7 +336,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         This is the offset of the MPQ archive within its container file in bytes as an integer.
     @result An NSDictionary object containing the archive's information on success or nil on failure.
 */
-- (NSDictionary*)archiveInfo;
+@property (nonatomic, readonly, copy) NSDictionary *archiveInfo;
 
 /*! 
     @method path
@@ -346,26 +345,26 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         initWithFileLimit: and the archive has never been saved yet.
     @result Returns the absolute path of the archive as an integer.
 */
-- (NSString*)path;
+@property (nonatomic, readonly, copy) NSString *path;
 
 /*! 
     @method modified
     @abstract Returns the current document state of the archive.
     @discussion Will always return NO if the archive is read-only. When an archive was just initialized 
-		from a file, should always return NO. When an archive was just initialized in memory, will always 
-		return YES.
+        from a file, should always return NO. When an archive was just initialized in memory, will always 
+        return YES.
     @result Returns YES if the archive has been modified and NO if it has not.
 */
-- (BOOL)modified;
+@property (nonatomic, readonly) BOOL modified;
 
 /*! 
     @method readOnly
     @abstract Returns the read-only state of the archive.
     @discussion Returns NO for archives initialized in memory. This may return YES for existing archives 
-		depending on what permissions the archive file has and on what type of media it is stored.
+        depending on what permissions the archive file has and on what type of media it is stored.
     @result Returns YES if the archive is read-only and NO if it is read-write.
 */
-- (BOOL)readOnly;
+@property (nonatomic, readonly) BOOL readOnly;
 
 /*! 
     @method openFileCount
@@ -373,7 +372,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion There must be no open files in order to save the archive to disk.
     @result Returns the number of open MPQ files as an integer.
 */
-- (uint32_t)openFileCount;
+@property (nonatomic, readonly) uint32_t openFileCount;
 
 /*! 
     @method openFileCountWithPosition:
@@ -392,7 +391,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         with the result of validFileCount.
     @result Returns the number of used and deleted files inside the archive as an integer.
 */
-- (uint32_t)fileCount;
+@property (nonatomic, readonly) uint32_t fileCount;
 
 /*! 
     @method validFileCount
@@ -400,7 +399,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion This includes every valid file, even if the filename is unknown.
     @result Returns the number of valid files inside the archive as an integer.
 */
-- (uint32_t)validFileCount;
+@property (nonatomic, readonly) uint32_t validFileCount;
 
 /*! 
     @method maximumNumberOfFiles
@@ -410,7 +409,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         may not be able to do if you don't know the file name of every file. This limit is inherent to the MPQ format.
     @result Returns the maximum number of files the archive may contain as an integer.
 */
-- (uint32_t)maximumNumberOfFiles;
+@property (nonatomic, readonly) uint32_t maximumNumberOfFiles;
 
 #pragma mark operations
 
@@ -421,43 +420,43 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         operation MPQKit is about to do or just completed when writeToFile:atomically: is called.
     @result Returns the number of operations as an integer.
 */
-- (uint32_t)operationCount;
+@property (nonatomic, readonly) uint32_t operationCount;
 
 - (BOOL)undoLastOperation:(NSError**)error;
 
 #pragma mark digital signing
 
 /*!
-	@method computeWeakSignatureDigest
-	@abstract Computes the weak signature digest of the archive.
-	@discussion This method will return nil if the archive does not have a weak signature or if the instance 
-		was initialized in memory and has not been written to disk yet.
+    @method computeWeakSignatureDigest
+    @abstract Computes the weak signature digest of the archive.
+    @discussion This method will return nil if the archive does not have a weak signature or if the instance 
+        was initialized in memory and has not been written to disk yet.
         
         The weak signature digest cannot be computed until the archive contains a (signature) file whose length 
         is exactly 72 bytes.
-		
-		Note that this method may take some time for large archives, since it computes a whole archive MD5 checksum.
+        
+        Note that this method may take some time for large archives, since it computes a whole archive MD5 checksum.
     @param error Optional pointer to a NSError *.
-	@result Returns the weak archive digest or nil on error.
+    @result Returns the weak archive digest or nil on error.
 */
 - (NSData*)computeWeakSignatureDigest:(NSError**)error;
 
 /*!
-	@method verifyBlizzardWeakSignature:
-	@abstract Returns YES if the archive has been weakly signed using Blizzard's weak RSA key and the signature 
-		matches the archive's weak digest. Otherwise returns NO.
-	@discussion TBW
+    @method verifyBlizzardWeakSignature:
+    @abstract Returns YES if the archive has been weakly signed using Blizzard's weak RSA key and the signature 
+        matches the archive's weak digest. Otherwise returns NO.
+    @discussion TBW
     @param isSigned If you want to distinguish between an invalid signature and no signature, you can pass a BOOL pointer. 
         Otherwise, set to NULL.
     @param error Optional pointer to a NSError *.
-	@result Returns YES if the archive was weakly signed by Blizzard and the signature is valid, NO otherwise.
+    @result Returns YES if the archive was weakly signed by Blizzard and the signature is valid, NO otherwise.
 */
 - (BOOL)verifyBlizzardWeakSignature:(BOOL*)isSigned error:(NSError**)error;
 
 /*!
-	@method computeStrongSignatureDigestFrom:size:tail:
-	@abstract Computes the strong signature digest of the archive.
-	@discussion This method will return nil if the instance resides entirely in memory, or in other words if the 
+    @method computeStrongSignatureDigestFrom:size:tail:
+    @abstract Computes the strong signature digest of the archive.
+    @discussion This method will return nil if the instance resides entirely in memory, or in other words if the 
         instance is not backed by an archive on disk.
         
         The digestOffset parameter should be the archive offset for a normal strong digest, and 0 for 
@@ -471,13 +470,13 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         
         digestTail can be used for special signatures, such as Macintosh World of Warcraft patch or Warcraft 3 map 
         signatures.
-		
-		Note that this method may take some time for large archives, since it computes a whole archive SHA1 checksum.
+        
+        Note that this method may take some time for large archives, since it computes a whole archive SHA1 checksum.
     @param digestOffset The offset in the archive file at which to begin the digest.
     @param digestSize The number of bytes from the archive file to digest.
     @param digestTail Data to be appended to the digest once the archive file has been digested but prior to closing the digest. Can be nil if not needed.
     @param error Optional pointer to a NSError *.
-	@result Returns the strong archive digest or nil on error.
+    @result Returns the strong archive digest or nil on error.
 */
 - (NSData*)computeStrongSignatureDigestFrom:(off_t)digestOffset size:(off_t)digestSize tail:(NSData*)digestTail error:(NSError**)error;
 
@@ -487,7 +486,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @discussion This method should be called before computing the strong digital signature digest of the archive 
         if you intend on verifying that digest to avoid a lenghty computation when the archive is not signed.
 */
-- (BOOL)hasStrongSignature;
+@property (nonatomic, readonly) BOOL hasStrongSignature;
 
 /*!
     @method verifyStrongSignature:isSigned:error:
@@ -531,7 +530,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         The default behavior is to save the listfile at save time.
     @result Returns YES if the listfile will be added to the archive or NO if it will not.
 */
-- (BOOL)storesListfile;
+@property (nonatomic) BOOL storesListfile;
 
 /*! 
     @method setStoresListfile:
@@ -551,7 +550,6 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         It is recommended to save the listfile.
     @param store YES to make the instance save the listfile at save time or NO to prevent it from doing so.
 */
-- (void)setStoresListfile:(BOOL)store;
 
 /*! 
     @method defaultCompressor
@@ -630,7 +628,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         know about any of the files in the archive (or if the archive is empty).
     @result An NSArray containing all the known files stored the instance's archive.
 */
-- (NSArray*)fileList;
+@property (nonatomic, readonly, copy) NSArray *fileList;
 
 #pragma mark file info
 
@@ -662,7 +660,7 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
         * MPQFilename: The file's path inside the MPQ archive. Note that the path separator is \.
     @result An NSEnumerator subclass object you can use to cycle through the file information dictionaries. nil on failure.
 */
-- (NSEnumerator*)fileInfoEnumerator;
+@property (nonatomic, readonly, strong) NSEnumerator *fileInfoEnumerator;
 
 /*!
     @method fileInfoForPosition:
@@ -1027,17 +1025,17 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @method writeToFile:atomically:
     @abstract Writes the archive at path.
     @discussion If path is the same as the path that was used to initialize the instance, 
-		the archive file is modified directly. If path is different than the path used to initialize 
-		the instance, a new file is created at path and a new archive is written there (save-as operation). 
-		Furthermore, the archive path of the instance is changed to the new path and the old archive is closed.
+        the archive file is modified directly. If path is different than the path used to initialize 
+        the instance, a new file is created at path and a new archive is written there (save-as operation). 
+        Furthermore, the archive path of the instance is changed to the new path and the old archive is closed.
         
         If the archive was not initialized with a path, a new file is created at path and the path of the 
         instance is set to path.
         
         In all cases, setting atomically to YES makes the instance close the archive file (if there is one) and 
-		create a new temporary archive file which will be moved to path once it has been fully written to disk. 
-		Note that the temporary file is actually a copy of the original archive file, so if the archive is embedded 
-		in some other file, all data not belonging to the archive is preserved.
+        create a new temporary archive file which will be moved to path once it has been fully written to disk. 
+        Note that the temporary file is actually a copy of the original archive file, so if the archive is embedded 
+        in some other file, all data not belonging to the archive is preserved.
         
         In all cases, if the method returns NO and atomically was YES or path was different from the instance's 
         initial path, the instance will be exactly as it was prior to the invocation. Otherwise, there are no garantees 
@@ -1119,10 +1117,10 @@ typedef struct mpq_deferred_operation_delete_context mpq_deferred_operation_dele
     @method archive:failedToAddFile:
     @abstract This method is called when MPQKit fails to add a file to an archive.
     @discussion The application cannot alter how the framework handles the error. This method 
-		is only useful to inform the user.
+        is only useful to inform the user.
     @param archive The archive in which the file was attempted to be added.
     @param filename The MPQ filename of the file that failed to be added.
-	@param error The internal MPQKit error associated with the failure.
+    @param error The internal MPQKit error associated with the failure.
 */
 - (void)archive:(MPQArchive*)archive failedToAddFile:(NSString*)filename error:(NSError*)error;
 

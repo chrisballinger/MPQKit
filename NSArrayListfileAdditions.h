@@ -10,11 +10,11 @@
 
 
 @interface NSArray (ListfileAdditions)
-+ (id)arrayWithListfileData:(NSData*)listfileData;
++ (instancetype)arrayWithListfileData:(NSData*)listfileData;
 @end
 
 @interface NSMutableArray (ListfileAdditions)
-+ (id)arrayWithListfileData:(NSData*)listfileData;
-- (id)initWithListfileData:(NSData*)listfileData;
++ (instancetype)arrayWithListfileData:(NSData*)listfileData;
+- (instancetype)initWithListfileData:(NSData*)listfileData;
 - (void)sortAndDeleteDuplicates;
 @end

@@ -79,8 +79,8 @@ static int mpqfs_opt_proc(void* data, const char* arg, int key, struct fuse_args
             return 1;
         
         case KEY_LISTFILE:
-            if (strstr(arg, "-l") == arg) listfile = [[NSString stringWithCString:arg + 2 encoding:NSUTF8StringEncoding] stringByStandardizingPath];
-            if (strstr(arg, "--listfile=") == arg) listfile = [[NSString stringWithCString:arg + 11 encoding:NSUTF8StringEncoding] stringByStandardizingPath];
+            if (strstr(arg, "-l") == arg) listfile = @(arg + 2).stringByStandardizingPath;
+            if (strstr(arg, "--listfile=") == arg) listfile = @(arg + 11).stringByStandardizingPath;
             [listfiles addObject:listfile];
             return 0;
         
@@ -125,13 +125,13 @@ int main(int argc, char* argv[]) {
     
     MPQArchive* archive = [[MPQArchive alloc] initWithPath:archive_path error:&error];
     if (!archive) {
-        fprintf(stderr, "error opening archive: %s\n", [[error description] UTF8String]);
+        fprintf(stderr, "error opening archive: %s\n", error.description.UTF8String);
         fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
         goto Exit1;
     }
     [archive_path release];
     
-    if ([listfiles count] > 0) {
+    if (listfiles.count > 0) {
         NSEnumerator* listfileEnum = [listfiles objectEnumerator];
         NSString* listfile;
         while ((listfile = [listfileEnum nextObject])) {
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
     
     MPQFileSystem* fs = [[MPQFileSystem alloc] initWithArchive:archive mountPoint:mount_point arguments:&args error:&error];
     if (!fs) {
-        fprintf(stderr, "error creating MPQ filesystem: %s\n", [[error description] UTF8String]);
+        fprintf(stderr, "error creating MPQ filesystem: %s\n", error.description.UTF8String);
         [archive release];
         goto Exit1;
     }

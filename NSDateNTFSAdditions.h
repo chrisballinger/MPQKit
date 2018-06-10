@@ -10,6 +10,6 @@
 
 
 @interface NSDate (NTFSAdditions)
-+ (id)dateWithNTFSFiletime:(int64_t)filetime;
-- (int64_t)ntfsFiletime;
++ (instancetype)dateWithNTFSFiletime:(int64_t)filetime;
+@property (nonatomic, readonly) int64_t ntfsFiletime;
 @end

@@ -36,7 +36,7 @@
     
     _backingStoreType = FileDescriptorBackingStore;
     
-    const char* cPath = [path fileSystemRepresentation];
+    const char* cPath = path.fileSystemRepresentation;
     CFURLRef fileURLRef = CFURLCreateFromFileSystemRepresentation(NULL, (const UInt8*)cPath, strlen(cPath) + 1, false);
     if (fileURLRef == NULL)
         ReturnFromInitWithError(MPQErrorDomain, errCouldNotConvertPathToURL, nil, error)
@@ -109,7 +109,7 @@
         ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
     _backingStoreType = FileDescriptorBackingStore;
-    _fileDescriptorBackingStore = open([path fileSystemRepresentation], O_RDONLY, 0);
+    _fileDescriptorBackingStore = open(path.fileSystemRepresentation, O_RDONLY, 0);
     if (_fileDescriptorBackingStore == -1)
         ReturnFromInitWithError(NSPOSIXErrorDomain, errno, nil, error)
     
@@ -117,7 +117,7 @@
 }
 
 - (id)initWithURL:(NSURL*)url error:(NSError**)error {
-    return [self initWithPath:[url path] error:error];
+    return [self initWithPath:url.path error:error];
 }
 
 - (void)dealloc {
@@ -141,7 +141,7 @@
     struct stat sb;
     switch(_backingStoreType) {
         case NSDataBackingStore:
-            return (off_t)[_dataBackingStore length];
+            return (off_t)_dataBackingStore.length;
         case FileDescriptorBackingStore:
             if (fstat(_fileDescriptorBackingStore, &sb) == -1) ReturnValueWithPOSIXError(-1, nil, error)
             return sb.st_size;
@@ -163,7 +163,7 @@
     
     switch(_backingStoreType) {
         case NSDataBackingStore:
-			// unsigned long will do the right thing on Mac OS X, since the 64-bit ABIs are using the LP64 model
+            // unsigned long will do the right thing on Mac OS X, since the 64-bit ABIs are using the LP64 model
             [_dataBackingStore getBytes:buffer range:NSMakeRange((unsigned long)offset, size)];
             return (ssize_t)size;
         case FileDescriptorBackingStore:

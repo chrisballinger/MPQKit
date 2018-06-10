@@ -57,11 +57,11 @@
 @implementation MPQFile (MPQFileAttributes)
 
 + (id)getCRC:(NSData*)data {
-    return [NSNumber numberWithUnsignedInt:MPQSwapInt32LittleToHost(*((uint32_t*)[data bytes]))];
+    return @(MPQSwapInt32LittleToHost(*((uint32_t*)data.bytes)));
 }
 
 + (id)getCreationDate:(NSData*)data {
-    return [NSDate dateWithNTFSFiletime:MPQSwapInt64LittleToHost(*((u_int64_t*)[data bytes]))];
+    return [NSDate dateWithNTFSFiletime:MPQSwapInt64LittleToHost(*((u_int64_t*)data.bytes))];
 }
 
 + (id)getMD5:(NSData*)data {
@@ -73,13 +73,13 @@
 #pragma mark -
 @implementation MPQFile
 
-- (id)init {
+- (instancetype)init {
     [self doesNotRecognizeSelector:_cmd];
     [self release];
     return nil;
 }
 
-- (id)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
+- (instancetype)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
     if (descriptor == nil) {
         [self release];
         return nil;
@@ -94,15 +94,15 @@
     if (!self)
         return nil;
     
-    filename = [[descriptor objectForKey:@"Filename"] retain];
-    hash_position = [[descriptor objectForKey:@"Position"] unsignedIntValue];
+    filename = [descriptor[@"Filename"] retain];
+    hash_position = [descriptor[@"Position"] unsignedIntValue];
     file_pointer = 0;
     
-    parent = [descriptor objectForKey:@"Parent"];
+    parent = descriptor[@"Parent"];
     NSAssert(parent, @"Invalid parent archive reference");
     
-    hash_entry = *(mpq_hash_table_entry_t*)[[descriptor objectForKey:@"HashTableEntry"] pointerValue];
-    block_entry = *(mpq_block_table_entry_t*)[[descriptor objectForKey:@"BlockTableEntry"] pointerValue];
+    hash_entry = *(mpq_hash_table_entry_t*)[descriptor[@"HashTableEntry"] pointerValue];
+    block_entry = *(mpq_block_table_entry_t*)[descriptor[@"BlockTableEntry"] pointerValue];
     
     _checkSectorAdlers = YES;
     
@@ -194,13 +194,13 @@
 
 - (NSData*)copyDataOfLength:(uint32_t)length error:(NSError**)error {
     NSMutableData* data = [[NSMutableData alloc] initWithLength:length];
-    ssize_t bytes_read = [self read:[data mutableBytes] size:length error:error];
+    ssize_t bytes_read = [self read:data.mutableBytes size:length error:error];
     if (bytes_read == -1) {
         [data release];
         return nil;
     }
     
-    [data setLength:bytes_read];
+    data.length = bytes_read;
     return data;
 }
 
@@ -265,7 +265,7 @@
     if (!self)
         return nil;
     
-    dataSource = [(MPQDataSourceProxy*)[descriptor objectForKey:@"DataSourceProxy"] createActualDataSource:error];
+    dataSource = [(MPQDataSourceProxy*)descriptor[@"DataSourceProxy"] createActualDataSource:error];
     NSAssert(dataSource, @"Invalid data object");
     
     return self;
@@ -338,18 +338,18 @@
     if (!self)
         return nil;
     
-    archive_fd = [[descriptor objectForKey:@"FileDescriptor"] intValue];
+    archive_fd = [descriptor[@"FileDescriptor"] intValue];
     NSAssert(archive_fd >= 0, @"Invalid archive file descriptor");
     
-    sector_size_shift = [[descriptor objectForKey:@"SectorSizeShift"] unsignedIntValue];
+    sector_size_shift = [descriptor[@"SectorSizeShift"] unsignedIntValue];
     full_sector_size = MPQ_BASE_SECTOR_SIZE << sector_size_shift;
     NSAssert(sector_size_shift > 0, @"Invalid sector size shift");
     
-    file_archive_offset = [[descriptor objectForKey:@"FileArchiveOffset"] longLongValue];
-    encryption_key = [[descriptor objectForKey:@"EncryptionKey"] unsignedIntValue];
+    file_archive_offset = [descriptor[@"FileArchiveOffset"] longLongValue];
+    encryption_key = [descriptor[@"EncryptionKey"] unsignedIntValue];
     
-    sector_table_length = [[descriptor objectForKey:@"SectorTableLength"] unsignedIntValue];
-    sector_table = [[descriptor objectForKey:@"SectorTable"] pointerValue];
+    sector_table_length = [descriptor[@"SectorTableLength"] unsignedIntValue];
+    sector_table = [descriptor[@"SectorTable"] pointerValue];
     if (block_entry.flags & (MPQFileCompressed | MPQFileDiabloCompressed)) {
         NSAssert(sector_table_length > 0, @"Invalid sector table length");
         NSAssert(sector_table, @"Invalid sector table");
@@ -510,9 +510,9 @@
                     if (error) {
                         NSDictionary* userInfo = [[NSDictionary alloc] initWithObjectsAndKeys:
                             [self fileInfo], MPQErrorFileInfo, 
-                            [NSNumber numberWithUnsignedInt:current_sector], MPQErrorSectorIndex, 
-                            [NSNumber numberWithUnsignedLong:adler], MPQErrorComputedSectorChecksum, 
-                            [NSNumber numberWithUnsignedInt:_sector_adlers[current_sector]], MPQErrorExpectedSectorChecksum, 
+                            @(current_sector), MPQErrorSectorIndex, 
+                            @(adler), MPQErrorComputedSectorChecksum, 
+                            @(_sector_adlers[current_sector]), MPQErrorExpectedSectorChecksum, 
                             nil];
                         *error = [MPQError errorWithDomain:MPQErrorDomain code:errInvalidSectorChecksum userInfo:userInfo];
                         [userInfo release];
@@ -602,7 +602,7 @@
     return data_offset;
         
 ErrorExit:
-    MPQDebugLog(@"%@ error occured at stage %d in readSectors", (error) ? [*error localizedDescription] : nil, stage);
+    MPQDebugLog(@"%@ error occured at stage %d in readSectors", (error) ? (*error).localizedDescription : nil, stage);
     if (perr == -1)
         MPQDebugLog(@"errno is %d", errno);
     
@@ -666,11 +666,11 @@ ErrorExit:
     if (!self)
         return nil;
     
-    archive_fd = [[descriptor objectForKey:@"FileDescriptor"] intValue];
+    archive_fd = [descriptor[@"FileDescriptor"] intValue];
     NSAssert(archive_fd, @"Invalid archive file descriptor");
     
-    file_archive_offset = [[descriptor objectForKey:@"FileArchiveOffset"] longLongValue];
-    encryption_key = [[descriptor objectForKey:@"EncryptionKey"] unsignedIntValue];
+    file_archive_offset = [descriptor[@"FileArchiveOffset"] longLongValue];
+    encryption_key = [descriptor[@"EncryptionKey"] unsignedIntValue];
     
     return self;
 }

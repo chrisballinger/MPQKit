@@ -15,15 +15,15 @@
 @implementation MPQFSApplicationDelegate
 
 - (id <SUVersionComparison>)versionComparatorForUpdater:(SUUpdater*)updater {
-	return comparator;
+    return comparator;
 }
 
 - (NSArray*)standardListfileArguments_ {
     NSString* listfileDirectory = [[NSBundle mainBundle] pathForResource:@"listfiles" ofType:@""];
-    if (!listfileDirectory) return [NSArray array];
+    if (!listfileDirectory) return @[];
     
     NSArray* listfileDirectoryContent = [[NSFileManager defaultManager] directoryContentsAtPath:listfileDirectory];
-    NSMutableArray* arguments = [NSMutableArray arrayWithCapacity:[listfileDirectoryContent count]];
+    NSMutableArray* arguments = [NSMutableArray arrayWithCapacity:listfileDirectoryContent.count];
     
     NSEnumerator* directoryContentEnum = [listfileDirectoryContent objectEnumerator];
     NSString* listfile;
@@ -36,7 +36,7 @@
 
 - (NSString*)mountPointForArchivePath_:(NSString*)path {
     NSFileManager* manager = [NSFileManager defaultManager];
-    NSString* basePoint = [@"/Volumes" stringByAppendingPathComponent:[path lastPathComponent]];
+    NSString* basePoint = [@"/Volumes" stringByAppendingPathComponent:path.lastPathComponent];
     
     NSString* mountPoint = [NSString stringWithString:basePoint];
     uint32_t count = 1;
@@ -52,7 +52,7 @@
     NSMutableArray* arguments = [NSMutableArray arrayWithObjects:path, [self mountPointForArchivePath_:path], nil];
     if (loadListfiles) [arguments addObjectsFromArray:[self standardListfileArguments_]];
     // FIXME: add support for volicon
-	
+    
 #if defined(__APPLE__)
     [NSTask launchedTaskWithLaunchPath:[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"mpqfsd"] arguments:arguments];
 #else
@@ -71,17 +71,17 @@
     [openPanel setCanChooseFiles:YES];
     [openPanel setCanChooseDirectories:NO];
     [openPanel setAllowsMultipleSelection:NO];
-    [openPanel setAccessoryView:loadStdListfilesView];
-	
+    openPanel.accessoryView = loadStdListfilesView;
+    
 #if defined(__APPLE__)
     int returnCode = [openPanel runModalForTypes:
-        [NSArray arrayWithObjects:@"mpq", NSFileTypeForHFSTypeCode('D2pq'), NSFileTypeForHFSTypeCode('W!pq'), NSFileTypeForHFSTypeCode('MPQA'), NSFileTypeForHFSTypeCode('Smpq'), nil]];
+        @[@"mpq", NSFileTypeForHFSTypeCode('D2pq'), NSFileTypeForHFSTypeCode('W!pq'), NSFileTypeForHFSTypeCode('MPQA'), NSFileTypeForHFSTypeCode('Smpq')]];
 #else
     int returnCode = [openPanel runModalForTypes:
         [NSArray arrayWithObjects:@"mpq", @"MPQ", nil]];
 #endif
     if (returnCode == NSOKButton)
-		[self mountArchive_:[openPanel filename] loadingListfiles:([loadStdListfilesButton state] == NSOnState) ? YES : NO];
+        [self mountArchive_:[openPanel filename] loadingListfiles:(loadStdListfilesButton.state == NSOnState) ? YES : NO];
 }
 
 @end

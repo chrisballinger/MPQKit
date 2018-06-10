@@ -16,7 +16,7 @@
     NSRange searchRange;
     NSRange foundRange;
 
-    searchRange = NSMakeRange(0, [self length]);
+    searchRange = NSMakeRange(0, self.length);
     while ((searchRange.length > 0) && ((foundRange = [newStr rangeOfString:@"\\" options:NSLiteralSearch range:searchRange]).length > 0)) {
         [newStr replaceCharactersInRange:foundRange withString:@"/"];
         searchRange = NSMakeRange(NSMaxRange(foundRange), NSMaxRange(searchRange) - NSMaxRange(foundRange));
@@ -30,7 +30,7 @@
     NSRange searchRange;
     NSRange foundRange;
 
-    searchRange = NSMakeRange(0, [self length]);
+    searchRange = NSMakeRange(0, self.length);
     while ((searchRange.length > 0) && ((foundRange = [newStr rangeOfString:@"/" options:NSLiteralSearch range:searchRange]).length > 0)) {
         [newStr replaceCharactersInRange:foundRange withString:@"\\"];
         searchRange = NSMakeRange(NSMaxRange(foundRange), NSMaxRange(searchRange) - NSMaxRange(foundRange));
