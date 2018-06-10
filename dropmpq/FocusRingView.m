@@ -27,7 +27,6 @@
 - (void)dealloc
 {
 	[self unregisterDraggedTypes];
-    [super dealloc];
 }
 
 - (id)delegate

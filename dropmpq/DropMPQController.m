@@ -178,8 +178,6 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     m_isRunning = FALSE;
-    [m_foldersToProcess release];
-    [m_dataLock release];
 	
 	[ui_tick invalidate];
 	ui_tick = nil;
@@ -243,30 +241,25 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
 
 - (void)processFolderThread:(id)object {
     // This will be a thread, so we need our own autorelease pool
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
     BOOL isDir = FALSE;
-    NSFileManager *dfm = [[NSFileManager defaultManager] retain];
+    NSFileManager *dfm = [NSFileManager defaultManager];
 	
 	NSString *old_string = nil;
     NSError *error = nil;
 	
     // We need to retain the lock objects
-    [m_dataLock retain];
 	
     // We enter the thread loop
     while (m_isRunning) {
         // create an autorelease pool to collect temporary objects
         // recreate it here to free up memory
-        [pool release];
-        pool = [[NSAutoreleasePool alloc] init];
         
         m_isProcessing = NO;
         
         // reset variables to idle state
 		old_string = m_infoString;
-		m_infoString = [@"" retain];
-        [old_string release];
+		m_infoString = @"";
 		old_string = nil;
 		
         m_displayMode = kIdleMode;
@@ -286,20 +279,20 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
         m_isProcessing = YES;
         
         // Check if there is a mpq.plist file in the target folder
-        NSDictionary *attribDict = [[NSDictionary dictionaryWithContentsOfFile:[path stringByAppendingPathComponent:@"mpq.plist"]] retain];
-        NSDictionary *prefAttribDict = [[[NSUserDefaults standardUserDefaults] objectForKey:DEFAULT_IMPORT_DICT_PREF] retain];
-        if (!attribDict) attribDict = [prefAttribDict retain];
+        NSDictionary *attribDict = [NSDictionary dictionaryWithContentsOfFile:[path stringByAppendingPathComponent:@"mpq.plist"]];
+        NSDictionary *prefAttribDict = [[NSUserDefaults standardUserDefaults] objectForKey:DEFAULT_IMPORT_DICT_PREF];
+        if (!attribDict) attribDict = prefAttribDict;
         
 		// Load the default import dictionary
         NSDictionary *defaultImportDict = [attribDict objectForKey:DEFAULT_IMPORT_DICT_KEY];
         if (!defaultImportDict) defaultImportDict = [prefAttribDict objectForKey:DEFAULT_IMPORT_DICT_KEY];
 		
         // Alias the default dictionary
-        NSDictionary *importDict = [defaultImportDict retain];
+        NSDictionary *importDict = defaultImportDict;
 		
 		// Some variables we'll need
 		MPQArchive *archive = nil;
-        NSMutableArray *excludeList = [[NSMutableArray arrayWithCapacity:0x20] retain];
+        NSMutableArray *excludeList = [NSMutableArray arrayWithCapacity:0x20];
         
         NSNumber *temp = nil;
         BOOL bPreserveArchive = YES;
@@ -316,18 +309,12 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
         bMakeImp = [temp boolValue];
         
         // Grab an NSArray out of the enumerator, cause it's gonna be more conveniant that way
-        NSArray *folderContent = [[[dfm enumeratorAtPath:path] allObjects] retain];
+        NSArray *folderContent = [[dfm enumeratorAtPath:path] allObjects];
         
-        NSString *archivePath = [[path stringByAppendingPathExtension:@"mpq"] retain];
-        if (bPreserveArchive && [dfm fileExistsAtPath:archivePath]) archive = [[MPQArchive archiveWithPath:archivePath] retain];    
-        else archive = [[MPQArchive archiveWithFileLimit:[folderContent count]] retain];
+        NSString *archivePath = [path stringByAppendingPathExtension:@"mpq"];
+        if (bPreserveArchive && [dfm fileExistsAtPath:archivePath]) archive = [MPQArchive archiveWithPath:archivePath];
+        else archive = [MPQArchive archiveWithFileLimit:[folderContent count]];
         if (!archive) {
-            [attribDict release];
-            [prefAttribDict release];
-            [defaultImportDict release];
-            [path release];
-            [folderContent release];
-            [excludeList release];
             continue;
         }
         
@@ -349,12 +336,10 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
         BOOL bFileExists = NO;
         
 		// Track imported files for the IMP generation
-        NSMutableArray *importList = (bMakeImp) ? [[NSMutableArray arrayWithCapacity:m_fTotal] retain] : nil;
+        NSMutableArray *importList = (bMakeImp) ? [NSMutableArray arrayWithCapacity:m_fTotal] : nil;
         for (i = 0; i < [folderContent count]; i++) {
             // create an autorelease pool to collect temporary objects
             // this is another long loop so flush the pool here too
-            [pool release];
-            pool = [[NSAutoreleasePool alloc] init];
             
             // Speed cache
 			itemSubPath = [folderContent objectAtIndex:i];
@@ -387,9 +372,6 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
             importDict = nil;
         }
         
-        [pool release];
-        pool = [[NSAutoreleasePool alloc] init];
-        
         if (bMakeImp) {
             // make a war3x war3campaign.imp file
             NSMutableData *impData = [NSMutableData dataWithLength:8];
@@ -397,7 +379,6 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
             NSData *impOldData = [archive copyDataForFile:@"war3campaign.imp" locale:MPQNeutral];
             if (impOldData) {
                 [impData setData:impOldData];
-				[impOldData release];
 				impOldData = nil;
 			}
             
@@ -418,10 +399,8 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
             [archive addFileWithData:impData filename:@"war3campaign.imp" parameters:defaultImportDict];
         }
         
-        [importList release];
         importList = nil;
         
-        [excludeList release];
         excludeList = nil;
         
 		m_fTotal = [archive operationCount];
@@ -434,39 +413,25 @@ static NSString *modeInfoStrings [] = {@"", @"Exporting \n%@", @"", @"%@"};
 		}
         
 		// Clean up
-        [archive release];
         archive = nil;
 		
-        [attribDict release];
         attribDict = nil;
         
-        [prefAttribDict release];
         prefAttribDict = nil;
         
-        [defaultImportDict release];
         defaultImportDict = nil;
 		
-        [archivePath release];
         archivePath = nil;
         
-        [path release];
         path = nil;
 		
-        [folderContent release];
         folderContent = nil;
     }
 	
-    // We clean up
-    [m_dataLock release];
-    [dfm release];
-    [pool release];
 }
 
 - (void)archive:(MPQArchive *)archive willAddFile:(NSString *)file {
-    NSString *old_string = m_infoString;
-	m_infoString = [file retain];
-	[old_string release];
-	
+	m_infoString = file;	
 	m_fLeft--;
 }
 
