@@ -47,6 +47,5 @@
 #define ReturnFromInitWithError(errorDomain, errorCode, errorInfo, errorPtr)                                            \
 	{                                                                                                                   \
 		if((errorPtr)) *(errorPtr) = [MPQError errorWithDomain:(errorDomain) code:(errorCode) userInfo:(errorInfo)];	\
-		[self release];                                                                                                 \
 		return nil;                                                                                                     \
 	}

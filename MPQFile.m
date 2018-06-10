@@ -42,13 +42,11 @@
 - (void)decreaseOpenFileCount_:(uint32_t)position {
     open_file_count--;
     (open_file_count_table[position])--;
-    if (open_file_count == 0) [self release];
 }
 
 - (void)increaseOpenFileCount_:(uint32_t)position {
     open_file_count++;
     (open_file_count_table[position])++;
-    if (open_file_count == 1) [self retain];
 }
 
 @end
@@ -75,13 +73,11 @@
 
 - (instancetype)init {
     [self doesNotRecognizeSelector:_cmd];
-    [self release];
     return nil;
 }
 
 - (instancetype)initForFile:(NSDictionary*)descriptor error:(NSError**)error {
     if (descriptor == nil) {
-        [self release];
         return nil;
     }
     
@@ -94,7 +90,7 @@
     if (!self)
         return nil;
     
-    filename = [descriptor[@"Filename"] retain];
+    filename = descriptor[@"Filename"];
     hash_position = [descriptor[@"Position"] unsignedIntValue];
     file_pointer = 0;
     
@@ -111,10 +107,7 @@
 }
 
 - (void)dealloc {
-    [filename release];
-    [parent decreaseOpenFileCount_:hash_position];
-    
-    [super dealloc];
+    [parent decreaseOpenFileCount_:hash_position];    
 }
 
 - (NSString*)name {
@@ -126,7 +119,7 @@
 }
 
 - (NSDictionary*)fileInfo {
-    return [parent fileInfoForPosition:hash_position error:(NSError**)NULL];
+    return [parent fileInfoForPosition:hash_position error:NULL];
 }
 
 - (NSDictionary*)fileInfo:(NSError**)error {
@@ -134,7 +127,7 @@
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset {
-    return [self seekToFileOffset:offset mode:MPQFileStart error:(NSError**)NULL];
+    return [self seekToFileOffset:offset mode:MPQFileStart error:NULL];
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset error:(NSError**)error {
@@ -142,7 +135,7 @@
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode {
-    return [self seekToFileOffset:offset mode:mode error:(NSError**)NULL];
+    return [self seekToFileOffset:offset mode:mode error:NULL];
 }
 
 - (uint32_t)seekToFileOffset:(off_t)offset mode:(MPQFileDisplacementMode)mode error:(NSError**)error { 
@@ -189,14 +182,13 @@
 }
 
 - (NSData*)copyDataOfLength:(uint32_t)length {
-    return [self copyDataOfLength:length error:(NSError**)NULL];
+    return [self copyDataOfLength:length error:NULL];
 }
 
 - (NSData*)copyDataOfLength:(uint32_t)length error:(NSError**)error {
     NSMutableData* data = [[NSMutableData alloc] initWithLength:length];
     ssize_t bytes_read = [self read:data.mutableBytes size:length error:error];
     if (bytes_read == -1) {
-        [data release];
         return nil;
     }
     
@@ -205,7 +197,7 @@
 }
 
 - (NSData*)copyDataToEndOfFile {
-    return [self copyDataOfLength:[self length] error:(NSError**)NULL];
+    return [self copyDataOfLength:[self length] error:NULL];
 }
 
 - (NSData*)copyDataToEndOfFile:(NSError**)error {
@@ -213,19 +205,19 @@
 }
 
 - (NSData*)getDataOfLength:(uint32_t)length {
-    return [[self copyDataOfLength:length error:(NSError**)NULL] autorelease];
+    return [self copyDataOfLength:length error:NULL];
 }
 
 - (NSData*)getDataOfLength:(uint32_t)length error:(NSError**)error {
-    return [[self copyDataOfLength:length error:error] autorelease];
+    return [self copyDataOfLength:length error:error];
 }
 
 - (NSData*)getDataToEndOfFile {
-    return [[self copyDataToEndOfFile:(NSError**)NULL] autorelease];
+    return [self copyDataToEndOfFile:NULL];
 }
 
 - (NSData*)getDataToEndOfFile:(NSError**)error {
-    return [[self copyDataToEndOfFile:error] autorelease];
+    return [self copyDataToEndOfFile:error];
 }
 
 - (ssize_t)read:(void*)buf size:(size_t)size error:(NSError**)error {
@@ -234,7 +226,7 @@
 }
 
 - (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically {
-    return [self writeToFile:path atomically:atomically error:(NSError**)NULL];
+    return [self writeToFile:path atomically:atomically error:NULL];
 }
 
 - (BOOL)writeToFile:(NSString*)path atomically:(BOOL)atomically error:(NSError**)error {
@@ -245,7 +237,6 @@
     BOOL result = [fileData writeToFile:path options:(atomically) ? NSAtomicWrite : 0 error:error];
     
     file_pointer = old;
-    [fileData release];
     return result;
 }
 
@@ -269,11 +260,6 @@
     NSAssert(dataSource, @"Invalid data object");
     
     return self;
-}
-
-- (void)dealloc {
-    [dataSource release];
-    [super dealloc];
 }
 
 - (uint32_t)length {
@@ -382,7 +368,6 @@
         free(sector_table);
     if (_sector_adlers)
         free(_sector_adlers);
-    [super dealloc];
 }
 
 - (ssize_t)_readSectors:(void*)buf range:(NSRange)which keeping:(NSRange)bytesToKeep error:(NSError**)error {
@@ -515,7 +500,6 @@
                             @(_sector_adlers[current_sector]), MPQErrorExpectedSectorChecksum, 
                             nil];
                         *error = [MPQError errorWithDomain:MPQErrorDomain code:errInvalidSectorChecksum userInfo:userInfo];
-                        [userInfo release];
                     }
                     goto ErrorExit;
                 }
@@ -678,7 +662,6 @@ ErrorExit:
 - (void)dealloc {
     if (data_cache_)
         free(data_cache_);
-    [super dealloc];
 }
 
 - (ssize_t)read:(void*)buf size:(size_t)size error:(NSError**)error {

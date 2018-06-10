@@ -31,17 +31,11 @@
     return self;
 }
 
-- (void)dealloc {
-    [m_typeKeysArray release];
-    [m_typeValuesArray release];
-	[super dealloc];
-}
-
 - (void)awakeFromNib {
     Class imageAndTextCellClass = nil;
     id imageAndTextCell = nil;
     if ((imageAndTextCellClass = [[NSBundle mainBundle] classNamed:@"ImageAndTextCell"])) {
-        imageAndTextCell = [[[imageAndTextCellClass alloc] init] autorelease];
+        imageAndTextCell = [[imageAndTextCellClass alloc] init];
         [imageAndTextCell setEditable:YES];
         if (!imageAndTextCell)
 			NSLog(@"Could not get the imageAndTextCell class");

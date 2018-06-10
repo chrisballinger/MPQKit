@@ -26,7 +26,7 @@
 
 - (IBAction)savePreferences:(id)sender {
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    NSMutableDictionary *defaultImportDict = [[[prefs objectForKey:DEFAULT_IMPORT_DICT_PREF] mutableCopy] autorelease];
+    NSMutableDictionary *defaultImportDict = [[prefs objectForKey:DEFAULT_IMPORT_DICT_PREF] mutableCopy];
     
     [defaultImportDict setObject:NSInt([m_preserveArchiveButton state]) forKey:PRESERVE_ARCHIVE_KEY];
     [defaultImportDict setObject:NSInt([m_makeImpButton state]) forKey:MAKE_IMP_KEY];

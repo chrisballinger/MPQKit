@@ -24,7 +24,7 @@
         ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
     _backingStoreType = NSDataBackingStore;
-    _dataBackingStore = [data retain];
+    _dataBackingStore = [data copy];
     
     return self;
 }
@@ -54,7 +54,6 @@
 - (void)dealloc {
     switch(_backingStoreType) {
         case NSDataBackingStore:
-            [_dataBackingStore release];
             _dataBackingStore = nil;
             break;
         case FileDescriptorBackingStore:
@@ -65,8 +64,6 @@
         default:
             abort();
     }
-    
-    [super dealloc];
 }
 
 - (id)createActualDataSource:(NSError**)error {
@@ -77,10 +74,10 @@
         case NSDataBackingStore:
             return [[MPQDataSource alloc] initWithData:_dataBackingStore error:error];
         case FileDescriptorBackingStore:
-            urlRef = CFURLCreateByResolvingBookmarkData(NULL, _fileAlias, NULL, NULL, NULL, NULL, NULL);
+            urlRef = CFURLCreateByResolvingBookmarkData(NULL, _fileAlias, kCFURLBookmarkResolutionWithoutUIMask, NULL, NULL, NULL, NULL);
             if (urlRef == NULL)
                 ReturnValueWithError(nil, MPQErrorDomain, errCouldNotConvertFSRefToURL, nil, error)
-            dataSource = [[MPQDataSource alloc] initWithURL:(NSURL*)urlRef error:error];
+                dataSource = [[MPQDataSource alloc] initWithURL:(__bridge NSURL*)urlRef error:error];
             CFRelease(urlRef);
             return dataSource;
         default:
@@ -98,7 +95,7 @@
         ReturnValueWithError(nil, MPQErrorDomain, errOutOfMemory, nil, error)
     
     _backingStoreType = NSDataBackingStore;
-    _dataBackingStore = [data retain];
+    _dataBackingStore = [data copy];
     
     return self;
 }
@@ -123,7 +120,6 @@
 - (void)dealloc {
     switch(_backingStoreType) {
         case NSDataBackingStore:
-            [_dataBackingStore release];
             _dataBackingStore = nil;
             break;
         case FileDescriptorBackingStore:
@@ -132,9 +128,7 @@
             break;
         default:
             abort();
-    }
-    
-    [super dealloc];
+    }    
 }
 
 - (off_t)length:(NSError**)error {

@@ -103,64 +103,57 @@ static int mpqfs_opt_proc(void* data, const char* arg, int key, struct fuse_args
 }
 
 int main(int argc, char* argv[]) {
-    NSAutoreleasePool* p = [NSAutoreleasePool new];
-    NSError* error = nil;
-    
-    struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
-    listfiles = [[NSMutableArray alloc] init];
-    
-    if (fuse_opt_parse(&args, NULL, mpqfs_opts, mpqfs_opt_proc) == -1) exit(1);
-    
-    if (archive_path == nil) {
-        fprintf(stderr, "missing archive path\n");
-        fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
-        goto Exit1;
-    }
-    
-    if (mount_point == nil) {
-        fprintf(stderr, "missing mount point\n");
-        fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
-        goto Exit1;
-    }
-    
-    MPQArchive* archive = [[MPQArchive alloc] initWithPath:archive_path error:&error];
-    if (!archive) {
-        fprintf(stderr, "error opening archive: %s\n", error.description.UTF8String);
-        fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
-        goto Exit1;
-    }
-    [archive_path release];
-    
-    if (listfiles.count > 0) {
-        NSEnumerator* listfileEnum = [listfiles objectEnumerator];
-        NSString* listfile;
-        while ((listfile = [listfileEnum nextObject])) {
-            [archive addContentsOfFileToFileList:listfile];
+    @autoreleasepool {
+        NSError* error = nil;
+        
+        struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+        listfiles = [[NSMutableArray alloc] init];
+        
+        if (fuse_opt_parse(&args, NULL, mpqfs_opts, mpqfs_opt_proc) == -1) exit(1);
+        
+        if (archive_path == nil) {
+            fprintf(stderr, "missing archive path\n");
+            fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
+            fuse_opt_free_args(&args);
+            exit(1);
         }
-    }
-    [listfiles release];
-    
-    MPQFileSystem* fs = [[MPQFileSystem alloc] initWithArchive:archive mountPoint:mount_point arguments:&args error:&error];
-    if (!fs) {
-        fprintf(stderr, "error creating MPQ filesystem: %s\n", error.description.UTF8String);
-        [archive release];
-        goto Exit1;
-    }
-    [archive release];
-    [mount_point release];
-    
-    // Set options
-    [fs setValue:[NSNumber numberWithBool:(has_volname) ? NO : YES] forKey:@"overwriteVolname"];
-    
-    // Start fuse (does not return until unmount)
-    [fs startFuse];
-    
-    [fs release];
-    [p release];
-    return 0;
+        
+        if (mount_point == nil) {
+            fprintf(stderr, "missing mount point\n");
+            fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
+            fuse_opt_free_args(&args);
+            exit(1);
+        }
+        
+        MPQArchive* archive = [[MPQArchive alloc] initWithPath:archive_path error:&error];
+        if (!archive) {
+            fprintf(stderr, "error opening archive: %s\n", error.description.UTF8String);
+            fprintf(stderr, "see `%s -h' for usage\n", argv[0]);
+            fuse_opt_free_args(&args);
+            exit(1);
+        }
+        
+        if (listfiles.count > 0) {
+            NSEnumerator* listfileEnum = [listfiles objectEnumerator];
+            NSString* listfile;
+            while ((listfile = [listfileEnum nextObject])) {
+                [archive addContentsOfFileToFileList:listfile];
+            }
+        }
+        
+        MPQFileSystem* fs = [[MPQFileSystem alloc] initWithArchive:archive mountPoint:mount_point arguments:&args error:&error];
+        if (!fs) {
+            fprintf(stderr, "error creating MPQ filesystem: %s\n", error.description.UTF8String);
+            fuse_opt_free_args(&args);
+            exit(1);
+        }
+        
+        // Set options
+        [fs setValue:[NSNumber numberWithBool:(has_volname) ? NO : YES] forKey:@"overwriteVolname"];
+        
+        // Start fuse (does not return until unmount)
+        [fs startFuse];
 
-Exit1:
-    fuse_opt_free_args(&args);
-    [p release];
-    exit(1);
+        return 0;
+    }
 }
